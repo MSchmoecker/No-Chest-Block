@@ -88,12 +88,17 @@
         <Reference Include="UnityEngine.PhysicsModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
             <HintPath>$(VALHEIM_INSTALL)\unstripped_corlib\UnityEngine.PhysicsModule.dll</HintPath>
         </Reference>
+        <Reference Include="UnityEngine.AnimationModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+            <HintPath>$(VALHEIM_INSTALL)\unstripped_corlib\UnityEngine.AnimationModule.dll</HintPath>
+        </Reference>
         <Reference Include="System"/>
         <Reference Include="System.Core"/>
         <Reference Include="System.Data"/>
         <Reference Include="System.Xml"/>
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="ContainerHandler.cs"/>
+        <Compile Include="Patches\ContainerPatch.cs"/>
         <Compile Include="Plugin.cs"/>
         <Compile Include="Properties\AssemblyInfo.cs"/>
     </ItemGroup>
