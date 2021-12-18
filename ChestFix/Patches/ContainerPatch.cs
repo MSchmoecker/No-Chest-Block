@@ -29,7 +29,7 @@ namespace ChestFix.Patches {
 
         private static void RPC_RequestItemRemoveResponse(long sender, bool success) {
             if (success) {
-                lastGrid.m_inventory.AddItem(InventoryGui.instance.m_dragItem);
+                lastGrid.m_inventory.AddItem(InventoryGui.instance.m_dragItem, InventoryGui.instance.m_dragAmount, lastPos.x, lastPos.y);
             }
 
             InventoryGui.instance.SetupDragItem(null, null, 0);
@@ -37,7 +37,7 @@ namespace ChestFix.Patches {
 
         private static void RPC_RequestItemAddResponse(long sender, bool success) {
             if (success) {
-                InventoryGui.instance.m_dragInventory.RemoveItem(InventoryGui.instance.m_dragItem);
+                InventoryGui.instance.m_dragInventory.RemoveItem(InventoryGui.instance.m_dragItem, InventoryGui.instance.m_dragAmount);
             }
 
             InventoryGui.instance.SetupDragItem(null, null, 0);
@@ -104,10 +104,12 @@ namespace ChestFix.Patches {
         }*/
 
         private static InventoryGrid lastGrid;
+        private static Vector2i lastPos;
 
         [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.OnSelectedItem)), HarmonyPrefix]
-        public static void OnSelectedItemPatch(InventoryGrid grid) {
+        public static void OnSelectedItemPatch(InventoryGrid grid, Vector2i pos) {
             lastGrid = grid;
+            lastPos = pos;
         }
 
         [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.OnSelectedItem)), HarmonyPrefix]
@@ -139,7 +141,7 @@ namespace ChestFix.Patches {
                 localPlayer.UnequipItem(item, triggerEquipEffects: false);
 
                 if (!__instance.m_currentContainer.IsOwner() &&
-                    (grid.GetInventory() != localPlayer.m_inventory || __instance.m_dragInventory != localPlayer.m_inventory)) {
+                    !(grid.GetInventory() == localPlayer.m_inventory && __instance.m_dragInventory == localPlayer.m_inventory)) {
                     // Logger.LogInfo($"from container {__instance.m_currentContainer.m_nview.GetZDO().m_uid}");
                     // Logger.LogInfo($"m_dragItem pos {__instance.m_dragItem.m_gridPos}");
                     // Logger.LogInfo($"pos {pos}");
@@ -153,7 +155,7 @@ namespace ChestFix.Patches {
 
                         Logger.LogInfo("RequestItemMove");
                         __instance.m_currentContainer.m_nview.InvokeRPC("RequestItemMove", data);
-                    } else if (__instance.m_dragInventory != __instance.m_currentContainer.GetInventory()) {
+                    } else if (grid.m_inventory == __instance.m_currentContainer.GetInventory()) {
                         ZPackage data = new ZPackage();
                         data.Write(localPlayer.GetPlayerID());
                         data.Write(__instance.m_dragItem.m_gridPos);
@@ -178,6 +180,7 @@ namespace ChestFix.Patches {
                     return false;
                 }
 
+                Logger.LogInfo("Move inside own inventory");
                 bool num = grid.DropItem(__instance.m_dragInventory, __instance.m_dragItem, __instance.m_dragAmount, pos);
                 if (__instance.m_dragItem.m_stack < __instance.m_dragAmount) {
                     __instance.m_dragAmount = __instance.m_dragItem.m_stack;

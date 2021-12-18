@@ -43,7 +43,7 @@ namespace ChestFix {
             Logger.LogInfo($"player : {player.GetPlayerName()}");
             Logger.LogInfo($"player : {player.GetInventory().GetEmptySlots()}");
 
-            bool added = LoadItemIntoInventory(package, container.GetInventory(), toContainer);
+            bool added = LoadItemIntoInventory(package, container.GetInventory(), toContainer, dragAmount);
 
             container.m_nview.InvokeRPC(sender, "RequestItemAddResponse", added);
 
@@ -111,7 +111,7 @@ namespace ChestFix {
             return true;
         }
 
-        private static bool LoadItemIntoInventory(ZPackage pkg, Inventory inventory, Vector2i pos) {
+        private static bool LoadItemIntoInventory(ZPackage pkg, Inventory inventory, Vector2i pos, int amount) {
             string text = pkg.ReadString();
             int stack = pkg.ReadInt();
             float durability = pkg.ReadSingle();
@@ -122,7 +122,7 @@ namespace ChestFix {
             string crafterName = pkg.ReadString();
 
             if (text != "") {
-                return inventory.AddItem(text, stack, durability, pos, equiped, quality, variant, crafterID, crafterName);
+                return inventory.AddItem(text, amount, durability, pos, equiped, quality, variant, crafterID, crafterName);
             }
 
             return false;
