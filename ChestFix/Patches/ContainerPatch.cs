@@ -173,7 +173,7 @@ namespace ChestFix.Patches {
                         data.Write(__instance.m_dragItem.m_gridPos);
                         data.Write(pos);
                         data.Write(__instance.m_dragAmount);
-                        WriteItemToPackage(__instance.m_dragItem, data);
+                        InventoryHelper.WriteItemToPackage(__instance.m_dragItem, data);
 
                         Logger.LogInfo("RequestItemAdd");
                         __instance.m_currentContainer.m_nview.InvokeRPC("RequestItemAdd", data);
@@ -198,7 +198,7 @@ namespace ChestFix.Patches {
                             data.Write(__instance.m_dragItem.m_gridPos);
                             data.Write(pos);
                             data.Write(amount);
-                            WriteItemToPackage(prevItem, data);
+                            InventoryHelper.WriteItemToPackage(prevItem, data);
 
                             Logger.LogInfo("RequestItemRemoveSwitch");
                             __instance.m_currentContainer.m_nview.InvokeRPC("RequestItemRemoveSwitch", data);
@@ -280,22 +280,6 @@ namespace ChestFix.Patches {
             }
 
             return false;
-        }
-
-        private static void WriteItemToPackage(ItemDrop.ItemData itemData, ZPackage pkg) {
-            if (itemData.m_dropPrefab == null) {
-                ZLog.Log("Item missing prefab " + itemData.m_shared.m_name);
-                pkg.Write("");
-            } else
-                pkg.Write(itemData.m_dropPrefab.name);
-
-            pkg.Write(itemData.m_stack);
-            pkg.Write(itemData.m_durability);
-            pkg.Write(itemData.m_equiped);
-            pkg.Write(itemData.m_quality);
-            pkg.Write(itemData.m_variant);
-            pkg.Write(itemData.m_crafterID);
-            pkg.Write(itemData.m_crafterName);
         }
     }
 }

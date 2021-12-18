@@ -52,7 +52,7 @@ namespace ChestFix {
                 amount = Mathf.Min(prevItem.m_shared.m_maxStackSize - prevItem.m_stack, dragAmount);
             }
 
-            bool added = LoadItemIntoInventory(package, container.GetInventory(), toContainer, amount);
+            bool added = InventoryHelper.LoadItemIntoInventory(package, container.GetInventory(), toContainer, amount);
 
             container.m_nview.InvokeRPC(sender, "RequestItemAddResponse", added, amount);
         }
@@ -97,7 +97,7 @@ namespace ChestFix {
             int removedAmount = Mathf.Min(from.m_stack, dragAmount);
             bool removed = container.GetInventory().RemoveItem(from, dragAmount);
 
-            bool added = LoadItemIntoInventory(package, container.GetInventory(), fromContainer, -1);
+            bool added = InventoryHelper.LoadItemIntoInventory(package, container.GetInventory(), fromContainer, -1);
 
             container.m_nview.InvokeRPC(sender, "RequestItemRemoveResponse", removed, removedAmount);
         }
@@ -119,23 +119,6 @@ namespace ChestFix {
             toInventory.MoveItemToThis(fromInventory, itemAt, itemAt.m_stack, item.m_gridPos.x, item.m_gridPos.y);
             fromInventory.MoveItemToThis(toInventory, item, amount, toPos.x, toPos.y);
             return true;
-        }
-
-        private static bool LoadItemIntoInventory(ZPackage pkg, Inventory inventory, Vector2i pos, int amount) {
-            string text = pkg.ReadString();
-            int stack = pkg.ReadInt();
-            float durability = pkg.ReadSingle();
-            bool equiped = pkg.ReadBool();
-            int quality = pkg.ReadInt();
-            int variant = pkg.ReadInt();
-            long crafterID = pkg.ReadLong();
-            string crafterName = pkg.ReadString();
-
-            if (text != "") {
-                return inventory.AddItem(text, amount >= 0 ? amount : stack, durability, pos, equiped, quality, variant, crafterID, crafterName);
-            }
-
-            return false;
         }
     }
 }
