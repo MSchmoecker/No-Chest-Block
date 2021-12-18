@@ -15,29 +15,41 @@ namespace ChestFix.Patches {
 
         [HarmonyPatch(typeof(Container), nameof(Container.Awake)), HarmonyPostfix]
         public static void ContainerAwakePatch(Container __instance) {
-            __instance.m_nview.Register<ZPackage>("RequestItemMove",
-                                                  (sender, package) => ContainerHandler.RPC_RequestItemMove(__instance, sender, package));
-            __instance.m_nview.Register<ZPackage>("RequestItemAdd",
-                                                  (sender, package) => ContainerHandler.RPC_RequestItemAdd(__instance, sender, package));
-            __instance.m_nview.Register<ZPackage>("RequestItemRemove",
-                                                  (sender, package) => ContainerHandler.RPC_RequestItemRemove(__instance, sender, package));
-            __instance.m_nview.Register<bool>("RequestItemMoveResponse", (l, b) => { InventoryGui.instance.SetupDragItem(null, null, 0); });
-            __instance.m_nview.Register<bool>("RequestItemAddResponse", RPC_RequestItemAddResponse);
+            __instance.m_nview.Register<ZPackage>("RequestItemMove", (l, package) => __instance.RPC_RequestItemMove(l, package));
+            __instance.m_nview.Register<ZPackage>("RequestItemAdd", (l, package) => __instance.RPC_RequestItemAdd(l, package));
+            __instance.m_nview.Register<ZPackage>("RequestItemRemove", (l, package) => __instance.RPC_RequestItemRemove(l, package));
+            __instance.m_nview.Register<ZPackage>("RequestItemRemoveSwitch", (l, package) => __instance.RPC_RequestItemRemoveSwitch(l, package));
 
-            __instance.m_nview.Register<bool>("RequestItemRemoveResponse", RPC_RequestItemRemoveResponse);
+            __instance.m_nview.Register<bool>("RequestItemMoveResponse", RPC_RequestItemMoveResponse);
+            __instance.m_nview.Register<bool, int>("RequestItemAddResponse", RPC_RequestItemAddResponse);
+            __instance.m_nview.Register<bool, int>("RequestItemRemoveResponse", RPC_RequestItemRemoveResponse);
+            __instance.m_nview.Register<bool, int>("RequestItemRemoveSwitchResponse", RPC_RequestItemRemoveSwitchResponse);
         }
 
-        private static void RPC_RequestItemRemoveResponse(long sender, bool success) {
+        private static void RPC_RequestItemMoveResponse(long sender, bool success) {
+            InventoryGui.instance.SetupDragItem(null, null, 0);
+        }
+        
+        private static void RPC_RequestItemRemoveResponse(long sender, bool success, int amount) {
             if (success) {
-                lastGrid.m_inventory.AddItem(InventoryGui.instance.m_dragItem, InventoryGui.instance.m_dragAmount, lastPos.x, lastPos.y);
+                lastGrid.m_inventory.AddItem(InventoryGui.instance.m_dragItem, amount, lastPos.x, lastPos.y);
             }
 
             InventoryGui.instance.SetupDragItem(null, null, 0);
         }
 
-        private static void RPC_RequestItemAddResponse(long sender, bool success) {
+        private static void RPC_RequestItemRemoveSwitchResponse(long sender, bool success, int amount) {
             if (success) {
-                InventoryGui.instance.m_dragInventory.RemoveItem(InventoryGui.instance.m_dragItem, InventoryGui.instance.m_dragAmount);
+                lastGrid.m_inventory.RemoveItem(lastGrid.m_inventory.GetItemAt(lastPos.x, lastPos.y));
+                lastGrid.m_inventory.AddItem(InventoryGui.instance.m_dragItem, amount, lastPos.x, lastPos.y);
+            }
+
+            InventoryGui.instance.SetupDragItem(null, null, 0);
+        }
+
+        private static void RPC_RequestItemAddResponse(long sender, bool success, int amount) {
+            if (success) {
+                InventoryGui.instance.m_dragInventory.RemoveItem(InventoryGui.instance.m_dragItem, amount);
             }
 
             InventoryGui.instance.SetupDragItem(null, null, 0);
@@ -166,15 +178,31 @@ namespace ChestFix.Patches {
                         Logger.LogInfo("RequestItemAdd");
                         __instance.m_currentContainer.m_nview.InvokeRPC("RequestItemAdd", data);
                     } else {
-                        ZPackage data = new ZPackage();
-                        data.Write(localPlayer.GetPlayerID());
-                        data.Write(__instance.m_dragItem.m_gridPos);
-                        data.Write(pos);
-                        data.Write(__instance.m_dragAmount);
-                        WriteItemToPackage(__instance.m_dragItem, data);
+                        int amount = __instance.m_dragAmount;
+                        ItemDrop.ItemData prevItem = grid.GetInventory().GetItemAt(pos.x, pos.y);
 
-                        Logger.LogInfo("RequestItemRemove");
-                        __instance.m_currentContainer.m_nview.InvokeRPC("RequestItemRemove", data);
+                        if (prevItem == null) {
+                            ZPackage data = new ZPackage();
+                            data.Write(localPlayer.GetPlayerID());
+                            data.Write(__instance.m_dragItem.m_gridPos);
+                            data.Write(pos);
+                            data.Write(amount);
+
+                            Logger.LogInfo("RequestItemRemove");
+                            __instance.m_currentContainer.m_nview.InvokeRPC("RequestItemRemove", data);
+                        } else {
+                            amount = Mathf.Min(prevItem.m_shared.m_maxStackSize - prevItem.m_stack, __instance.m_dragAmount);
+
+                            ZPackage data = new ZPackage();
+                            data.Write(localPlayer.GetPlayerID());
+                            data.Write(__instance.m_dragItem.m_gridPos);
+                            data.Write(pos);
+                            data.Write(amount);
+                            WriteItemToPackage(prevItem, data);
+
+                            Logger.LogInfo("RequestItemRemoveSwitch");
+                            __instance.m_currentContainer.m_nview.InvokeRPC("RequestItemRemoveSwitch", data);
+                        }
                     }
 
                     return false;
