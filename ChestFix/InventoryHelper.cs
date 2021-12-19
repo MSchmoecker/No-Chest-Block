@@ -1,5 +1,3 @@
-using Jotunn;
-
 namespace ChestFix {
     public static class InventoryHelper {
         public static bool LoadItemIntoInventory(ZPackage pkg, Inventory inventory, Vector2i pos, int amount) {

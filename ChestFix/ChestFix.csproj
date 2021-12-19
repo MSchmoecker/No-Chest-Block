@@ -51,10 +51,6 @@
         <Reference Include="assembly_guiutils, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
             <HintPath>$(VALHEIM_INSTALL)\valheim_Data\Managed\publicized_assemblies\assembly_guiutils_publicized.dll</HintPath>
         </Reference>
-        <Reference Include="Jotunn, Culture=neutral, PublicKeyToken=null">
-            <HintPath>$(VALHEIM_INSTALL)\BepInEx\plugins\Jotunn\Jotunn.dll</HintPath>
-            <HintPath>$(R2MODMAN_INSTALL)\BepInEx\plugins\ValheimModding-Jotunn\Jotunn.dll</HintPath>
-        </Reference>
         <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
             <HintPath>$(VALHEIM_INSTALL)\unstripped_corlib\UnityEngine.dll</HintPath>
         </Reference>
@@ -99,6 +95,7 @@
     <ItemGroup>
         <Compile Include="ContainerHandler.cs" />
         <Compile Include="InventoryHelper.cs" />
+        <Compile Include="Log.cs" />
         <Compile Include="Patches\ContainerPatch.cs" />
         <Compile Include="Plugin.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
@@ -106,7 +103,6 @@
     <ItemGroup>
         <Content Include=".gitignore" />
         <Content Include="Patches\.gitkeep" />
-        <EmbeddedResource Include="Localization\English.json" />
     </ItemGroup>
     <ItemGroup>
         <Content Include="../README.md">

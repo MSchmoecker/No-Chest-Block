@@ -4,12 +4,11 @@
 ...
 
 ## Installation
-This mod requires BepInEx and Jötunn.\
+This mod requires BepInEx\
 Extract the content of `ChestFix` into the `BepInEx/plugins` folder.
 
 ## Development
 BepInEx must be setup at manual or with r2modman/Thunderstore Mod Manager.
-Jötunn must be installed.
 
 ## Links
 - Thunderstore: https://valheim.thunderstore.io/package/MSchmoecker/ChestFix/

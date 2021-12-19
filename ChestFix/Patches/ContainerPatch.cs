@@ -1,9 +1,8 @@
 using System;
 using System.Diagnostics;
 using HarmonyLib;
-using Jotunn.Managers;
 using UnityEngine;
-using Logger = Jotunn.Logger;
+using VNEI;
 
 namespace ChestFix.Patches {
     [HarmonyPatch]
@@ -29,7 +28,7 @@ namespace ChestFix.Patches {
 
         private static void RPC_RequestItemMoveResponse(long sender, bool success) {
             stopwatch.Stop();
-            Logger.LogInfo($"RPC_RequestItemMoveResponse: {stopwatch.ElapsedMilliseconds}ms, success: {success}");
+            Log.LogInfo($"RPC_RequestItemMoveResponse: {stopwatch.ElapsedMilliseconds}ms, success: {success}");
 
 
             InventoryGui.instance.SetupDragItem(null, null, 0);
@@ -37,7 +36,7 @@ namespace ChestFix.Patches {
 
         private static void RPC_RequestItemRemoveResponse(long sender, bool success, int amount, bool hasSwitched) {
             stopwatch.Stop();
-            Logger.LogInfo($"RPC_RequestItemRemoveResponse: {stopwatch.ElapsedMilliseconds}ms, success: {success}");
+            Log.LogInfo($"RPC_RequestItemRemoveResponse: {stopwatch.ElapsedMilliseconds}ms, success: {success}");
 
             if (success) {
                 if (hasSwitched) {
@@ -52,7 +51,7 @@ namespace ChestFix.Patches {
 
         private static void RPC_RequestItemAddResponse(long sender, bool success, int amount) {
             stopwatch.Stop();
-            Logger.LogInfo($"RPC_RequestItemAddResponse: {stopwatch.ElapsedMilliseconds}ms, success: {success}");
+            Log.LogInfo($"RPC_RequestItemAddResponse: {stopwatch.ElapsedMilliseconds}ms, success: {success}");
 
             if (success) {
                 InventoryGui.instance.m_dragInventory.RemoveItem(InventoryGui.instance.m_dragItem, amount);
@@ -171,7 +170,7 @@ namespace ChestFix.Patches {
                         data.Write(pos);
                         data.Write(__instance.m_dragAmount);
 
-                        Logger.LogInfo("RequestItemMove");
+                        Log.LogInfo("RequestItemMove");
                         stopwatch.Reset();
                         stopwatch.Start();
                         __instance.m_currentContainer.m_nview.InvokeRPC("RequestItemMove", data);
@@ -183,7 +182,7 @@ namespace ChestFix.Patches {
                         data.Write(__instance.m_dragAmount);
                         InventoryHelper.WriteItemToPackage(__instance.m_dragItem, data);
 
-                        Logger.LogInfo("RequestItemAdd");
+                        Log.LogInfo("RequestItemAdd");
                         stopwatch.Reset();
                         stopwatch.Start();
                         __instance.m_currentContainer.m_nview.InvokeRPC("RequestItemAdd", data);
@@ -209,7 +208,7 @@ namespace ChestFix.Patches {
                             data.Write(false);
                         }
 
-                        Logger.LogInfo("RequestItemRemove");
+                        Log.LogInfo("RequestItemRemove");
                         stopwatch.Reset();
                         stopwatch.Start();
                         __instance.m_currentContainer.m_nview.InvokeRPC("RequestItemRemove", data);
@@ -218,7 +217,7 @@ namespace ChestFix.Patches {
                     return false;
                 }
 
-                Logger.LogInfo("Move inside own inventory");
+                Log.LogInfo("Move inside own inventory");
                 bool num = grid.DropItem(__instance.m_dragInventory, __instance.m_dragItem, __instance.m_dragAmount, pos);
                 if (__instance.m_dragItem.m_stack < __instance.m_dragAmount) {
                     __instance.m_dragAmount = __instance.m_dragItem.m_stack;

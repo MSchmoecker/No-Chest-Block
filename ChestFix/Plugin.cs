@@ -1,14 +1,11 @@
 ﻿using System.Reflection;
 using BepInEx;
 using HarmonyLib;
-using Jotunn.Entities;
 using UnityEngine;
-using Jotunn.Utils;
-using Jotunn.Managers;
+using VNEI;
 
 namespace ChestFix {
     [BepInPlugin(ModGuid, ModName, ModVersion)]
-    [BepInDependency(Jotunn.Main.ModGuid)]
     public class Plugin : BaseUnityPlugin {
         public const string ModName = "ChestFix";
         public const string ModGuid = "com.maxsch.valheim.ChestFix";
@@ -21,18 +18,10 @@ namespace ChestFix {
 
         private void Awake() {
             Instance = this;
+            Log.Init(Logger);
 
             harmony = new Harmony(ModGuid);
             harmony.PatchAll();
-
-            // load embedded asset bundle
-            // AssetBundle = AssetUtils.LoadAssetBundleFromResources("ChestFix_AssetBundle", Assembly.GetExecutingAssembly());
-
-            // load embedded localisation
-            CustomLocalization localization = new CustomLocalization();
-            string englishJson = AssetUtils.LoadTextFromResources("Localization.English.json", Assembly.GetExecutingAssembly());
-            localization.AddJsonFile("English", englishJson);
-            LocalizationManager.Instance.AddLocalization(localization);
         }
     }
 }

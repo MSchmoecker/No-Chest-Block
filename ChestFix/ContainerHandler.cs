@@ -1,11 +1,11 @@
 using System;
 using UnityEngine;
-using Logger = Jotunn.Logger;
+using VNEI;
 
 namespace ChestFix {
     public static class ContainerHandler {
         public static void RPC_RequestItemMove(this Container container, long sender, ZPackage package) {
-            Logger.LogInfo("RPC_RequestItemMove");
+            Log.LogInfo("RPC_RequestItemMove");
 
             Vector2i fromPos = package.ReadVector2i();
             Vector2i toPos = package.ReadVector2i();
@@ -14,7 +14,7 @@ namespace ChestFix {
             ItemDrop.ItemData from = container.GetInventory().GetItemAt(fromPos.x, fromPos.y);
 
             if (from == null) {
-                Logger.LogInfo("from == null: true");
+                Log.LogInfo("from == null: true");
                 container.m_nview.InvokeRPC(sender, "RequestItemMoveResponse", false);
                 return;
             }
@@ -29,21 +29,21 @@ namespace ChestFix {
         }
 
         public static void RPC_RequestItemAdd(this Container container, long sender, ZPackage package) {
-            Logger.LogInfo("RPC_RequestItemAdd");
+            Log.LogInfo("RPC_RequestItemAdd");
 
             long playerId = package.ReadLong();
             Vector2i fromInventory = package.ReadVector2i();
             Vector2i toContainer = package.ReadVector2i();
             int dragAmount = package.ReadInt();
 
-            Logger.LogInfo($"playerId : {playerId}");
-            Logger.LogInfo($"fromInventory : {fromInventory}");
-            Logger.LogInfo($"toContainer : {toContainer}");
-            Logger.LogInfo($"dragAmount : {dragAmount}");
+            Log.LogInfo($"playerId : {playerId}");
+            Log.LogInfo($"fromInventory : {fromInventory}");
+            Log.LogInfo($"toContainer : {toContainer}");
+            Log.LogInfo($"dragAmount : {dragAmount}");
 
             Player player = Player.GetPlayer(playerId);
-            Logger.LogInfo($"player : {player.GetPlayerName()}");
-            Logger.LogInfo($"player : {player.GetInventory().GetEmptySlots()}");
+            Log.LogInfo($"player : {player.GetPlayerName()}");
+            Log.LogInfo($"player : {player.GetInventory().GetEmptySlots()}");
 
             int amount = dragAmount;
 
@@ -58,7 +58,7 @@ namespace ChestFix {
         }
 
         public static void RPC_RequestItemRemove(this Container container, long sender, ZPackage package) {
-            Logger.LogInfo("RPC_RequestItemRemove");
+            Log.LogInfo("RPC_RequestItemRemove");
 
             Vector2i fromContainer = package.ReadVector2i();
             Vector2i toInventory = package.ReadVector2i();
@@ -68,7 +68,7 @@ namespace ChestFix {
             ItemDrop.ItemData from = container.GetInventory().GetItemAt(fromContainer.x, fromContainer.y);
 
             if (from == null) {
-                Logger.LogInfo("from == null: true");
+                Log.LogInfo("from == null: true");
                 container.m_nview.InvokeRPC(sender, "RequestItemRemoveResponse", false);
                 return;
             }
