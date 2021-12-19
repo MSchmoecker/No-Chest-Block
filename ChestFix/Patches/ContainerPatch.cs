@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using HarmonyLib;
 using Jotunn.Managers;
 using UnityEngine;
@@ -7,6 +8,8 @@ using Logger = Jotunn.Logger;
 namespace ChestFix.Patches {
     [HarmonyPatch]
     public class ContainerPatch {
+        private static Stopwatch stopwatch = new Stopwatch();
+
         [HarmonyPatch(typeof(Container), nameof(Container.IsInUse)), HarmonyPostfix]
         public static void IsInUsePatch(ref bool __result, ref bool ___m_inUse) {
             __result = false;
@@ -18,29 +21,29 @@ namespace ChestFix.Patches {
             __instance.m_nview.Register<ZPackage>("RequestItemMove", (l, package) => __instance.RPC_RequestItemMove(l, package));
             __instance.m_nview.Register<ZPackage>("RequestItemAdd", (l, package) => __instance.RPC_RequestItemAdd(l, package));
             __instance.m_nview.Register<ZPackage>("RequestItemRemove", (l, package) => __instance.RPC_RequestItemRemove(l, package));
-            __instance.m_nview.Register<ZPackage>("RequestItemRemoveSwitch", (l, package) => __instance.RPC_RequestItemRemoveSwitch(l, package));
 
             __instance.m_nview.Register<bool>("RequestItemMoveResponse", RPC_RequestItemMoveResponse);
             __instance.m_nview.Register<bool, int>("RequestItemAddResponse", RPC_RequestItemAddResponse);
-            __instance.m_nview.Register<bool, int>("RequestItemRemoveResponse", RPC_RequestItemRemoveResponse);
-            __instance.m_nview.Register<bool, int>("RequestItemRemoveSwitchResponse", RPC_RequestItemRemoveSwitchResponse);
+            __instance.m_nview.Register<bool, int, bool>("RequestItemRemoveResponse", RPC_RequestItemRemoveResponse);
         }
 
         private static void RPC_RequestItemMoveResponse(long sender, bool success) {
-            InventoryGui.instance.SetupDragItem(null, null, 0);
-        }
-        
-        private static void RPC_RequestItemRemoveResponse(long sender, bool success, int amount) {
-            if (success) {
-                lastGrid.m_inventory.AddItem(InventoryGui.instance.m_dragItem, amount, lastPos.x, lastPos.y);
-            }
+            stopwatch.Stop();
+            Logger.LogInfo($"RPC_RequestItemMoveResponse: {stopwatch.ElapsedMilliseconds}ms, success: {success}");
+
 
             InventoryGui.instance.SetupDragItem(null, null, 0);
         }
 
-        private static void RPC_RequestItemRemoveSwitchResponse(long sender, bool success, int amount) {
+        private static void RPC_RequestItemRemoveResponse(long sender, bool success, int amount, bool hasSwitched) {
+            stopwatch.Stop();
+            Logger.LogInfo($"RPC_RequestItemRemoveResponse: {stopwatch.ElapsedMilliseconds}ms, success: {success}");
+
             if (success) {
-                lastGrid.m_inventory.RemoveItem(lastGrid.m_inventory.GetItemAt(lastPos.x, lastPos.y));
+                if (hasSwitched) {
+                    lastGrid.m_inventory.RemoveItem(lastGrid.m_inventory.GetItemAt(lastPos.x, lastPos.y));
+                }
+
                 lastGrid.m_inventory.AddItem(InventoryGui.instance.m_dragItem, amount, lastPos.x, lastPos.y);
             }
 
@@ -48,6 +51,9 @@ namespace ChestFix.Patches {
         }
 
         private static void RPC_RequestItemAddResponse(long sender, bool success, int amount) {
+            stopwatch.Stop();
+            Logger.LogInfo($"RPC_RequestItemAddResponse: {stopwatch.ElapsedMilliseconds}ms, success: {success}");
+
             if (success) {
                 InventoryGui.instance.m_dragInventory.RemoveItem(InventoryGui.instance.m_dragItem, amount);
             }
@@ -166,6 +172,8 @@ namespace ChestFix.Patches {
                         data.Write(__instance.m_dragAmount);
 
                         Logger.LogInfo("RequestItemMove");
+                        stopwatch.Reset();
+                        stopwatch.Start();
                         __instance.m_currentContainer.m_nview.InvokeRPC("RequestItemMove", data);
                     } else if (grid.m_inventory == __instance.m_currentContainer.GetInventory()) {
                         ZPackage data = new ZPackage();
@@ -176,33 +184,35 @@ namespace ChestFix.Patches {
                         InventoryHelper.WriteItemToPackage(__instance.m_dragItem, data);
 
                         Logger.LogInfo("RequestItemAdd");
+                        stopwatch.Reset();
+                        stopwatch.Start();
                         __instance.m_currentContainer.m_nview.InvokeRPC("RequestItemAdd", data);
                     } else {
-                        int amount = __instance.m_dragAmount;
                         ItemDrop.ItemData prevItem = grid.GetInventory().GetItemAt(pos.x, pos.y);
+                        int amount;
 
-                        if (prevItem == null) {
-                            ZPackage data = new ZPackage();
-                            data.Write(localPlayer.GetPlayerID());
-                            data.Write(__instance.m_dragItem.m_gridPos);
-                            data.Write(pos);
-                            data.Write(amount);
-
-                            Logger.LogInfo("RequestItemRemove");
-                            __instance.m_currentContainer.m_nview.InvokeRPC("RequestItemRemove", data);
-                        } else {
+                        if (prevItem != null && InventoryHelper.IsSameItem(prevItem, __instance.m_dragItem)) {
                             amount = Mathf.Min(prevItem.m_shared.m_maxStackSize - prevItem.m_stack, __instance.m_dragAmount);
-
-                            ZPackage data = new ZPackage();
-                            data.Write(localPlayer.GetPlayerID());
-                            data.Write(__instance.m_dragItem.m_gridPos);
-                            data.Write(pos);
-                            data.Write(amount);
-                            InventoryHelper.WriteItemToPackage(prevItem, data);
-
-                            Logger.LogInfo("RequestItemRemoveSwitch");
-                            __instance.m_currentContainer.m_nview.InvokeRPC("RequestItemRemoveSwitch", data);
+                        } else {
+                            amount = __instance.m_dragAmount;
                         }
+
+                        ZPackage data = new ZPackage();
+                        data.Write(__instance.m_dragItem.m_gridPos);
+                        data.Write(pos);
+                        data.Write(amount);
+
+                        if (prevItem != null) {
+                            data.Write(true);
+                            InventoryHelper.WriteItemToPackage(prevItem, data);
+                        } else {
+                            data.Write(false);
+                        }
+
+                        Logger.LogInfo("RequestItemRemove");
+                        stopwatch.Reset();
+                        stopwatch.Start();
+                        __instance.m_currentContainer.m_nview.InvokeRPC("RequestItemRemove", data);
                     }
 
                     return false;

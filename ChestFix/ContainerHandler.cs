@@ -19,7 +19,7 @@ namespace ChestFix {
                 return;
             }
 
-            if (MoveItem(container.GetInventory(), container.GetInventory(), from, dragAmount, toPos)) {
+            if (InventoryHelper.MoveItem(container.GetInventory(), from, dragAmount, toPos)) {
                 ZDOMan.instance.ForceSendZDO(container.m_nview.GetZDO().m_uid);
                 container.m_nview.InvokeRPC(sender, "RequestItemMoveResponse", true);
                 return;
@@ -60,10 +60,10 @@ namespace ChestFix {
         public static void RPC_RequestItemRemove(this Container container, long sender, ZPackage package) {
             Logger.LogInfo("RPC_RequestItemRemove");
 
-            long playerId = package.ReadLong();
             Vector2i fromContainer = package.ReadVector2i();
             Vector2i toInventory = package.ReadVector2i();
             int dragAmount = package.ReadInt();
+            bool hasSwitchItem = package.ReadBool();
 
             ItemDrop.ItemData from = container.GetInventory().GetItemAt(fromContainer.x, fromContainer.y);
 
@@ -73,52 +73,14 @@ namespace ChestFix {
                 return;
             }
 
-            int removedAmount = Mathf.Min(from.m_stack, dragAmount);
-            bool removed = container.GetInventory().RemoveItem(from, dragAmount);
-            container.m_nview.InvokeRPC(sender, "RequestItemRemoveResponse", removed, removedAmount);
-        }
-
-        public static void RPC_RequestItemRemoveSwitch(this Container container, long sender, ZPackage package) {
-            Logger.LogInfo("RPC_RequestItemRemoveSwitch");
-
-            long playerId = package.ReadLong();
-            Vector2i fromContainer = package.ReadVector2i();
-            Vector2i toInventory = package.ReadVector2i();
-            int dragAmount = package.ReadInt();
-
-            ItemDrop.ItemData from = container.GetInventory().GetItemAt(fromContainer.x, fromContainer.y);
-
-            if (from == null) {
-                Logger.LogInfo("from == null: true");
-                container.m_nview.InvokeRPC(sender, "RequestItemRemoveResponse", false);
-                return;
+            bool added = false;
+            if (hasSwitchItem) {
+                added = InventoryHelper.LoadItemIntoInventory(package, container.GetInventory(), fromContainer, -1);
             }
 
             int removedAmount = Mathf.Min(from.m_stack, dragAmount);
             bool removed = container.GetInventory().RemoveItem(from, dragAmount);
-
-            bool added = InventoryHelper.LoadItemIntoInventory(package, container.GetInventory(), fromContainer, -1);
-
-            container.m_nview.InvokeRPC(sender, "RequestItemRemoveResponse", removed, removedAmount);
-        }
-
-        private static bool MoveItem(Inventory fromInventory, Inventory toInventory, ItemDrop.ItemData item, int amount, Vector2i toPos) {
-            ItemDrop.ItemData itemAt = fromInventory.GetItemAt(toPos.x, toPos.y);
-
-            if (itemAt == item) {
-                return true;
-            }
-
-            if (itemAt == null ||
-                itemAt.m_shared.m_name == item.m_shared.m_name && (item.m_shared.m_maxQuality <= 1 || itemAt.m_quality == item.m_quality) &&
-                itemAt.m_shared.m_maxStackSize != 1 || item.m_stack != amount) {
-                return toInventory.MoveItemToThis(fromInventory, item, amount, toPos.x, toPos.y);
-            }
-
-            fromInventory.RemoveItem(item);
-            toInventory.MoveItemToThis(fromInventory, itemAt, itemAt.m_stack, item.m_gridPos.x, item.m_gridPos.y);
-            fromInventory.MoveItemToThis(toInventory, item, amount, toPos.x, toPos.y);
-            return true;
+            container.m_nview.InvokeRPC(sender, "RequestItemRemoveResponse", removed, removedAmount, added);
         }
     }
 }
