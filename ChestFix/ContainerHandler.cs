@@ -89,8 +89,11 @@ namespace ChestFix {
                 if (InventoryHelper.IsSameItem(from, addedItem)) {
                     switched = false;
                     int stackSize = from.m_shared.m_maxStackSize;
+                    int beforeAmount = removedAmount;
                     removedAmount = Mathf.Min(removedAmount, stackSize - addedItem.m_stack);
-                    inventory.RemoveItem(addedItem, removedAmount);
+
+                    // set stack size by RemoveItem() to new value, value = beforeAmount - removedAmount
+                    inventory.RemoveItem(addedItem, addedItem.m_stack - beforeAmount + removedAmount);
                 }
             }
 
