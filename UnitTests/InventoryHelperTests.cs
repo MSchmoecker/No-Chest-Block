@@ -6,10 +6,10 @@ using NUnit.Framework;
 namespace UnitTests {
     [TestFixture]
     public class InventoryHelperTests {
-        [SetUp]
+        [OneTimeSetUp]
         public void Setup() {
             Harmony harmony = new Harmony("id");
-            harmony.PatchAll();
+            harmony.PatchAll(typeof(ZLogPatch));
         }
 
         [HarmonyPatch]
@@ -21,20 +21,10 @@ namespace UnitTests {
             }
         }
 
-        private static ItemDrop.ItemData CreateItem(string name, int amount, int maxAmount) {
-            return new ItemDrop.ItemData {
-                m_shared = new ItemDrop.ItemData.SharedData {
-                    m_name = name,
-                    m_maxStackSize = maxAmount
-                },
-                m_stack = amount
-            };
-        }
-
         [Test]
-        public void MoveItemEmptyExeptOneItem() {
+        public void MoveItemEmptyExceptOneItem() {
             Inventory inventory = new Inventory("inventory", null, 4, 5);
-            ItemDrop.ItemData item = CreateItem("my item", 5, 10);
+            ItemDrop.ItemData item = Helper.CreateItem("my item", 5, 10);
             inventory.AddItem(item, 5, 3, 3);
 
             bool success = InventoryHelper.MoveItem(inventory, item, 5, new Vector2i(2, 2));
@@ -51,7 +41,7 @@ namespace UnitTests {
         [Test]
         public void MoveItemOnEqualSame() {
             Inventory inventory = new Inventory("inventory", null, 4, 5);
-            ItemDrop.ItemData item = CreateItem("my item", 5, 10);
+            ItemDrop.ItemData item = Helper.CreateItem("my item", 5, 10);
             inventory.AddItem(item, 5, 3, 3);
 
             bool success = InventoryHelper.MoveItem(inventory, item, 5, new Vector2i(3, 3));
@@ -61,8 +51,8 @@ namespace UnitTests {
         [Test]
         public void MoveItemOnSameEnoughSpaceToStack() {
             Inventory inventory = new Inventory("inventory", null, 4, 5);
-            inventory.AddItem(CreateItem("my item", 5, 15), 5, 2, 2);
-            inventory.AddItem(CreateItem("my item", 5, 15), 5, 3, 3);
+            inventory.AddItem(Helper.CreateItem("my item", 5, 15), 5, 2, 2);
+            inventory.AddItem(Helper.CreateItem("my item", 5, 15), 5, 3, 3);
 
             ItemDrop.ItemData item = inventory.GetItemAt(3, 3);
 
@@ -75,8 +65,8 @@ namespace UnitTests {
         [Test]
         public void MoveItemOnSameNotEnoughSpaceToStack() {
             Inventory inventory = new Inventory("inventory", null, 4, 5);
-            inventory.AddItem(CreateItem("my item", 10, 15), 10, 2, 2);
-            inventory.AddItem(CreateItem("my item", 10, 15), 10, 3, 3);
+            inventory.AddItem(Helper.CreateItem("my item", 10, 15), 10, 2, 2);
+            inventory.AddItem(Helper.CreateItem("my item", 10, 15), 10, 3, 3);
 
             ItemDrop.ItemData item = inventory.GetItemAt(3, 3);
 
@@ -89,8 +79,8 @@ namespace UnitTests {
         [Test]
         public void MoveItemSwitch() {
             Inventory inventory = new Inventory("inventory", null, 4, 5);
-            inventory.AddItem(CreateItem("my item 1", 10, 15), 10, 2, 2);
-            inventory.AddItem(CreateItem("my item 2", 10, 15), 10, 3, 3);
+            inventory.AddItem(Helper.CreateItem("my item 1", 10, 15), 10, 2, 2);
+            inventory.AddItem(Helper.CreateItem("my item 2", 10, 15), 10, 3, 3);
 
             ItemDrop.ItemData item = inventory.GetItemAt(3, 3);
             

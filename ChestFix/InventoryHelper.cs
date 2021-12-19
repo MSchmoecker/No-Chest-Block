@@ -19,10 +19,10 @@ namespace ChestFix {
             return inventory.AddItem(name, actualAmount, durability, pos, equipped, quality, variant, crafterID, crafterName);
         }
 
-        public static void WriteItemToPackage(ItemDrop.ItemData itemData, ZPackage pkg) {
+        public static void WriteItemToPackage(ItemDrop.ItemData itemData, ZPackage pkg, bool nameHack = false) {
             if (itemData.m_dropPrefab == null) {
-                ZLog.Log("Item missing prefab " + itemData.m_shared.m_name);
-                pkg.Write("");
+                Log.LogInfo("Item missing prefab " + itemData.m_shared.m_name);
+                pkg.Write( nameHack ? itemData.m_shared.m_name : "");
             } else {
                 pkg.Write(itemData.m_dropPrefab.name);
             }

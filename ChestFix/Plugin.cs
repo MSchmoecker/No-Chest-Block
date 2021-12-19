@@ -2,7 +2,6 @@
 using BepInEx;
 using HarmonyLib;
 using UnityEngine;
-using VNEI;
 
 namespace ChestFix {
     [BepInPlugin(ModGuid, ModName, ModVersion)]

@@ -2,7 +2,6 @@ using System;
 using System.Diagnostics;
 using HarmonyLib;
 using UnityEngine;
-using VNEI;
 
 namespace ChestFix.Patches {
     [HarmonyPatch]
@@ -19,11 +18,11 @@ namespace ChestFix.Patches {
         public static void ContainerAwakePatch(Container __instance) {
             __instance.m_nview.Register<ZPackage>("RequestItemMove", (l, package) => __instance.RPC_RequestItemMove(l, package));
             __instance.m_nview.Register<ZPackage>("RequestItemAdd", (l, package) => __instance.RPC_RequestItemAdd(l, package));
-            __instance.m_nview.Register<ZPackage>("RequestItemRemove", (l, package) => __instance.RPC_RequestItemRemove(l, package));
+            __instance.m_nview.Register<ZPackage>("RequestItemRemove", (l, package) => RPC_RequestItemRemove(__instance, l, package));
 
             __instance.m_nview.Register<bool>("RequestItemMoveResponse", RPC_RequestItemMoveResponse);
             __instance.m_nview.Register<bool, int>("RequestItemAddResponse", RPC_RequestItemAddResponse);
-            __instance.m_nview.Register<bool, int, bool>("RequestItemRemoveResponse", RPC_RequestItemRemoveResponse);
+            __instance.m_nview.Register<ZPackage>("RequestItemRemoveResponse", RPC_RequestItemRemoveResponse);
         }
 
         private static void RPC_RequestItemMoveResponse(long sender, bool success) {
@@ -34,9 +33,18 @@ namespace ChestFix.Patches {
             InventoryGui.instance.SetupDragItem(null, null, 0);
         }
 
-        private static void RPC_RequestItemRemoveResponse(long sender, bool success, int amount, bool hasSwitched) {
+        private static void RPC_RequestItemRemove(Container container, long l, ZPackage package) {
+            ZPackage response = container.RPC_RequestItemRemove(l, package);
+            container.m_nview.InvokeRPC(l, "RequestItemRemoveResponse", response);
+        }
+
+        private static void RPC_RequestItemRemoveResponse(long sender, ZPackage package) {
             stopwatch.Stop();
-            Log.LogInfo($"RPC_RequestItemRemoveResponse: {stopwatch.ElapsedMilliseconds}ms, success: {success}");
+            Log.LogInfo($"RPC_RequestItemRemoveResponse: {stopwatch.ElapsedMilliseconds}ms");
+
+            bool success = package.ReadBool();
+            int amount = package.ReadInt();
+            bool hasSwitched = package.ReadBool();
 
             if (success) {
                 if (hasSwitched) {

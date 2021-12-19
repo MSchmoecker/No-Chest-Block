@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-using VNEI;
 
 namespace ChestFix {
     public static class ContainerHandler {
@@ -57,9 +56,12 @@ namespace ChestFix {
             container.m_nview.InvokeRPC(sender, "RequestItemAddResponse", added, amount);
         }
 
-        public static void RPC_RequestItemRemove(this Container container, long sender, ZPackage package) {
+        public static ZPackage RPC_RequestItemRemove(this Container container, long sender, ZPackage package) {
+            ZPackage response = new ZPackage();
+
             Log.LogInfo("RPC_RequestItemRemove");
 
+            // read package data
             Vector2i fromContainer = package.ReadVector2i();
             Vector2i toInventory = package.ReadVector2i();
             int dragAmount = package.ReadInt();
@@ -68,19 +70,35 @@ namespace ChestFix {
             ItemDrop.ItemData from = container.GetInventory().GetItemAt(fromContainer.x, fromContainer.y);
 
             if (from == null) {
-                Log.LogInfo("from == null: true");
-                container.m_nview.InvokeRPC(sender, "RequestItemRemoveResponse", false);
-                return;
-            }
-
-            bool added = false;
-            if (hasSwitchItem) {
-                added = InventoryHelper.LoadItemIntoInventory(package, container.GetInventory(), fromContainer, -1);
+                Log.LogInfo("from is null");
+                response.Write(false); // not removed
+                response.Write(0);
+                response.Write(false); // not switched
+                return response;
             }
 
             int removedAmount = Mathf.Min(from.m_stack, dragAmount);
             bool removed = container.GetInventory().RemoveItem(from, dragAmount);
-            container.m_nview.InvokeRPC(sender, "RequestItemRemoveResponse", removed, removedAmount, added);
+
+            bool switched = false;
+
+            if (hasSwitchItem) {
+                switched = InventoryHelper.LoadItemIntoInventory(package, container.GetInventory(), fromContainer, -1);
+                ItemDrop.ItemData addedItem = container.GetInventory().GetItemAt(fromContainer.x, fromContainer.y);
+
+                if (InventoryHelper.IsSameItem(from, addedItem)) {
+                    switched = false;
+                    int stackSize = from.m_shared.m_maxStackSize;
+                    removedAmount = Mathf.Min(removedAmount, stackSize - addedItem.m_stack);
+                    container.GetInventory().RemoveItem(addedItem, removedAmount);
+                }
+            }
+
+            response.Write(removed);
+            response.Write(removedAmount);
+            response.Write(switched);
+
+            return response;
         }
     }
 }

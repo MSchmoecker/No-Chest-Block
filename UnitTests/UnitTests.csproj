@@ -73,6 +73,8 @@
         </Reference>
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="ContainerHandlerTests.cs" />
+        <Compile Include="Helper.cs" />
         <Compile Include="InventoryHelperTests.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
     </ItemGroup>
