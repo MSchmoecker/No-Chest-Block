@@ -56,7 +56,7 @@ namespace ChestFix {
             container.m_nview.InvokeRPC(sender, "RequestItemAddResponse", added, amount);
         }
 
-        public static ZPackage RPC_RequestItemRemove(this Container container, long sender, ZPackage package) {
+        public static ZPackage RPC_RequestItemRemove(this Inventory inventory, long sender, ZPackage package) {
             ZPackage response = new ZPackage();
 
             Log.LogInfo("RPC_RequestItemRemove");
@@ -67,7 +67,7 @@ namespace ChestFix {
             int dragAmount = package.ReadInt();
             bool hasSwitchItem = package.ReadBool();
 
-            ItemDrop.ItemData from = container.GetInventory().GetItemAt(fromContainer.x, fromContainer.y);
+            ItemDrop.ItemData from = inventory.GetItemAt(fromContainer.x, fromContainer.y);
 
             if (from == null) {
                 Log.LogInfo("from is null");
@@ -78,19 +78,19 @@ namespace ChestFix {
             }
 
             int removedAmount = Mathf.Min(from.m_stack, dragAmount);
-            bool removed = container.GetInventory().RemoveItem(from, dragAmount);
+            bool removed = inventory.RemoveItem(from, dragAmount);
 
             bool switched = false;
 
             if (hasSwitchItem) {
-                switched = InventoryHelper.LoadItemIntoInventory(package, container.GetInventory(), fromContainer, -1);
-                ItemDrop.ItemData addedItem = container.GetInventory().GetItemAt(fromContainer.x, fromContainer.y);
+                switched = InventoryHelper.LoadItemIntoInventory(package, inventory, fromContainer, -1);
+                ItemDrop.ItemData addedItem = inventory.GetItemAt(fromContainer.x, fromContainer.y);
 
                 if (InventoryHelper.IsSameItem(from, addedItem)) {
                     switched = false;
                     int stackSize = from.m_shared.m_maxStackSize;
                     removedAmount = Mathf.Min(removedAmount, stackSize - addedItem.m_stack);
-                    container.GetInventory().RemoveItem(addedItem, removedAmount);
+                    inventory.RemoveItem(addedItem, removedAmount);
                 }
             }
 

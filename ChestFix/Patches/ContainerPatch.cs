@@ -34,7 +34,7 @@ namespace ChestFix.Patches {
         }
 
         private static void RPC_RequestItemRemove(Container container, long l, ZPackage package) {
-            ZPackage response = container.RPC_RequestItemRemove(l, package);
+            ZPackage response = container.GetInventory().RPC_RequestItemRemove(l, package);
             container.m_nview.InvokeRPC(l, "RequestItemRemoveResponse", response);
         }
 

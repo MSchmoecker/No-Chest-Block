@@ -26,7 +26,8 @@ namespace UnitTests {
         public static class InventoryAddItemPatch {
             [HarmonyPatch(typeof(Inventory), nameof(Inventory.AddItem), typeof(string), typeof(int), typeof(float), typeof(Vector2i),
                           typeof(bool), typeof(int), typeof(int), typeof(long), typeof(string)), HarmonyPrefix]
-            public static bool NoLogPatch(Inventory __instance, ref bool __result, string name, int stack, float durability, Vector2i pos, bool equiped, int quality, int variant,
+            public static bool NoLogPatch(Inventory __instance, ref bool __result, string name, int stack, float durability, Vector2i pos,
+                bool equiped, int quality, int variant,
                 long crafterID, string crafterName) {
                 ItemDrop.ItemData itemData = new ItemDrop.ItemData() {
                     m_stack = stack,
@@ -48,8 +49,8 @@ namespace UnitTests {
 
         [Test]
         public void RPC_RequestItemRemoveToEmptyInventorySlotExactAmountAsContainer() {
-            Container container = Helper.CreateContainer();
-            container.GetInventory().AddItem(Helper.CreateItem("my item", 5, 10), 5, 2, 2);
+            Inventory inventory = new Inventory("inventory", null, 4, 5);
+            inventory.AddItem(Helper.CreateItem("my item", 5, 10), 5, 2, 2);
 
             ZPackage package = new ZPackage();
             package.Write(new Vector2i(2, 2)); // from container pos
@@ -58,7 +59,7 @@ namespace UnitTests {
             package.Write(false); // no item
             package.SetPos(0);
 
-            ZPackage response = container.RPC_RequestItemRemove(0L, package);
+            ZPackage response = inventory.RPC_RequestItemRemove(0L, package);
             response.SetPos(0);
 
             bool success = response.ReadBool();
@@ -68,12 +69,14 @@ namespace UnitTests {
             Assert.True(success);
             Assert.AreEqual(5, addedAmount);
             Assert.False(hasSwitched);
+
+            Assert.AreEqual(0, inventory.m_inventory.Count);
         }
 
         [Test]
         public void RPC_RequestItemRemoveToEmptyInventorySlotFewerAmountAsContainer() {
-            Container container = Helper.CreateContainer();
-            container.GetInventory().AddItem(Helper.CreateItem("my item", 5, 10), 5, 2, 2);
+            Inventory inventory = new Inventory("inventory", null, 4, 5);
+            inventory.AddItem(Helper.CreateItem("my item", 5, 10), 5, 2, 2);
 
             ZPackage package = new ZPackage();
             package.Write(new Vector2i(2, 2)); // from container pos
@@ -82,7 +85,7 @@ namespace UnitTests {
             package.Write(false); // no item
             package.SetPos(0);
 
-            ZPackage response = container.RPC_RequestItemRemove(0L, package);
+            ZPackage response = inventory.RPC_RequestItemRemove(0L, package);
             response.SetPos(0);
 
             bool success = response.ReadBool();
@@ -92,12 +95,15 @@ namespace UnitTests {
             Assert.True(success);
             Assert.AreEqual(3, addedAmount);
             Assert.False(hasSwitched);
+
+            Assert.AreEqual(1, inventory.m_inventory.Count);
+            Assert.AreEqual(2, inventory.m_inventory[0].m_stack);
         }
 
         [Test]
         public void RPC_RequestItemRemoveToEmptyInventorySlotMoreAmountAsContainer() {
-            Container container = Helper.CreateContainer();
-            container.GetInventory().AddItem(Helper.CreateItem("my item", 5, 10), 5, 2, 2);
+            Inventory inventory = new Inventory("inventory", null, 4, 5);
+            inventory.AddItem(Helper.CreateItem("my item", 5, 10), 5, 2, 2);
 
             ZPackage package = new ZPackage();
             package.Write(new Vector2i(2, 2)); // from container pos
@@ -106,7 +112,7 @@ namespace UnitTests {
             package.Write(false); // no item
             package.SetPos(0);
 
-            ZPackage response = container.RPC_RequestItemRemove(0L, package);
+            ZPackage response = inventory.RPC_RequestItemRemove(0L, package);
             response.SetPos(0);
 
             bool success = response.ReadBool();
@@ -116,11 +122,13 @@ namespace UnitTests {
             Assert.True(success);
             Assert.AreEqual(5, addedAmount);
             Assert.False(hasSwitched);
+
+            Assert.AreEqual(0, inventory.m_inventory.Count);
         }
 
         [Test]
         public void RPC_RequestItemRemoveToEmptyInventorySlotItemNotInContainer() {
-            Container container = Helper.CreateContainer();
+            Inventory inventory = new Inventory("inventory", null, 4, 5);
 
             ZPackage package = new ZPackage();
             package.Write(new Vector2i(2, 2)); // from container pos
@@ -129,7 +137,7 @@ namespace UnitTests {
             package.Write(false); // no item
             package.SetPos(0);
 
-            ZPackage response = container.RPC_RequestItemRemove(0L, package);
+            ZPackage response = inventory.RPC_RequestItemRemove(0L, package);
             response.SetPos(0);
 
             bool success = response.ReadBool();
@@ -139,12 +147,14 @@ namespace UnitTests {
             Assert.False(success);
             Assert.AreEqual(0, addedAmount);
             Assert.False(hasSwitched);
+
+            Assert.AreEqual(0, inventory.m_inventory.Count);
         }
 
         [Test]
         public void RPC_RequestItemRemoveDifferentItemToInventory() {
-            Container container = Helper.CreateContainer();
-            container.GetInventory().AddItem(Helper.CreateItem("my item A", 5, 10), 5, 2, 2);
+            Inventory inventory = new Inventory("inventory", null, 4, 5);
+            inventory.AddItem(Helper.CreateItem("my item A", 5, 10), 5, 2, 2);
 
             ZPackage package = new ZPackage();
             package.Write(new Vector2i(2, 2)); // from container pos
@@ -155,7 +165,7 @@ namespace UnitTests {
 
             package.SetPos(0);
 
-            ZPackage response = container.RPC_RequestItemRemove(0L, package);
+            ZPackage response = inventory.RPC_RequestItemRemove(0L, package);
             response.SetPos(0);
 
             bool success = response.ReadBool();
@@ -165,12 +175,16 @@ namespace UnitTests {
             Assert.True(success);
             Assert.AreEqual(5, addedAmount);
             Assert.True(hasSwitched);
+
+            Assert.AreEqual(1, inventory.m_inventory.Count);
+            Assert.AreEqual("my item B", inventory.m_inventory[0].m_shared.m_name);
+            Assert.AreEqual(3, inventory.m_inventory[0].m_stack);
         }
-        
+
         [Test]
         public void RPC_RequestItemRemoveSameItemToInventoryCanStack() {
-            Container container = Helper.CreateContainer();
-            container.GetInventory().AddItem(Helper.CreateItem("my item A", 5, 20), 5, 2, 2);
+            Inventory inventory = new Inventory("inventory", null, 4, 5);
+            inventory.AddItem(Helper.CreateItem("my item A", 5, 20), 5, 2, 2);
 
             ZPackage package = new ZPackage();
             package.Write(new Vector2i(2, 2)); // from container pos
@@ -181,7 +195,7 @@ namespace UnitTests {
 
             package.SetPos(0);
 
-            ZPackage response = container.RPC_RequestItemRemove(0L, package);
+            ZPackage response = inventory.RPC_RequestItemRemove(0L, package);
             response.SetPos(0);
 
             bool success = response.ReadBool();
@@ -191,6 +205,8 @@ namespace UnitTests {
             Assert.True(success);
             Assert.AreEqual(5, addedAmount);
             Assert.False(hasSwitched);
+
+            Assert.AreEqual(0, inventory.m_inventory.Count);
         }
     }
 }
