@@ -213,24 +213,15 @@ namespace ChestFix.Patches {
                         __instance.m_currentContainer.m_nview.InvokeRPC("RequestItemAdd", data);
                     } else {
                         ItemDrop.ItemData prevItem = grid.GetInventory().GetItemAt(pos.x, pos.y);
-                        int amount;
-
-                        if (prevItem != null && InventoryHelper.IsSameItem(prevItem, __instance.m_dragItem)) {
-                            amount = Mathf.Min(prevItem.m_shared.m_maxStackSize - prevItem.m_stack, __instance.m_dragAmount);
-                        } else {
-                            amount = __instance.m_dragAmount;
-                        }
 
                         ZPackage data = new ZPackage();
                         data.Write(__instance.m_dragItem.m_gridPos);
                         data.Write(pos);
-                        data.Write(amount);
+                        data.Write(__instance.m_dragAmount);
+                        data.Write(prevItem != null);
 
                         if (prevItem != null) {
-                            data.Write(true);
                             InventoryHelper.WriteItemToPackage(prevItem, data);
-                        } else {
-                            data.Write(false);
                         }
 
                         Log.LogInfo("RequestItemRemove");
