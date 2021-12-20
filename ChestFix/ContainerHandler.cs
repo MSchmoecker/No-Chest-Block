@@ -78,11 +78,17 @@ namespace ChestFix {
             }
 
             int removedAmount = Mathf.Min(from.m_stack, dragAmount);
-            bool removed = inventory.RemoveItem(from, dragAmount);
+            bool removed = false;
+
+            if (!hasSwitchItem || from.m_stack - removedAmount == 0) {
+                removed = inventory.RemoveItem(from, dragAmount);
+            } else {
+                removedAmount = 0;
+            }
 
             bool switched = false;
 
-            if (hasSwitchItem) {
+            if (hasSwitchItem && removed) {
                 switched = InventoryHelper.LoadItemIntoInventory(package, inventory, fromContainer, -1);
                 ItemDrop.ItemData addedItem = inventory.GetItemAt(fromContainer.x, fromContainer.y);
 

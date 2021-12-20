@@ -26,7 +26,7 @@ namespace UnitTests {
         public static class InventoryAddItemPatch {
             [HarmonyPatch(typeof(Inventory), nameof(Inventory.AddItem), typeof(string), typeof(int), typeof(float), typeof(Vector2i),
                           typeof(bool), typeof(int), typeof(int), typeof(long), typeof(string)), HarmonyPrefix]
-            public static bool NoLogPatch(Inventory __instance, ref bool __result, string name, int stack, float durability, Vector2i pos,
+            public static bool AddNoMonoBehaviourPatch(Inventory __instance, ref bool __result, string name, int stack, float durability, Vector2i pos,
                 bool equiped, int quality, int variant,
                 long crafterID, string crafterName) {
                 ItemDrop.ItemData itemData = new ItemDrop.ItemData() {
@@ -179,6 +179,36 @@ namespace UnitTests {
             Assert.AreEqual(1, inventory.m_inventory.Count);
             Assert.AreEqual("my item B", inventory.m_inventory[0].m_shared.m_name);
             Assert.AreEqual(3, inventory.m_inventory[0].m_stack);
+        }
+
+        [Test]
+        public void RPC_RequestItemRemoveDifferentItemToInventoryWithTrySplit() {
+            Inventory inventory = new Inventory("inventory", null, 4, 5);
+            inventory.AddItem(Helper.CreateItem("my item A", 5, 10), 5, 2, 2);
+
+            ZPackage package = new ZPackage();
+            package.Write(new Vector2i(2, 2)); // from container pos
+            package.Write(new Vector2i(4, 4)); // to inventory pos
+            package.Write(3); // drag amount
+            package.Write(true); // switch with item
+            InventoryHelper.WriteItemToPackage(Helper.CreateItem("my item B", 3, 15), package, true); //item to switch
+
+            package.SetPos(0);
+
+            ZPackage response = inventory.RPC_RequestItemRemove(0L, package);
+            response.SetPos(0);
+
+            bool success = response.ReadBool();
+            int addedAmount = response.ReadInt();
+            bool hasSwitched = response.ReadBool();
+
+            Assert.False(success);
+            Assert.AreEqual(0, addedAmount);
+            Assert.False(hasSwitched);
+
+            Assert.AreEqual(1, inventory.m_inventory.Count);
+            Assert.AreEqual("my item A", inventory.m_inventory[0].m_shared.m_name);
+            Assert.AreEqual(5, inventory.m_inventory[0].m_stack);
         }
 
         [Test]
