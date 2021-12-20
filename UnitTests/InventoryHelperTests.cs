@@ -6,21 +6,6 @@ using NUnit.Framework;
 namespace UnitTests {
     [TestFixture]
     public class InventoryHelperTests {
-        [OneTimeSetUp]
-        public void Setup() {
-            Harmony harmony = new Harmony("id");
-            harmony.PatchAll(typeof(ZLogPatch));
-        }
-
-        [HarmonyPatch]
-        public static class ZLogPatch {
-            [HarmonyPatch(typeof(ZLog), nameof(ZLog.Log)), HarmonyPrefix]
-            public static bool NoZLogPatch(object o) {
-                System.Console.Write(o);
-                return false;
-            }
-        }
-
         [Test]
         public void MoveItemEmptyExceptOneItem() {
             Inventory inventory = new Inventory("inventory", null, 4, 5);
