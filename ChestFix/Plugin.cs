@@ -6,8 +6,8 @@ using UnityEngine;
 namespace ChestFix {
     [BepInPlugin(ModGuid, ModName, ModVersion)]
     public class Plugin : BaseUnityPlugin {
-        public const string ModName = "ChestFix";
-        public const string ModGuid = "com.maxsch.valheim.ChestFix";
+        public const string ModName = "NoChestBlock";
+        public const string ModGuid = "com.maxsch.valheim.NoChestBlock";
         public const string ModVersion = "0.0.0";
 
         public static Plugin Instance { get; private set; }

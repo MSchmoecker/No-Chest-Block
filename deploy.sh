@@ -1,4 +1,5 @@
-ModName="ChestFix"
+ModName="NoChestBlock"
+ModPath="ChestFix"
 
 # function for xml reading
 read_dom () {
@@ -34,8 +35,7 @@ echo "$ModDir"
 
 # copy content
 mkdir -p "$ModDir"
-cp "$ModName/bin/Debug/$ModName.dll" "$ModDir"
-cp "$ModName/bin/Debug/$ModName.dll" "D:/Nextcloud/Dokumente/Valheim"
+cp "$ModPath/bin/Debug/$ModName.dll" "$ModDir"
 cp README.md "$ModDir"
 cp manifest.json "$ModDir"
 cp icon.png "$ModDir"

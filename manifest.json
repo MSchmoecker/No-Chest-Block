@@ -2,7 +2,7 @@
 	"name": "ChestFix",
 	"description": "DESCRIPTION",
 	"version_number": "0.1.0",
-	"website_url": "https://github.com/MSchmoecker/ChestFix",
+	"website_url": "https://github.com/MSchmoecker/No-Chest-Block",
 	"dependencies": [
 		"denikson-BepInExPack_Valheim-5.4.1600",
 		"ValheimModding-Jotunn-2.4.4"
