@@ -73,9 +73,10 @@
         </Reference>
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="ContainerHandlerTests.cs" />
+        <Compile Include="ContainerHandlerAddTest.cs" />
+        <Compile Include="ContainerHandlerRemoveTest.cs" />
         <Compile Include="Helper.cs" />
-        <Compile Include="InventoryHelperTests.cs" />
+        <Compile Include="InventoryHelperTest.cs" />
         <Compile Include="Patches.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
     </ItemGroup>

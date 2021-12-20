@@ -17,11 +17,11 @@ namespace ChestFix.Patches {
         [HarmonyPatch(typeof(Container), nameof(Container.Awake)), HarmonyPostfix]
         public static void ContainerAwakePatch(Container __instance) {
             __instance.m_nview.Register<ZPackage>("RequestItemMove", (l, package) => __instance.RPC_RequestItemMove(l, package));
-            __instance.m_nview.Register<ZPackage>("RequestItemAdd", (l, package) => __instance.RPC_RequestItemAdd(l, package));
+            __instance.m_nview.Register<ZPackage>("RequestItemAdd", (l, package) => RPC_RequestItemAdd(__instance, l, package));
             __instance.m_nview.Register<ZPackage>("RequestItemRemove", (l, package) => RPC_RequestItemRemove(__instance, l, package));
 
             __instance.m_nview.Register<bool>("RequestItemMoveResponse", RPC_RequestItemMoveResponse);
-            __instance.m_nview.Register<bool, int>("RequestItemAddResponse", RPC_RequestItemAddResponse);
+            __instance.m_nview.Register<ZPackage>("RequestItemAddResponse", RPC_RequestItemAddResponse);
             __instance.m_nview.Register<ZPackage>("RequestItemRemoveResponse", RPC_RequestItemRemoveResponse);
         }
 
@@ -31,6 +31,11 @@ namespace ChestFix.Patches {
 
 
             InventoryGui.instance.SetupDragItem(null, null, 0);
+        }
+
+        private static void RPC_RequestItemAdd(Container container, long l, ZPackage package) {
+            ZPackage response = container.GetInventory().RPC_RequestItemAdd(l, package);
+            container.m_nview.InvokeRPC(l, "RequestItemAddResponse", response);
         }
 
         private static void RPC_RequestItemRemove(Container container, long l, ZPackage package) {
@@ -57,12 +62,25 @@ namespace ChestFix.Patches {
             InventoryGui.instance.SetupDragItem(null, null, 0);
         }
 
-        private static void RPC_RequestItemAddResponse(long sender, bool success, int amount) {
+        private static void RPC_RequestItemAddResponse(long sender, ZPackage package) {
             stopwatch.Stop();
-            Log.LogInfo($"RPC_RequestItemAddResponse: {stopwatch.ElapsedMilliseconds}ms, success: {success}");
+            Log.LogInfo($"RPC_RequestItemAddResponse: {stopwatch.ElapsedMilliseconds}ms");
+
+            bool success = package.ReadBool();
+            int amount = package.ReadInt();
+            bool hasSwitched = package.ReadBool();
+
+            Log.LogInfo($"success: {success}");
+            Log.LogInfo($"amount: {amount}");
+            Log.LogInfo($"hasSwitched: {hasSwitched}");
 
             if (success) {
                 InventoryGui.instance.m_dragInventory.RemoveItem(InventoryGui.instance.m_dragItem, amount);
+
+                if (hasSwitched) {
+                    Vector2i fromPos = InventoryGui.instance.m_dragItem.m_gridPos;
+                    InventoryHelper.LoadItemIntoInventory(package, Player.m_localPlayer.GetInventory(), fromPos, -1, -1);
+                }
             }
 
             InventoryGui.instance.SetupDragItem(null, null, 0);
@@ -184,7 +202,6 @@ namespace ChestFix.Patches {
                         __instance.m_currentContainer.m_nview.InvokeRPC("RequestItemMove", data);
                     } else if (grid.m_inventory == __instance.m_currentContainer.GetInventory()) {
                         ZPackage data = new ZPackage();
-                        data.Write(localPlayer.GetPlayerID());
                         data.Write(__instance.m_dragItem.m_gridPos);
                         data.Write(pos);
                         data.Write(__instance.m_dragAmount);

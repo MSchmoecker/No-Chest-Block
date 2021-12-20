@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace UnitTests {
     [TestFixture]
-    public class ContainerHandlerTest {
+    public class ContainerHandlerRemoveTest {
         [Test]
         public void RPC_RequestItemRemoveToEmptyInventorySlotExactAmountAsContainer() {
             Inventory inventory = new Inventory("inventory", null, 4, 5);

@@ -27,33 +27,48 @@ namespace ChestFix {
             container.m_nview.InvokeRPC(sender, "RequestItemMoveResponse", false);
         }
 
-        public static void RPC_RequestItemAdd(this Container container, long sender, ZPackage package) {
+        public static ZPackage RPC_RequestItemAdd(this Inventory inventory, long sender, ZPackage package) {
+            ZPackage response = new ZPackage();
+
             Log.LogInfo("RPC_RequestItemAdd");
 
-            long playerId = package.ReadLong();
             Vector2i fromInventory = package.ReadVector2i();
             Vector2i toContainer = package.ReadVector2i();
             int dragAmount = package.ReadInt();
+            ItemDrop.ItemData dragItem = InventoryHelper.LoadItemFromPackage(package, toContainer);
 
-            Log.LogInfo($"playerId : {playerId}");
-            Log.LogInfo($"fromInventory : {fromInventory}");
-            Log.LogInfo($"toContainer : {toContainer}");
-            Log.LogInfo($"dragAmount : {dragAmount}");
+            bool added = false;
+            bool switched = false;
+            bool dontAdd = false;
+            int amount = Mathf.Min(dragAmount, dragItem.m_stack);
 
-            Player player = Player.GetPlayer(playerId);
-            Log.LogInfo($"player : {player.GetPlayerName()}");
-            Log.LogInfo($"player : {player.GetInventory().GetEmptySlots()}");
+            ItemDrop.ItemData prevItem = inventory.GetItemAt(toContainer.x, toContainer.y);
 
-            int amount = dragAmount;
-
-            ItemDrop.ItemData prevItem = container.GetInventory().GetItemAt(toContainer.x, toContainer.y);
             if (prevItem != null) {
-                amount = Mathf.Min(prevItem.m_shared.m_maxStackSize - prevItem.m_stack, dragAmount);
+                if (InventoryHelper.IsSameItem(prevItem, dragItem)) {
+                    amount = Mathf.Min(prevItem.m_shared.m_maxStackSize - prevItem.m_stack, dragAmount);
+                } else if (dragItem.m_stack != dragAmount) {
+                    dontAdd = true;
+                    amount = 0;
+                } else {
+                    inventory.RemoveItem(prevItem, prevItem.m_stack);
+                    switched = true;
+                }
             }
 
-            bool added = InventoryHelper.LoadItemIntoInventory(package, container.GetInventory(), toContainer, amount);
+            if (!dontAdd) {
+                added = inventory.AddItem(dragItem, amount, toContainer.x, toContainer.y);
+            }
 
-            container.m_nview.InvokeRPC(sender, "RequestItemAddResponse", added, amount);
+            response.Write(added);
+            response.Write(amount);
+            response.Write(switched);
+
+            if (switched) {
+                InventoryHelper.WriteItemToPackage(prevItem, response);
+            }
+
+            return response;
         }
 
         public static ZPackage RPC_RequestItemRemove(this Inventory inventory, long sender, ZPackage package) {
@@ -89,7 +104,7 @@ namespace ChestFix {
             bool switched = false;
 
             if (hasSwitchItem && removed) {
-                switched = InventoryHelper.LoadItemIntoInventory(package, inventory, fromContainer, -1);
+                switched = InventoryHelper.LoadItemIntoInventory(package, inventory, fromContainer, -1, -1);
                 ItemDrop.ItemData addedItem = inventory.GetItemAt(fromContainer.x, fromContainer.y);
 
                 if (InventoryHelper.IsSameItem(from, addedItem)) {

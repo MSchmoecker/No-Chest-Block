@@ -5,7 +5,7 @@ using NUnit.Framework;
 
 namespace UnitTests {
     [TestFixture]
-    public class InventoryHelperTests {
+    public class InventoryHelperTest {
         [Test]
         public void MoveItemEmptyExceptOneItem() {
             Inventory inventory = new Inventory("inventory", null, 4, 5);

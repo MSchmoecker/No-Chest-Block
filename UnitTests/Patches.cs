@@ -11,6 +11,8 @@ namespace UnitTests {
             harmony.PatchAll(typeof(ZLogPatch));
             harmony.PatchAll(typeof(LogPatch));
             harmony.PatchAll(typeof(InventoryAddItemPatch));
+            harmony.PatchAll(typeof(WriteItemToPackageAlwaysNameHackPatch));
+            harmony.PatchAll(typeof(LoadItemFromPackageAlwaysNameHackPatch));
         }
 
         [HarmonyPatch]
@@ -54,6 +56,22 @@ namespace UnitTests {
                 };
                 __result = __instance.AddItem(itemData, itemData.m_stack, pos.x, pos.y);
                 return false;
+            }
+        }
+
+        [HarmonyPatch]
+        public static class WriteItemToPackageAlwaysNameHackPatch {
+            [HarmonyPatch(typeof(InventoryHelper), nameof(InventoryHelper.WriteItemToPackage)), HarmonyPrefix]
+            public static void WriteItemToPackagePatch(ref bool nameHack) {
+                nameHack = true;
+            }
+        }
+
+        [HarmonyPatch]
+        public static class LoadItemFromPackageAlwaysNameHackPatch {
+            [HarmonyPatch(typeof(InventoryHelper), nameof(InventoryHelper.LoadItemFromPackage)), HarmonyPrefix]
+            public static void LoadItemFromPackagePatch(ref bool nameHack) {
+                nameHack = true;
             }
         }
     }
