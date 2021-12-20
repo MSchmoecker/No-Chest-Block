@@ -82,6 +82,7 @@ namespace ChestFix {
             int dragAmount = package.ReadInt();
             bool hasSwitchItem = package.ReadBool();
 
+            ItemDrop.ItemData dragItem = hasSwitchItem ? InventoryHelper.LoadItemFromPackage(package, fromContainer) : null;
             ItemDrop.ItemData from = inventory.GetItemAt(fromContainer.x, fromContainer.y);
 
             if (from == null) {
@@ -92,29 +93,21 @@ namespace ChestFix {
                 return response;
             }
 
-            int removedAmount = Mathf.Min(from.m_stack, dragAmount);
+            int removedAmount = 0;
             bool removed = false;
-
-            if (!hasSwitchItem || from.m_stack - removedAmount == 0) {
-                removed = inventory.RemoveItem(from, dragAmount);
-            } else {
-                removedAmount = 0;
-            }
-
             bool switched = false;
 
-            if (hasSwitchItem && removed) {
-                switched = InventoryHelper.LoadItemIntoInventory(package, inventory, fromContainer, -1, -1);
-                ItemDrop.ItemData addedItem = inventory.GetItemAt(fromContainer.x, fromContainer.y);
-
-                if (InventoryHelper.IsSameItem(from, addedItem)) {
-                    switched = false;
-                    int stackSize = from.m_shared.m_maxStackSize;
-                    int beforeAmount = removedAmount;
-                    removedAmount = Mathf.Min(removedAmount, stackSize - addedItem.m_stack);
-
-                    // set stack size by RemoveItem() to new value, value = beforeAmount - removedAmount
-                    inventory.RemoveItem(addedItem, addedItem.m_stack - beforeAmount + removedAmount);
+            if (dragItem == null) {
+                removedAmount = Mathf.Min(from.m_stack, dragAmount);
+                removed = inventory.RemoveItem(from, removedAmount);
+            } else {
+                if (InventoryHelper.IsSameItem(from, dragItem)) {
+                    removedAmount = Mathf.Min( dragItem.m_shared.m_maxStackSize - dragItem.m_stack, dragAmount);
+                    removed = inventory.RemoveItem(from, removedAmount);
+                } else if (dragAmount == from.m_stack) {
+                    removed = inventory.RemoveItem(from, dragAmount);
+                    removedAmount = Mathf.Min(from.m_stack, dragAmount);
+                    switched = inventory.AddItem(dragItem, dragItem.m_stack, fromContainer.x, fromContainer.y);
                 }
             }
 
