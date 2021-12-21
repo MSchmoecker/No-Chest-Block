@@ -76,6 +76,7 @@
         <Compile Include="ContainerHandlerAddTest.cs" />
         <Compile Include="ContainerHandlerRemoveTest.cs" />
         <Compile Include="Helper.cs" />
+        <Compile Include="InventoryHandlerTest.cs" />
         <Compile Include="InventoryHelperTest.cs" />
         <Compile Include="Patches.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />

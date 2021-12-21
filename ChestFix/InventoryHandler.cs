@@ -5,6 +5,10 @@ namespace ChestFix {
     public class InventoryHandler {
         public static readonly List<Vector2i> blockedInventorySlots = new List<Vector2i>();
 
+        public static void RPC_RequestItemAddResponse(long sender, ZPackage package) {
+            RPC_RequestItemAddResponse(Player.m_localPlayer.GetInventory(), sender, package);
+        }
+
         public static void RPC_RequestItemMoveResponse(long sender, bool success) {
             ContainerPatch.stopwatch.Stop();
             Log.LogInfo($"RPC_RequestItemMoveResponse: {ContainerPatch.stopwatch.ElapsedMilliseconds}ms, success: {success}");
@@ -45,9 +49,11 @@ namespace ChestFix {
             InventoryGui.instance.SetupDragItem(null, null, 0);
         }
 
-        public static void RPC_RequestItemAddResponse(long sender, ZPackage package) {
-            ContainerPatch.stopwatch.Stop();
-            Log.LogInfo($"RPC_RequestItemAddResponse: {ContainerPatch.stopwatch.ElapsedMilliseconds}ms");
+        public static void RPC_RequestItemAddResponse(Inventory inventory, long sender, ZPackage package) {
+            if (ContainerPatch.stopwatch != null) {
+                ContainerPatch.stopwatch.Stop();
+                Log.LogInfo($"RPC_RequestItemAddResponse: {ContainerPatch.stopwatch.ElapsedMilliseconds}ms");
+            }
 
             Vector2i inventoryPos = package.ReadVector2i();
             bool success = package.ReadBool();
@@ -59,15 +65,20 @@ namespace ChestFix {
             Log.LogInfo($"hasSwitched: {hasSwitched}");
 
             if (success) {
-                ItemDrop.ItemData toRemove = Player.m_localPlayer.GetInventory().GetItemAt(inventoryPos.x, inventoryPos.y);
-                Player.m_localPlayer.GetInventory().RemoveItem(toRemove, amount);
+                ItemDrop.ItemData toRemove = inventory.GetItemAt(inventoryPos.x, inventoryPos.y);
+
+                if (toRemove != null) {
+                    inventory.RemoveItem(toRemove, amount);
+                }
 
                 if (hasSwitched) {
-                    InventoryHelper.LoadItemIntoInventory(package, Player.m_localPlayer.GetInventory(), inventoryPos, -1, -1);
+                    InventoryHelper.LoadItemIntoInventory(package, inventory, inventoryPos, -1, -1);
                 }
             }
 
-            InventoryGui.instance.SetupDragItem(null, null, 0);
+            if (InventoryGui.instance != null) {
+                InventoryGui.instance.SetupDragItem(null, null, 0);
+            }
         }
     }
 }
