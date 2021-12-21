@@ -97,6 +97,8 @@ namespace ChestFix {
                 response.Write(false); // not removed
                 response.Write(0);
                 response.Write(false); // not switched
+                response.Write(toInventory);
+                response.Write(false); // no response item
                 return response;
             }
 
@@ -121,6 +123,12 @@ namespace ChestFix {
             response.Write(removed);
             response.Write(removedAmount);
             response.Write(switched);
+            response.Write(toInventory);
+            response.Write(true); // has response item
+
+            // if (removed) {
+            InventoryHelper.WriteItemToPackage(from, response);
+            // }
 
             return response;
         }

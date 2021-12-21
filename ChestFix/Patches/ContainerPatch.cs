@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using HarmonyLib;
 using UnityEngine;
@@ -6,7 +7,8 @@ using UnityEngine;
 namespace ChestFix.Patches {
     [HarmonyPatch]
     public class ContainerPatch {
-        private static Stopwatch stopwatch = new Stopwatch();
+        private static readonly Stopwatch stopwatch = new Stopwatch();
+        private static readonly List<Vector2i> blockedInventorySlots = new List<Vector2i>();
 
         [HarmonyPatch(typeof(Container), nameof(Container.IsInUse)), HarmonyPostfix]
         public static void IsInUsePatch(ref bool __result, ref bool ___m_inUse) {
@@ -50,13 +52,27 @@ namespace ChestFix.Patches {
             bool success = package.ReadBool();
             int amount = package.ReadInt();
             bool hasSwitched = package.ReadBool();
+            Vector2i inventoryPos = package.ReadVector2i();
+            bool hasResponseItem = package.ReadBool();
+            ItemDrop.ItemData responseItem = null;
+
+            if (hasResponseItem) {
+                responseItem = InventoryHelper.LoadItemFromPackage(package, inventoryPos);
+            }
+
+            Inventory playerInv = Player.m_localPlayer.GetInventory();
+
+            if (blockedInventorySlots.Contains(inventoryPos)) {
+                blockedInventorySlots.Remove(inventoryPos);
+            }
 
             if (success) {
                 if (hasSwitched) {
-                    lastGrid.m_inventory.RemoveItem(lastGrid.m_inventory.GetItemAt(lastPos.x, lastPos.y));
+                    ItemDrop.ItemData atSlot = playerInv.GetItemAt(inventoryPos.x, inventoryPos.y);
+                    playerInv.RemoveItem(atSlot);
                 }
 
-                lastGrid.m_inventory.AddItem(InventoryGui.instance.m_dragItem, amount, lastPos.x, lastPos.y);
+                playerInv.AddItem(responseItem, amount, inventoryPos.x, inventoryPos.y);
             }
 
             InventoryGui.instance.SetupDragItem(null, null, 0);
@@ -147,15 +163,6 @@ namespace ChestFix.Patches {
             }
         }*/
 
-        private static InventoryGrid lastGrid;
-        private static Vector2i lastPos;
-
-        [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.OnSelectedItem)), HarmonyPrefix]
-        public static void OnSelectedItemPatch(InventoryGrid grid, Vector2i pos) {
-            lastGrid = grid;
-            lastPos = pos;
-        }
-
         [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.OnSelectedItem)), HarmonyPrefix]
         public static bool OnSelectedItemPatch(InventoryGui __instance, InventoryGrid grid, ItemDrop.ItemData item, Vector2i pos,
             InventoryGrid.Modifier mod) {
@@ -226,6 +233,8 @@ namespace ChestFix.Patches {
                             InventoryHelper.WriteItemToPackage(prevItem, data);
                         }
 
+                        blockedInventorySlots.AddItem(__instance.m_dragItem.m_gridPos);
+
                         Log.LogInfo("RequestItemRemove");
                         stopwatch.Reset();
                         stopwatch.Start();
@@ -284,16 +293,22 @@ namespace ChestFix.Patches {
 
                             if (grid.GetInventory() == __instance.m_currentContainer.GetInventory()) {
                                 if (localPlayer.GetInventory().CanAddItem(item)) {
-                                    ZPackage data = new ZPackage();
-                                    data.Write(pos);
-                                    data.Write(Vector2i.zero);
-                                    data.Write(item.m_stack);
-                                    data.Write(false);
+                                    Vector2i targetSlot = InventoryHelper.FindEmptySlot(localPlayer.GetInventory(), blockedInventorySlots);
 
-                                    Log.LogInfo("RequestItemRemove");
-                                    stopwatch.Reset();
-                                    stopwatch.Start();
-                                    __instance.m_currentContainer.m_nview.InvokeRPC("RequestItemRemove", data);
+                                    if (targetSlot.x != -1 && targetSlot.y != -1) {
+                                        ZPackage data = new ZPackage();
+                                        data.Write(pos);
+                                        data.Write(targetSlot);
+                                        data.Write(item.m_stack);
+                                        data.Write(false); // don't allow switch
+
+                                        blockedInventorySlots.AddItem(targetSlot);
+
+                                        Log.LogInfo("RequestItemRemove");
+                                        stopwatch.Reset();
+                                        stopwatch.Start();
+                                        __instance.m_currentContainer.m_nview.InvokeRPC("RequestItemRemove", data);
+                                    }
                                 }
                             } else {
                                 ZPackage data = new ZPackage();

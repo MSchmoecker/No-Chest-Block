@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using ChestFix.Patches;
 using UnityEngine;
 
 namespace ChestFix {
@@ -130,6 +132,20 @@ namespace ChestFix {
             return itemA.m_shared.m_name == itemB.m_shared.m_name &&
                    (itemA.m_shared.m_maxQuality <= 1 || itemB.m_quality == itemA.m_quality) &&
                    itemA.m_shared.m_maxStackSize != 1;
+        }
+
+        public static Vector2i FindEmptySlot(Inventory inventory, List<Vector2i> blockedSlots) {
+            for (int y = 0; y < inventory.m_height; ++y) {
+                for (int x = 0; x < inventory.m_width; ++x) {
+                    if (inventory.GetItemAt(x, y) != null || blockedSlots.Contains(new Vector2i(x, y))) {
+                        continue;
+                    }
+
+                    return new Vector2i(x, y);
+                }
+            }
+
+            return new Vector2i(-1, -1);
         }
     }
 }

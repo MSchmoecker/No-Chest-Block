@@ -197,7 +197,7 @@ namespace UnitTests {
 
             Assert.AreEqual(0, inventory.m_inventory.Count);
         }
-        
+
         [Test]
         public void RPC_RequestItemRemoveSameItemNotAllToInventoryCanStack() {
             Inventory inventory = new Inventory("inventory", null, 4, 5);
@@ -254,6 +254,38 @@ namespace UnitTests {
 
             Assert.AreEqual(1, inventory.m_inventory.Count);
             Assert.AreEqual(4, inventory.m_inventory[0].m_stack);
+        }
+
+        [Test]
+        public void RPC_RequestItemRemoveGetItemDataBack() {
+            Inventory inventory = new Inventory("inventory", null, 4, 5);
+            inventory.AddItem(Helper.CreateItem("my item A", 5, 20), 5, 2, 2);
+
+            ZPackage package = new ZPackage();
+            package.Write(new Vector2i(2, 2)); // from container pos
+            package.Write(new Vector2i(4, 4)); // to inventory pos
+            package.Write(5); // drag amount
+            package.Write(false); // switch with item
+
+            package.SetPos(0);
+
+            ZPackage response = inventory.RPC_RequestItemRemove(0L, package);
+            response.SetPos(0);
+
+            bool success = response.ReadBool();
+            int addedAmount = response.ReadInt();
+            bool hasSwitched = response.ReadBool();
+            Vector2i inventoryPos = response.ReadVector2i();
+            bool hasResponseItem = response.ReadBool();
+            ItemDrop.ItemData returnedItem = InventoryHelper.LoadItemFromPackage(response, inventoryPos);
+
+            Assert.True(success);
+            Assert.AreEqual(5, addedAmount);
+            Assert.False(hasSwitched);
+
+            Assert.AreEqual(0, inventory.m_inventory.Count);
+            Assert.AreEqual("my item A", returnedItem.m_shared.m_name);
+            Assert.AreEqual(5, returnedItem.m_stack);
         }
     }
 }

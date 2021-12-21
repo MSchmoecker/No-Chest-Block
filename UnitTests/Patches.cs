@@ -19,7 +19,7 @@ namespace UnitTests {
         public static class ZLogPatch {
             [HarmonyPatch(typeof(ZLog), nameof(ZLog.Log)), HarmonyPrefix]
             public static bool NoZLogPatch(object o) {
-                System.Console.Write(o);
+                System.Console.WriteLine(o);
                 return false;
             }
         }
