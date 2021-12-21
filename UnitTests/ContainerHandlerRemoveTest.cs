@@ -18,7 +18,7 @@ namespace UnitTests {
             package.Write(false); // no item
             package.SetPos(0);
 
-            ZPackage response = inventory.RPC_RequestItemRemove(0L, package);
+            ZPackage response = inventory.RequestItemRemove(0L, package);
             response.SetPos(0);
 
             bool success = response.ReadBool();
@@ -44,7 +44,7 @@ namespace UnitTests {
             package.Write(false); // no item
             package.SetPos(0);
 
-            ZPackage response = inventory.RPC_RequestItemRemove(0L, package);
+            ZPackage response = inventory.RequestItemRemove(0L, package);
             response.SetPos(0);
 
             bool success = response.ReadBool();
@@ -71,7 +71,7 @@ namespace UnitTests {
             package.Write(false); // no item
             package.SetPos(0);
 
-            ZPackage response = inventory.RPC_RequestItemRemove(0L, package);
+            ZPackage response = inventory.RequestItemRemove(0L, package);
             response.SetPos(0);
 
             bool success = response.ReadBool();
@@ -96,7 +96,7 @@ namespace UnitTests {
             package.Write(false); // no item
             package.SetPos(0);
 
-            ZPackage response = inventory.RPC_RequestItemRemove(0L, package);
+            ZPackage response = inventory.RequestItemRemove(0L, package);
             response.SetPos(0);
 
             bool success = response.ReadBool();
@@ -124,7 +124,7 @@ namespace UnitTests {
 
             package.SetPos(0);
 
-            ZPackage response = inventory.RPC_RequestItemRemove(0L, package);
+            ZPackage response = inventory.RequestItemRemove(0L, package);
             response.SetPos(0);
 
             bool success = response.ReadBool();
@@ -154,7 +154,7 @@ namespace UnitTests {
 
             package.SetPos(0);
 
-            ZPackage response = inventory.RPC_RequestItemRemove(0L, package);
+            ZPackage response = inventory.RequestItemRemove(0L, package);
             response.SetPos(0);
 
             bool success = response.ReadBool();
@@ -184,7 +184,7 @@ namespace UnitTests {
 
             package.SetPos(0);
 
-            ZPackage response = inventory.RPC_RequestItemRemove(0L, package);
+            ZPackage response = inventory.RequestItemRemove(0L, package);
             response.SetPos(0);
 
             bool success = response.ReadBool();
@@ -212,7 +212,7 @@ namespace UnitTests {
 
             package.SetPos(0);
 
-            ZPackage response = inventory.RPC_RequestItemRemove(0L, package);
+            ZPackage response = inventory.RequestItemRemove(0L, package);
             response.SetPos(0);
 
             bool success = response.ReadBool();
@@ -241,7 +241,7 @@ namespace UnitTests {
 
             package.SetPos(0);
 
-            ZPackage response = inventory.RPC_RequestItemRemove(0L, package);
+            ZPackage response = inventory.RequestItemRemove(0L, package);
             response.SetPos(0);
 
             bool success = response.ReadBool();
@@ -269,7 +269,7 @@ namespace UnitTests {
 
             package.SetPos(0);
 
-            ZPackage response = inventory.RPC_RequestItemRemove(0L, package);
+            ZPackage response = inventory.RequestItemRemove(0L, package);
             response.SetPos(0);
 
             bool success = response.ReadBool();

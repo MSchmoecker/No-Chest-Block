@@ -7,8 +7,7 @@ using UnityEngine;
 namespace ChestFix.Patches {
     [HarmonyPatch]
     public class ContainerPatch {
-        private static readonly Stopwatch stopwatch = new Stopwatch();
-        private static readonly List<Vector2i> blockedInventorySlots = new List<Vector2i>();
+        public static readonly Stopwatch stopwatch = new Stopwatch();
 
         [HarmonyPatch(typeof(Container), nameof(Container.IsInUse)), HarmonyPostfix]
         public static void IsInUsePatch(ref bool __result, ref bool ___m_inUse) {
@@ -18,89 +17,15 @@ namespace ChestFix.Patches {
 
         [HarmonyPatch(typeof(Container), nameof(Container.Awake)), HarmonyPostfix]
         public static void ContainerAwakePatch(Container __instance) {
-            __instance.m_nview.Register<ZPackage>("RequestItemMove", (l, package) => __instance.RPC_RequestItemMove(l, package));
-            __instance.m_nview.Register<ZPackage>("RequestItemAdd", (l, package) => RPC_RequestItemAdd(__instance, l, package));
-            __instance.m_nview.Register<ZPackage>("RequestItemRemove", (l, package) => RPC_RequestItemRemove(__instance, l, package));
+            ZNetView nview = __instance.m_nview;
 
-            __instance.m_nview.Register<bool>("RequestItemMoveResponse", RPC_RequestItemMoveResponse);
-            __instance.m_nview.Register<ZPackage>("RequestItemAddResponse", RPC_RequestItemAddResponse);
-            __instance.m_nview.Register<ZPackage>("RequestItemRemoveResponse", RPC_RequestItemRemoveResponse);
-        }
+            nview.Register<ZPackage>("RequestItemMove", (l, package) => ContainerHandler.RPC_RequestItemMove(__instance, l, package));
+            nview.Register<ZPackage>("RequestItemAdd", (l, package) => ContainerHandler.RPC_RequestItemAdd(__instance, l, package));
+            nview.Register<ZPackage>("RequestItemRemove", (l, package) => ContainerHandler.RPC_RequestItemRemove(__instance, l, package));
 
-        private static void RPC_RequestItemMoveResponse(long sender, bool success) {
-            stopwatch.Stop();
-            Log.LogInfo($"RPC_RequestItemMoveResponse: {stopwatch.ElapsedMilliseconds}ms, success: {success}");
-
-
-            InventoryGui.instance.SetupDragItem(null, null, 0);
-        }
-
-        private static void RPC_RequestItemAdd(Container container, long l, ZPackage package) {
-            ZPackage response = container.GetInventory().RPC_RequestItemAdd(l, package);
-            container.m_nview.InvokeRPC(l, "RequestItemAddResponse", response);
-        }
-
-        private static void RPC_RequestItemRemove(Container container, long l, ZPackage package) {
-            ZPackage response = container.GetInventory().RPC_RequestItemRemove(l, package);
-            container.m_nview.InvokeRPC(l, "RequestItemRemoveResponse", response);
-        }
-
-        private static void RPC_RequestItemRemoveResponse(long sender, ZPackage package) {
-            stopwatch.Stop();
-            Log.LogInfo($"RPC_RequestItemRemoveResponse: {stopwatch.ElapsedMilliseconds}ms");
-
-            bool success = package.ReadBool();
-            int amount = package.ReadInt();
-            bool hasSwitched = package.ReadBool();
-            Vector2i inventoryPos = package.ReadVector2i();
-            bool hasResponseItem = package.ReadBool();
-            ItemDrop.ItemData responseItem = null;
-
-            if (hasResponseItem) {
-                responseItem = InventoryHelper.LoadItemFromPackage(package, inventoryPos);
-            }
-
-            Inventory playerInv = Player.m_localPlayer.GetInventory();
-
-            if (blockedInventorySlots.Contains(inventoryPos)) {
-                blockedInventorySlots.Remove(inventoryPos);
-            }
-
-            if (success) {
-                if (hasSwitched) {
-                    ItemDrop.ItemData atSlot = playerInv.GetItemAt(inventoryPos.x, inventoryPos.y);
-                    playerInv.RemoveItem(atSlot);
-                }
-
-                playerInv.AddItem(responseItem, amount, inventoryPos.x, inventoryPos.y);
-            }
-
-            InventoryGui.instance.SetupDragItem(null, null, 0);
-        }
-
-        private static void RPC_RequestItemAddResponse(long sender, ZPackage package) {
-            stopwatch.Stop();
-            Log.LogInfo($"RPC_RequestItemAddResponse: {stopwatch.ElapsedMilliseconds}ms");
-
-            Vector2i inventoryPos = package.ReadVector2i();
-            bool success = package.ReadBool();
-            int amount = package.ReadInt();
-            bool hasSwitched = package.ReadBool();
-
-            Log.LogInfo($"success: {success}");
-            Log.LogInfo($"amount: {amount}");
-            Log.LogInfo($"hasSwitched: {hasSwitched}");
-
-            if (success) {
-                ItemDrop.ItemData toRemove = Player.m_localPlayer.GetInventory().GetItemAt(inventoryPos.x, inventoryPos.y);
-                Player.m_localPlayer.GetInventory().RemoveItem(toRemove, amount);
-
-                if (hasSwitched) {
-                    InventoryHelper.LoadItemIntoInventory(package, Player.m_localPlayer.GetInventory(), inventoryPos, -1, -1);
-                }
-            }
-
-            InventoryGui.instance.SetupDragItem(null, null, 0);
+            nview.Register<bool>("RequestItemMoveResponse", InventoryHandler.RPC_RequestItemMoveResponse);
+            nview.Register<ZPackage>("RequestItemAddResponse", InventoryHandler.RPC_RequestItemAddResponse);
+            nview.Register<ZPackage>("RequestItemRemoveResponse", InventoryHandler.RPC_RequestItemRemoveResponse);
         }
 
         [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.Update)), HarmonyPrefix]
@@ -233,7 +158,7 @@ namespace ChestFix.Patches {
                             InventoryHelper.WriteItemToPackage(prevItem, data);
                         }
 
-                        blockedInventorySlots.AddItem(__instance.m_dragItem.m_gridPos);
+                        InventoryHandler.blockedInventorySlots.AddItem(__instance.m_dragItem.m_gridPos);
 
                         Log.LogInfo("RequestItemRemove");
                         stopwatch.Reset();
@@ -293,7 +218,8 @@ namespace ChestFix.Patches {
 
                             if (grid.GetInventory() == __instance.m_currentContainer.GetInventory()) {
                                 if (localPlayer.GetInventory().CanAddItem(item)) {
-                                    Vector2i targetSlot = InventoryHelper.FindEmptySlot(localPlayer.GetInventory(), blockedInventorySlots);
+                                    Vector2i targetSlot =
+                                        InventoryHelper.FindEmptySlot(localPlayer.GetInventory(), InventoryHandler.blockedInventorySlots);
 
                                     if (targetSlot.x != -1 && targetSlot.y != -1) {
                                         ZPackage data = new ZPackage();
@@ -302,7 +228,7 @@ namespace ChestFix.Patches {
                                         data.Write(item.m_stack);
                                         data.Write(false); // don't allow switch
 
-                                        blockedInventorySlots.AddItem(targetSlot);
+                                        InventoryHandler.blockedInventorySlots.AddItem(targetSlot);
 
                                         Log.LogInfo("RequestItemRemove");
                                         stopwatch.Reset();

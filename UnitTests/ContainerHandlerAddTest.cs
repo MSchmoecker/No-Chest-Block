@@ -16,7 +16,7 @@ namespace UnitTests {
             data.Write(true); // allow switch
             data.SetPos(0);
 
-            ZPackage response = inventory.RPC_RequestItemAdd(0L, data);
+            ZPackage response = inventory.RequestItemAdd(0L, data);
             response.SetPos(0);
 
             Vector2i inventoryPos = response.ReadVector2i();
@@ -45,7 +45,7 @@ namespace UnitTests {
             data.Write(false); // not allow switch
             data.SetPos(0);
 
-            ZPackage response = inventory.RPC_RequestItemAdd(0L, data);
+            ZPackage response = inventory.RequestItemAdd(0L, data);
             response.SetPos(0);
 
             Vector2i inventoryPos = response.ReadVector2i();
@@ -75,7 +75,7 @@ namespace UnitTests {
             data.Write(true); // allow switch
             data.SetPos(0);
 
-            ZPackage response = inventory.RPC_RequestItemAdd(0L, data);
+            ZPackage response = inventory.RequestItemAdd(0L, data);
             response.SetPos(0);
 
             Vector2i inventoryPos = response.ReadVector2i();
@@ -104,7 +104,7 @@ namespace UnitTests {
             data.Write(true); // allow switch
             data.SetPos(0);
 
-            ZPackage response = inventory.RPC_RequestItemAdd(0L, data);
+            ZPackage response = inventory.RequestItemAdd(0L, data);
             response.SetPos(0);
 
             Vector2i inventoryPos = response.ReadVector2i();
@@ -134,7 +134,7 @@ namespace UnitTests {
             data.Write(true); // allow switch
             data.SetPos(0);
 
-            ZPackage response = inventory.RPC_RequestItemAdd(0L, data);
+            ZPackage response = inventory.RequestItemAdd(0L, data);
             response.SetPos(0);
 
             Vector2i inventoryPos = response.ReadVector2i();
@@ -170,7 +170,7 @@ namespace UnitTests {
             data.Write(true); // allow switch
             data.SetPos(0);
 
-            ZPackage response = inventory.RPC_RequestItemAdd(0L, data);
+            ZPackage response = inventory.RequestItemAdd(0L, data);
             response.SetPos(0);
 
             Vector2i inventoryPos = response.ReadVector2i();
@@ -200,7 +200,7 @@ namespace UnitTests {
             data.Write(false); // not allow switch
             data.SetPos(0);
 
-            ZPackage response = inventory.RPC_RequestItemAdd(0L, data);
+            ZPackage response = inventory.RequestItemAdd(0L, data);
             response.SetPos(0);
 
             Vector2i inventoryPos = response.ReadVector2i();
@@ -230,7 +230,7 @@ namespace UnitTests {
             data.Write(true); // allow switch
             data.SetPos(0);
 
-            ZPackage response = inventory.RPC_RequestItemAdd(0L, data);
+            ZPackage response = inventory.RequestItemAdd(0L, data);
             response.SetPos(0);
 
             Vector2i inventoryPos = response.ReadVector2i();
@@ -260,7 +260,7 @@ namespace UnitTests {
             data.Write(true); // allow switch
             data.SetPos(0);
 
-            ZPackage response = inventory.RPC_RequestItemAdd(0L, data);
+            ZPackage response = inventory.RequestItemAdd(0L, data);
             response.SetPos(0);
 
             Vector2i inventoryPos = response.ReadVector2i();

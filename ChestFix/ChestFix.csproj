@@ -94,6 +94,7 @@
     </ItemGroup>
     <ItemGroup>
         <Compile Include="ContainerHandler.cs" />
+        <Compile Include="InventoryHandler.cs" />
         <Compile Include="InventoryHelper.cs" />
         <Compile Include="Log.cs" />
         <Compile Include="Patches\ContainerPatch.cs" />
@@ -102,7 +103,6 @@
     </ItemGroup>
     <ItemGroup>
         <Content Include=".gitignore" />
-        <Content Include="Patches\.gitkeep" />
     </ItemGroup>
     <ItemGroup>
         <Content Include="../README.md">

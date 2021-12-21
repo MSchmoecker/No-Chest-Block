@@ -3,7 +3,17 @@ using UnityEngine;
 
 namespace ChestFix {
     public static class ContainerHandler {
-        public static void RPC_RequestItemMove(this Container container, long sender, ZPackage package) {
+        public static void RPC_RequestItemAdd(Container container, long l, ZPackage package) {
+            ZPackage response = container.GetInventory().RequestItemAdd(l, package);
+            container.m_nview.InvokeRPC(l, "RequestItemAddResponse", response);
+        }
+
+        public static void RPC_RequestItemRemove(Container container, long l, ZPackage package) {
+            ZPackage response = container.GetInventory().RequestItemRemove(l, package);
+            container.m_nview.InvokeRPC(l, "RequestItemRemoveResponse", response);
+        }
+
+        public static void RPC_RequestItemMove(Container container, long sender, ZPackage package) {
             Log.LogInfo("RPC_RequestItemMove");
 
             Vector2i fromPos = package.ReadVector2i();
@@ -27,7 +37,7 @@ namespace ChestFix {
             container.m_nview.InvokeRPC(sender, "RequestItemMoveResponse", false);
         }
 
-        public static ZPackage RPC_RequestItemAdd(this Inventory inventory, long sender, ZPackage package) {
+        public static ZPackage RequestItemAdd(this Inventory inventory, long sender, ZPackage package) {
             ZPackage response = new ZPackage();
 
             Log.LogInfo("RPC_RequestItemAdd");
@@ -78,7 +88,7 @@ namespace ChestFix {
             return response;
         }
 
-        public static ZPackage RPC_RequestItemRemove(this Inventory inventory, long sender, ZPackage package) {
+        public static ZPackage RequestItemRemove(this Inventory inventory, long sender, ZPackage package) {
             ZPackage response = new ZPackage();
 
             Log.LogInfo("RPC_RequestItemRemove");
