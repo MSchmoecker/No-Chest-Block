@@ -66,6 +66,7 @@ namespace ChestFix.Patches {
             stopwatch.Stop();
             Log.LogInfo($"RPC_RequestItemAddResponse: {stopwatch.ElapsedMilliseconds}ms");
 
+            Vector2i inventoryPos = package.ReadVector2i();
             bool success = package.ReadBool();
             int amount = package.ReadInt();
             bool hasSwitched = package.ReadBool();
@@ -75,11 +76,11 @@ namespace ChestFix.Patches {
             Log.LogInfo($"hasSwitched: {hasSwitched}");
 
             if (success) {
-                InventoryGui.instance.m_dragInventory.RemoveItem(InventoryGui.instance.m_dragItem, amount);
+                ItemDrop.ItemData toRemove = Player.m_localPlayer.GetInventory().GetItemAt(inventoryPos.x, inventoryPos.y);
+                Player.m_localPlayer.GetInventory().RemoveItem(toRemove, amount);
 
                 if (hasSwitched) {
-                    Vector2i fromPos = InventoryGui.instance.m_dragItem.m_gridPos;
-                    InventoryHelper.LoadItemIntoInventory(package, Player.m_localPlayer.GetInventory(), fromPos, -1, -1);
+                    InventoryHelper.LoadItemIntoInventory(package, Player.m_localPlayer.GetInventory(), inventoryPos, -1, -1);
                 }
             }
 
@@ -206,6 +207,7 @@ namespace ChestFix.Patches {
                         data.Write(pos);
                         data.Write(__instance.m_dragAmount);
                         InventoryHelper.WriteItemToPackage(__instance.m_dragItem, data);
+                        data.Write(true);
 
                         Log.LogInfo("RequestItemAdd");
                         stopwatch.Reset();
@@ -281,9 +283,30 @@ namespace ChestFix.Patches {
                             localPlayer.UnequipItem(item);
 
                             if (grid.GetInventory() == __instance.m_currentContainer.GetInventory()) {
-                                localPlayer.GetInventory().MoveItemToThis(grid.GetInventory(), item);
+                                if (localPlayer.GetInventory().CanAddItem(item)) {
+                                    ZPackage data = new ZPackage();
+                                    data.Write(pos);
+                                    data.Write(Vector2i.zero);
+                                    data.Write(item.m_stack);
+                                    data.Write(false);
+
+                                    Log.LogInfo("RequestItemRemove");
+                                    stopwatch.Reset();
+                                    stopwatch.Start();
+                                    __instance.m_currentContainer.m_nview.InvokeRPC("RequestItemRemove", data);
+                                }
                             } else {
-                                __instance.m_currentContainer.GetInventory().MoveItemToThis(localPlayer.GetInventory(), item);
+                                ZPackage data = new ZPackage();
+                                data.Write(pos);
+                                data.Write(__instance.m_currentContainer.GetInventory().FindEmptySlot(true));
+                                data.Write(item.m_stack);
+                                InventoryHelper.WriteItemToPackage(item, data);
+                                data.Write(false);
+
+                                Log.LogInfo("RequestItemAdd");
+                                stopwatch.Reset();
+                                stopwatch.Start();
+                                __instance.m_currentContainer.m_nview.InvokeRPC("RequestItemAdd", data);
                             }
 
                             __instance.m_moveItemEffects.Create(__instance.transform.position, Quaternion.identity);

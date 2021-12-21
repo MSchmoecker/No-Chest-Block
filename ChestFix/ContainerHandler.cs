@@ -36,6 +36,7 @@ namespace ChestFix {
             Vector2i toContainer = package.ReadVector2i();
             int dragAmount = package.ReadInt();
             ItemDrop.ItemData dragItem = InventoryHelper.LoadItemFromPackage(package, toContainer);
+            bool allowSwitch = package.ReadBool();
 
             bool added = false;
             bool switched = false;
@@ -51,8 +52,13 @@ namespace ChestFix {
                     dontAdd = true;
                     amount = 0;
                 } else {
-                    inventory.RemoveItem(prevItem, prevItem.m_stack);
-                    switched = true;
+                    if (allowSwitch) {
+                        inventory.RemoveItem(prevItem, prevItem.m_stack);
+                        switched = true;
+                    } else {
+                        dontAdd = true;
+                        amount = 0;
+                    }
                 }
             }
 
@@ -60,6 +66,7 @@ namespace ChestFix {
                 added = inventory.AddItem(dragItem, amount, toContainer.x, toContainer.y);
             }
 
+            response.Write(fromInventory);
             response.Write(added);
             response.Write(amount);
             response.Write(switched);
@@ -102,7 +109,7 @@ namespace ChestFix {
                 removed = inventory.RemoveItem(from, removedAmount);
             } else {
                 if (InventoryHelper.IsSameItem(from, dragItem)) {
-                    removedAmount = Mathf.Min( dragItem.m_shared.m_maxStackSize - dragItem.m_stack, dragAmount);
+                    removedAmount = Mathf.Min(dragItem.m_shared.m_maxStackSize - dragItem.m_stack, dragAmount);
                     removed = inventory.RemoveItem(from, removedAmount);
                 } else if (dragAmount == from.m_stack) {
                     removed = inventory.RemoveItem(from, dragAmount);
