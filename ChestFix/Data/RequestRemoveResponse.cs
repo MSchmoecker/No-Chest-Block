@@ -43,5 +43,14 @@ namespace ChestFix {
             responseItem = hasResponseItem ? InventoryHelper.LoadItemFromPackage(package, inventoryPos) : null;
             return this;
         }
+
+        public void PrintDebug() {
+            Log.LogInfo($"RequestRemoveResponse:");
+            Log.LogInfo($"\tsuccess: {success}");
+            Log.LogInfo($"\tamount: {amount}");
+            Log.LogInfo($"\thasSwitched: {hasSwitched}");
+            Log.LogInfo($"\tinventoryPos: {inventoryPos}");
+            Log.LogInfo($"\tresponseItem: {responseItem != null}");
+        }
     }
 }

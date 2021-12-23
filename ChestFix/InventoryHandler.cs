@@ -21,6 +21,7 @@ namespace ChestFix {
             Log.LogInfo($"RPC_RequestItemRemoveResponse: {ContainerPatch.stopwatch.ElapsedMilliseconds}ms");
 
             RequestRemoveResponse response = new RequestRemoveResponse(package);
+            response.PrintDebug();
 
             bool success = response.success;
             int amount = response.amount;
@@ -53,6 +54,7 @@ namespace ChestFix {
             }
 
             RequestAddResponse response = new RequestAddResponse(package);
+            response.PrintDebug();
 
             Vector2i inventoryPos = response.inventoryPos;
             bool success = response.success;

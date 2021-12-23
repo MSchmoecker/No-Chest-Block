@@ -41,5 +41,13 @@ namespace ChestFix {
 
             return this;
         }
+
+        public void PrintDebug() {
+            Log.LogInfo($"RequestAddResponse:");
+            Log.LogInfo($"\tinventoryPos: {inventoryPos}");
+            Log.LogInfo($"\tsuccess: {success}");
+            Log.LogInfo($"\tamount: {amount}");
+            Log.LogInfo($"\tswitchItem: {switchItem != null}");
+        }
     }
 }

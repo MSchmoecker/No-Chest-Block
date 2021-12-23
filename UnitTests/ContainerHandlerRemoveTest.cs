@@ -287,5 +287,47 @@ namespace UnitTests {
             Assert.AreEqual("my item A", returnedItem.m_shared.m_name);
             Assert.AreEqual(5, returnedItem.m_stack);
         }
+
+        [Test]
+        public void RPC_RequestItemRemoveOddSplitEvenContainer() {
+            Inventory inventory = new Inventory("inventory", null, 4, 5);
+            inventory.AddItem(Helper.CreateItem("my item A", 5, 20), 5, 2, 2);
+
+            ZPackage request = new RequestItemRemove(new Vector2i(2, 2), new Vector2i(4, 4), 3, null).WriteToPackage();
+            request.SetPos(0);
+
+            ZPackage responseData = inventory.RequestItemRemove(0L, request);
+            responseData.SetPos(0);
+            RequestRemoveResponse response = new RequestRemoveResponse(responseData);
+
+            Assert.True(response.success);
+            Assert.AreEqual(3, response.amount);
+            Assert.AreEqual(3, response.responseItem.m_stack);
+            Assert.False(response.hasSwitched);
+
+            Assert.AreEqual(1, inventory.m_inventory.Count);
+            Assert.AreEqual(2, inventory.m_inventory[0].m_stack);
+        }
+
+        [Test]
+        public void RPC_RequestItemRemoveOddSplitOddContainer() {
+            Inventory inventory = new Inventory("inventory", null, 4, 5);
+            inventory.AddItem(Helper.CreateItem("my item A", 5, 20), 5, 2, 2);
+
+            ZPackage request = new RequestItemRemove(new Vector2i(2, 2), new Vector2i(4, 4), 2, null).WriteToPackage();
+            request.SetPos(0);
+
+            ZPackage responseData = inventory.RequestItemRemove(0L, request);
+            responseData.SetPos(0);
+            RequestRemoveResponse response = new RequestRemoveResponse(responseData);
+
+            Assert.True(response.success);
+            Assert.AreEqual(2, response.amount);
+            Assert.AreEqual(2, response.responseItem.m_stack);
+            Assert.False(response.hasSwitched);
+
+            Assert.AreEqual(1, inventory.m_inventory.Count);
+            Assert.AreEqual(3, inventory.m_inventory[0].m_stack);
+        }
     }
 }

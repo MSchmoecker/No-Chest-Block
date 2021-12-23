@@ -131,25 +131,27 @@ namespace ChestFix.Patches {
                         stopwatch.Start();
                         __instance.m_currentContainer.m_nview.InvokeRPC("RequestItemMove", request);
                     } else if (grid.m_inventory == __instance.m_currentContainer.GetInventory()) {
-                        ZPackage request = new RequestItemAdd(__instance.m_dragItem.m_gridPos, pos,
-                                                              __instance.m_dragAmount, __instance.m_dragItem, true).WriteToPackage();
+                        RequestItemAdd request = new RequestItemAdd(__instance.m_dragItem.m_gridPos, pos,
+                                                                    __instance.m_dragAmount, __instance.m_dragItem, true);
 
                         Log.LogInfo("RequestItemAdd");
+                        request.PrintDebug();
                         stopwatch.Reset();
                         stopwatch.Start();
-                        __instance.m_currentContainer.m_nview.InvokeRPC("RequestItemAdd", request);
+                        __instance.m_currentContainer.m_nview.InvokeRPC("RequestItemAdd", request.WriteToPackage());
                     } else {
                         ItemDrop.ItemData prevItem = grid.GetInventory().GetItemAt(pos.x, pos.y);
 
-                        ZPackage request = new RequestItemRemove(__instance.m_dragItem.m_gridPos, pos,
-                                                                 __instance.m_dragAmount, prevItem).WriteToPackage();
+                        RequestItemRemove request = new RequestItemRemove(__instance.m_dragItem.m_gridPos, pos,
+                                                                          __instance.m_dragAmount, prevItem);
 
                         InventoryHandler.blockedInventorySlots.AddItem(__instance.m_dragItem.m_gridPos);
 
                         Log.LogInfo("RequestItemRemove");
+                        request.PrintDebug();
                         stopwatch.Reset();
                         stopwatch.Start();
-                        __instance.m_currentContainer.m_nview.InvokeRPC("RequestItemRemove", request);
+                        __instance.m_currentContainer.m_nview.InvokeRPC("RequestItemRemove", request.WriteToPackage());
                     }
 
                     return false;

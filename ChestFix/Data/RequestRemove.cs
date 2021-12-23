@@ -39,5 +39,13 @@ namespace ChestFix {
             switchItem = hasSwitchItem ? InventoryHelper.LoadItemFromPackage(package, fromContainer) : null;
             return this;
         }
+
+        public void PrintDebug() {
+            Log.LogInfo($"RequestItemRemove:");
+            Log.LogInfo($"\tfromContainer: {fromContainer}");
+            Log.LogInfo($"\ttoInventory: {toInventory}");
+            Log.LogInfo($"\tdragAmount: {dragAmount}");
+            Log.LogInfo($"\tswitchItem: {switchItem != null}");
+        }
     }
 }

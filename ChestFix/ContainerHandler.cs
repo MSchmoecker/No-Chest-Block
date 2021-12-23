@@ -40,11 +40,10 @@ namespace ChestFix {
         }
 
         public static ZPackage RequestItemAdd(this Inventory inventory, long sender, ZPackage package) {
-            ZPackage response = new ZPackage();
-
             Log.LogInfo("RPC_RequestItemAdd");
 
             RequestItemAdd request = new RequestItemAdd(package);
+            request.PrintDebug();
 
             Vector2i fromInventory = request.fromInventory;
             Vector2i toContainer = request.toContainer;
@@ -87,6 +86,7 @@ namespace ChestFix {
             Log.LogInfo("RPC_RequestItemRemove");
 
             RequestItemRemove request = new RequestItemRemove(package);
+            request.PrintDebug();
 
             Vector2i fromContainer = request.fromContainer;
             Vector2i toInventory = request.toInventory;
@@ -118,7 +118,9 @@ namespace ChestFix {
                 }
             }
 
-            return new RequestRemoveResponse(removed, removedAmount, switched, toInventory, from).WriteToPackage();
+            ItemDrop.ItemData responseItem = from.Clone();
+            responseItem.m_stack = removedAmount;
+            return new RequestRemoveResponse(removed, removedAmount, switched, toInventory, responseItem).WriteToPackage();
         }
     }
 }

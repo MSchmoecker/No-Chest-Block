@@ -38,5 +38,14 @@ namespace ChestFix {
             allowSwitch = package.ReadBool();
             return this;
         }
+
+        public void PrintDebug() {
+            Log.LogInfo($"RequestItemAdd:");
+            Log.LogInfo($"\tfromInventory: {fromInventory}");
+            Log.LogInfo($"\ttoContainer: {toContainer}");
+            Log.LogInfo($"\tdragAmount: {dragAmount}");
+            Log.LogInfo($"\tdragItem: {dragItem != null}");
+            Log.LogInfo($"\tallowSwitch: {allowSwitch}");
+        }
     }
 }
