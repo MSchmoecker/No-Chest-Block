@@ -124,46 +124,32 @@ namespace ChestFix.Patches {
                     // Logger.LogInfo($"m_dragAmount {__instance.m_dragAmount}");
 
                     if (grid.GetInventory() == __instance.m_dragInventory) {
-                        ZPackage data = new ZPackage();
-                        data.Write(__instance.m_dragItem.m_gridPos);
-                        data.Write(pos);
-                        data.Write(__instance.m_dragAmount);
+                        ZPackage request = new RequestMove(__instance.m_dragItem.m_gridPos, pos, __instance.m_dragAmount).WriteToPackage();
 
                         Log.LogInfo("RequestItemMove");
                         stopwatch.Reset();
                         stopwatch.Start();
-                        __instance.m_currentContainer.m_nview.InvokeRPC("RequestItemMove", data);
+                        __instance.m_currentContainer.m_nview.InvokeRPC("RequestItemMove", request);
                     } else if (grid.m_inventory == __instance.m_currentContainer.GetInventory()) {
-                        ZPackage data = new ZPackage();
-                        data.Write(__instance.m_dragItem.m_gridPos);
-                        data.Write(pos);
-                        data.Write(__instance.m_dragAmount);
-                        InventoryHelper.WriteItemToPackage(__instance.m_dragItem, data);
-                        data.Write(true);
+                        ZPackage request = new RequestItemAdd(__instance.m_dragItem.m_gridPos, pos,
+                                                              __instance.m_dragAmount, __instance.m_dragItem, true).WriteToPackage();
 
                         Log.LogInfo("RequestItemAdd");
                         stopwatch.Reset();
                         stopwatch.Start();
-                        __instance.m_currentContainer.m_nview.InvokeRPC("RequestItemAdd", data);
+                        __instance.m_currentContainer.m_nview.InvokeRPC("RequestItemAdd", request);
                     } else {
                         ItemDrop.ItemData prevItem = grid.GetInventory().GetItemAt(pos.x, pos.y);
 
-                        ZPackage data = new ZPackage();
-                        data.Write(__instance.m_dragItem.m_gridPos);
-                        data.Write(pos);
-                        data.Write(__instance.m_dragAmount);
-                        data.Write(prevItem != null);
-
-                        if (prevItem != null) {
-                            InventoryHelper.WriteItemToPackage(prevItem, data);
-                        }
+                        ZPackage request = new RequestItemRemove(__instance.m_dragItem.m_gridPos, pos,
+                                                                 __instance.m_dragAmount, prevItem).WriteToPackage();
 
                         InventoryHandler.blockedInventorySlots.AddItem(__instance.m_dragItem.m_gridPos);
 
                         Log.LogInfo("RequestItemRemove");
                         stopwatch.Reset();
                         stopwatch.Start();
-                        __instance.m_currentContainer.m_nview.InvokeRPC("RequestItemRemove", data);
+                        __instance.m_currentContainer.m_nview.InvokeRPC("RequestItemRemove", request);
                     }
 
                     return false;

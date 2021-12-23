@@ -20,16 +20,13 @@ namespace ChestFix {
             ContainerPatch.stopwatch.Stop();
             Log.LogInfo($"RPC_RequestItemRemoveResponse: {ContainerPatch.stopwatch.ElapsedMilliseconds}ms");
 
-            bool success = package.ReadBool();
-            int amount = package.ReadInt();
-            bool hasSwitched = package.ReadBool();
-            Vector2i inventoryPos = package.ReadVector2i();
-            bool hasResponseItem = package.ReadBool();
-            ItemDrop.ItemData responseItem = null;
+            RequestRemoveResponse response = new RequestRemoveResponse(package);
 
-            if (hasResponseItem) {
-                responseItem = InventoryHelper.LoadItemFromPackage(package, inventoryPos);
-            }
+            bool success = response.success;
+            int amount = response.amount;
+            bool hasSwitched = response.hasSwitched;
+            Vector2i inventoryPos = response.inventoryPos;
+            ItemDrop.ItemData responseItem = response.responseItem;
 
             Inventory playerInv = Player.m_localPlayer.GetInventory();
 
@@ -55,14 +52,16 @@ namespace ChestFix {
                 Log.LogInfo($"RPC_RequestItemAddResponse: {ContainerPatch.stopwatch.ElapsedMilliseconds}ms");
             }
 
-            Vector2i inventoryPos = package.ReadVector2i();
-            bool success = package.ReadBool();
-            int amount = package.ReadInt();
-            bool hasSwitched = package.ReadBool();
+            RequestAddResponse response = new RequestAddResponse(package);
+
+            Vector2i inventoryPos = response.inventoryPos;
+            bool success = response.success;
+            int amount = response.amount;
+            ItemDrop.ItemData switchItem = response.switchItem;
 
             Log.LogInfo($"success: {success}");
             Log.LogInfo($"amount: {amount}");
-            Log.LogInfo($"hasSwitched: {hasSwitched}");
+            Log.LogInfo($"hasSwitched: {switchItem != null}");
 
             if (success) {
                 ItemDrop.ItemData toRemove = inventory.GetItemAt(inventoryPos.x, inventoryPos.y);
@@ -71,8 +70,8 @@ namespace ChestFix {
                     inventory.RemoveItem(toRemove, amount);
                 }
 
-                if (hasSwitched) {
-                    InventoryHelper.LoadItemIntoInventory(package, inventory, inventoryPos, -1, -1);
+                if (switchItem != null) {
+                    inventory.AddItem(switchItem, switchItem.m_stack, inventoryPos.x, inventoryPos.y);
                 }
             }
 

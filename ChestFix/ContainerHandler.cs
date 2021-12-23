@@ -16,9 +16,11 @@ namespace ChestFix {
         public static void RPC_RequestItemMove(Container container, long sender, ZPackage package) {
             Log.LogInfo("RPC_RequestItemMove");
 
-            Vector2i fromPos = package.ReadVector2i();
-            Vector2i toPos = package.ReadVector2i();
-            int dragAmount = package.ReadInt();
+            RequestMove request = new RequestMove(package);
+
+            Vector2i fromPos = request.fromPos;
+            Vector2i toPos = request.toPos;
+            int dragAmount = request.dragAmount;
 
             ItemDrop.ItemData from = container.GetInventory().GetItemAt(fromPos.x, fromPos.y);
 
@@ -42,11 +44,13 @@ namespace ChestFix {
 
             Log.LogInfo("RPC_RequestItemAdd");
 
-            Vector2i fromInventory = package.ReadVector2i();
-            Vector2i toContainer = package.ReadVector2i();
-            int dragAmount = package.ReadInt();
-            ItemDrop.ItemData dragItem = InventoryHelper.LoadItemFromPackage(package, toContainer);
-            bool allowSwitch = package.ReadBool();
+            RequestItemAdd request = new RequestItemAdd(package);
+
+            Vector2i fromInventory = request.fromInventory;
+            Vector2i toContainer = request.toContainer;
+            int dragAmount = request.dragAmount;
+            ItemDrop.ItemData dragItem = request.dragItem;
+            bool allowSwitch = request.allowSwitch;
 
             bool added = false;
             bool switched = false;
@@ -76,71 +80,45 @@ namespace ChestFix {
                 added = inventory.AddItem(dragItem, amount, toContainer.x, toContainer.y);
             }
 
-            response.Write(fromInventory);
-            response.Write(added);
-            response.Write(amount);
-            response.Write(switched);
-
-            if (switched) {
-                InventoryHelper.WriteItemToPackage(prevItem, response);
-            }
-
-            return response;
+            return new RequestAddResponse(added, fromInventory, amount, switched ? prevItem : null).WriteToPackage();
         }
 
         public static ZPackage RequestItemRemove(this Inventory inventory, long sender, ZPackage package) {
-            ZPackage response = new ZPackage();
-
             Log.LogInfo("RPC_RequestItemRemove");
 
-            // read package data
-            Vector2i fromContainer = package.ReadVector2i();
-            Vector2i toInventory = package.ReadVector2i();
-            int dragAmount = package.ReadInt();
-            bool hasSwitchItem = package.ReadBool();
+            RequestItemRemove request = new RequestItemRemove(package);
 
-            ItemDrop.ItemData dragItem = hasSwitchItem ? InventoryHelper.LoadItemFromPackage(package, fromContainer) : null;
-            ItemDrop.ItemData from = inventory.GetItemAt(fromContainer.x, fromContainer.y);
+            Vector2i fromContainer = request.fromContainer;
+            Vector2i toInventory = request.toInventory;
+            int dragAmount = request.dragAmount;
+            ItemDrop.ItemData switchItem = request.switchItem;
+
+            ItemDrop.ItemData from = inventory.GetItemAt(request.fromContainer.x, request.fromContainer.y);
 
             if (from == null) {
                 Log.LogInfo("from is null");
-                response.Write(false); // not removed
-                response.Write(0);
-                response.Write(false); // not switched
-                response.Write(toInventory);
-                response.Write(false); // no response item
-                return response;
+                return new RequestRemoveResponse(false, 0, false, toInventory, null).WriteToPackage();
             }
 
             int removedAmount = 0;
             bool removed = false;
             bool switched = false;
 
-            if (dragItem == null) {
+            if (switchItem == null) {
                 removedAmount = Mathf.Min(from.m_stack, dragAmount);
                 removed = inventory.RemoveItem(from, removedAmount);
             } else {
-                if (InventoryHelper.IsSameItem(from, dragItem)) {
-                    removedAmount = Mathf.Min(dragItem.m_shared.m_maxStackSize - dragItem.m_stack, dragAmount);
+                if (InventoryHelper.IsSameItem(from, switchItem)) {
+                    removedAmount = Mathf.Min(switchItem.m_shared.m_maxStackSize - switchItem.m_stack, dragAmount);
                     removed = inventory.RemoveItem(from, removedAmount);
                 } else if (dragAmount == from.m_stack) {
                     removed = inventory.RemoveItem(from, dragAmount);
                     removedAmount = Mathf.Min(from.m_stack, dragAmount);
-                    switched = inventory.AddItem(dragItem, dragItem.m_stack, fromContainer.x, fromContainer.y);
+                    switched = inventory.AddItem(switchItem, switchItem.m_stack, fromContainer.x, fromContainer.y);
                 }
             }
 
-            response.Write(removed);
-            response.Write(removedAmount);
-            response.Write(switched);
-            response.Write(toInventory);
-            response.Write(true); // has response item
-
-            // if (removed) {
-            InventoryHelper.WriteItemToPackage(from, response);
-            // }
-
-            return response;
+            return new RequestRemoveResponse(removed, removedAmount, switched, toInventory, from).WriteToPackage();
         }
     }
 }
