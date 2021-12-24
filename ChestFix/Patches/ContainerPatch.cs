@@ -88,6 +88,16 @@ namespace ChestFix.Patches {
             }
         }*/
 
+        private static void AddItemToChest(RequestItemAdd request, Inventory playerInventory, Container container) {
+            playerInventory.RemoveItem(playerInventory.GetItemAt(request.fromInventory.x, request.fromInventory.y), request.dragAmount);
+            InventoryHandler.BlockSlot(request.fromInventory);
+
+            Log.LogInfo("RequestItemAdd");
+            request.PrintDebug();
+            stopwatch.Restart();
+            container.m_nview.InvokeRPC("RequestItemAdd", request.WriteToPackage());
+        }
+
         [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.OnSelectedItem)), HarmonyPrefix]
         public static bool OnSelectedItemPatch(InventoryGui __instance, InventoryGrid grid, ItemDrop.ItemData item, Vector2i pos,
             InventoryGrid.Modifier mod) {
@@ -133,19 +143,14 @@ namespace ChestFix.Patches {
                     } else if (grid.m_inventory == __instance.m_currentContainer.GetInventory()) {
                         RequestItemAdd request = new RequestItemAdd(__instance.m_dragItem.m_gridPos, pos,
                                                                     __instance.m_dragAmount, __instance.m_dragItem, true);
-
-                        Log.LogInfo("RequestItemAdd");
-                        request.PrintDebug();
-                        stopwatch.Reset();
-                        stopwatch.Start();
-                        __instance.m_currentContainer.m_nview.InvokeRPC("RequestItemAdd", request.WriteToPackage());
+                        AddItemToChest(request, localPlayer.GetInventory(), __instance.m_currentContainer);
                     } else {
                         ItemDrop.ItemData prevItem = grid.GetInventory().GetItemAt(pos.x, pos.y);
 
                         RequestItemRemove request = new RequestItemRemove(__instance.m_dragItem.m_gridPos, pos,
                                                                           __instance.m_dragAmount, prevItem);
 
-                        InventoryHandler.blockedInventorySlots.AddItem(__instance.m_dragItem.m_gridPos);
+                        InventoryHandler.BlockSlot(__instance.m_dragItem.m_gridPos);
 
                         Log.LogInfo("RequestItemRemove");
                         request.PrintDebug();
@@ -207,7 +212,7 @@ namespace ChestFix.Patches {
                             if (grid.GetInventory() == __instance.m_currentContainer.GetInventory()) {
                                 if (localPlayer.GetInventory().CanAddItem(item)) {
                                     Vector2i targetSlot =
-                                        InventoryHelper.FindEmptySlot(localPlayer.GetInventory(), InventoryHandler.blockedInventorySlots);
+                                        InventoryHelper.FindEmptySlot(localPlayer.GetInventory(), InventoryHandler.blockedSlots);
 
                                     if (targetSlot.x != -1 && targetSlot.y != -1) {
                                         ZPackage data = new ZPackage();
@@ -216,7 +221,7 @@ namespace ChestFix.Patches {
                                         data.Write(item.m_stack);
                                         data.Write(false); // don't allow switch
 
-                                        InventoryHandler.blockedInventorySlots.AddItem(targetSlot);
+                                        InventoryHandler.BlockSlot(targetSlot);
 
                                         Log.LogInfo("RequestItemRemove");
                                         stopwatch.Reset();
@@ -225,17 +230,10 @@ namespace ChestFix.Patches {
                                     }
                                 }
                             } else {
-                                ZPackage data = new ZPackage();
-                                data.Write(pos);
-                                data.Write(__instance.m_currentContainer.GetInventory().FindEmptySlot(true));
-                                data.Write(item.m_stack);
-                                InventoryHelper.WriteItemToPackage(item, data);
-                                data.Write(false);
+                                Vector2i targetPos = __instance.m_currentContainer.GetInventory().FindEmptySlot(true);
+                                RequestItemAdd request = new RequestItemAdd(pos, targetPos, item.m_stack, item, false);
 
-                                Log.LogInfo("RequestItemAdd");
-                                stopwatch.Reset();
-                                stopwatch.Start();
-                                __instance.m_currentContainer.m_nview.InvokeRPC("RequestItemAdd", data);
+                                AddItemToChest(request, localPlayer.GetInventory(), __instance.m_currentContainer);
                             }
 
                             __instance.m_moveItemEffects.Create(__instance.transform.position, Quaternion.identity);

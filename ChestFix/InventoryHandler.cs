@@ -1,9 +1,11 @@
 using System.Collections.Generic;
+using System.Linq;
 using ChestFix.Patches;
+using HarmonyLib;
 
 namespace ChestFix {
     public class InventoryHandler {
-        public static readonly List<Vector2i> blockedInventorySlots = new List<Vector2i>();
+        public static readonly List<Vector2i> blockedSlots = new List<Vector2i>();
 
         public static void RPC_RequestItemAddResponse(long sender, ZPackage package) {
             RPC_RequestItemAddResponse(Player.m_localPlayer.GetInventory(), sender, package);
@@ -31,9 +33,7 @@ namespace ChestFix {
 
             Inventory playerInv = Player.m_localPlayer.GetInventory();
 
-            if (blockedInventorySlots.Contains(inventoryPos)) {
-                blockedInventorySlots.Remove(inventoryPos);
-            }
+            ReleaseSlot(inventoryPos);
 
             if (success) {
                 if (hasSwitched) {
@@ -65,21 +65,35 @@ namespace ChestFix {
             Log.LogInfo($"amount: {amount}");
             Log.LogInfo($"hasSwitched: {switchItem != null}");
 
-            if (success) {
-                ItemDrop.ItemData toRemove = inventory.GetItemAt(inventoryPos.x, inventoryPos.y);
+            ReleaseSlot(inventoryPos);
+            
+            // if (success) {
+            //     ItemDrop.ItemData toRemove = inventory.GetItemAt(inventoryPos.x, inventoryPos.y);
+            //
+            //     if (toRemove != null) {
+            //         inventory.RemoveItem(toRemove, amount);
+            //     }
+            // } 
 
-                if (toRemove != null) {
-                    inventory.RemoveItem(toRemove, amount);
-                }
-
-                if (switchItem != null) {
-                    inventory.AddItem(switchItem, switchItem.m_stack, inventoryPos.x, inventoryPos.y);
-                }
+            if (switchItem != null) {
+                inventory.AddItem(switchItem, switchItem.m_stack, inventoryPos.x, inventoryPos.y);
             }
 
             if (InventoryGui.instance != null) {
                 InventoryGui.instance.SetupDragItem(null, null, 0);
             }
+        }
+
+        public static void BlockSlot(Vector2i slot) {
+            blockedSlots.RemoveAll(i => i.x == slot.x && i.y == slot.y);
+        }
+
+        public static void ReleaseSlot(Vector2i slot) {
+            blockedSlots.AddItem(slot);
+        }
+
+        public static bool IsSlotBlocked(Vector2i slot) {
+            return blockedSlots.Any(i => i.x == slot.x && i.y == slot.y);
         }
     }
 }
