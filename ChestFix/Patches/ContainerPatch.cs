@@ -88,14 +88,16 @@ namespace ChestFix.Patches {
             }
         }*/
 
-        private static void AddItemToChest(RequestItemAdd request, Inventory playerInventory, Container container) {
+        public static void AddItemToChest(RequestItemAdd request, Inventory playerInventory, Container container) {
             playerInventory.RemoveItem(playerInventory.GetItemAt(request.fromInventory.x, request.fromInventory.y), request.dragAmount);
             InventoryHandler.BlockSlot(request.fromInventory);
 
             Log.LogInfo("RequestItemAdd");
             request.PrintDebug();
             stopwatch.Restart();
-            container.m_nview.InvokeRPC("RequestItemAdd", request.WriteToPackage());
+            if (container.m_nview) {
+                container.m_nview.InvokeRPC("RequestItemAdd", request.WriteToPackage());
+            }
         }
 
         private static void RemoveItemFromChest(RequestItemRemove request, Container container) {
@@ -104,7 +106,9 @@ namespace ChestFix.Patches {
             Log.LogInfo("RequestItemRemove");
             request.PrintDebug();
             stopwatch.Restart();
-            container.m_nview.InvokeRPC("RequestItemRemove", request.WriteToPackage());
+            if (container.m_nview) {
+                container.m_nview.InvokeRPC("RequestItemRemove", request.WriteToPackage());
+            }
         }
 
         [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.OnSelectedItem)), HarmonyPrefix]

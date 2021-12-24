@@ -83,11 +83,11 @@ namespace ChestFix {
         }
 
         public static void BlockSlot(Vector2i slot) {
-            blockedSlots.RemoveAll(i => i.x == slot.x && i.y == slot.y);
+            blockedSlots.Add(slot);
         }
 
         public static void ReleaseSlot(Vector2i slot) {
-            blockedSlots.AddItem(slot);
+            blockedSlots.RemoveAll(i => i.x == slot.x && i.y == slot.y);
         }
 
         public static bool IsSlotBlocked(Vector2i slot) {
