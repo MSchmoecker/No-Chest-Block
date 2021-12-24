@@ -44,7 +44,9 @@ namespace ChestFix {
                 playerInv.AddItem(responseItem, amount, inventoryPos.x, inventoryPos.y);
             }
 
-            InventoryGui.instance.SetupDragItem(null, null, 0);
+            if (InventoryGui.instance != null) {
+                InventoryGui.instance.SetupDragItem(null, null, 0);
+            }
         }
 
         public static void RPC_RequestItemAddResponse(Inventory inventory, long sender, ZPackage package) {
@@ -60,10 +62,6 @@ namespace ChestFix {
             bool success = response.success;
             int amount = response.amount;
             ItemDrop.ItemData switchItem = response.switchItem;
-
-            Log.LogInfo($"success: {success}");
-            Log.LogInfo($"amount: {amount}");
-            Log.LogInfo($"hasSwitched: {switchItem != null}");
 
             ReleaseSlot(inventoryPos);
             

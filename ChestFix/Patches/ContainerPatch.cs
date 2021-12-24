@@ -98,6 +98,15 @@ namespace ChestFix.Patches {
             container.m_nview.InvokeRPC("RequestItemAdd", request.WriteToPackage());
         }
 
+        private static void RemoveItemFromChest(RequestItemRemove request, Container container) {
+            InventoryHandler.BlockSlot(request.toInventory);
+
+            Log.LogInfo("RequestItemRemove");
+            request.PrintDebug();
+            stopwatch.Restart();
+            container.m_nview.InvokeRPC("RequestItemRemove", request.WriteToPackage());
+        }
+
         [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.OnSelectedItem)), HarmonyPrefix]
         public static bool OnSelectedItemPatch(InventoryGui __instance, InventoryGrid grid, ItemDrop.ItemData item, Vector2i pos,
             InventoryGrid.Modifier mod) {
@@ -137,8 +146,7 @@ namespace ChestFix.Patches {
                         ZPackage request = new RequestMove(__instance.m_dragItem.m_gridPos, pos, __instance.m_dragAmount).WriteToPackage();
 
                         Log.LogInfo("RequestItemMove");
-                        stopwatch.Reset();
-                        stopwatch.Start();
+                        stopwatch.Restart();
                         __instance.m_currentContainer.m_nview.InvokeRPC("RequestItemMove", request);
                     } else if (grid.m_inventory == __instance.m_currentContainer.GetInventory()) {
                         RequestItemAdd request = new RequestItemAdd(__instance.m_dragItem.m_gridPos, pos,
@@ -150,13 +158,7 @@ namespace ChestFix.Patches {
                         RequestItemRemove request = new RequestItemRemove(__instance.m_dragItem.m_gridPos, pos,
                                                                           __instance.m_dragAmount, prevItem);
 
-                        InventoryHandler.BlockSlot(__instance.m_dragItem.m_gridPos);
-
-                        Log.LogInfo("RequestItemRemove");
-                        request.PrintDebug();
-                        stopwatch.Reset();
-                        stopwatch.Start();
-                        __instance.m_currentContainer.m_nview.InvokeRPC("RequestItemRemove", request.WriteToPackage());
+                        RemoveItemFromChest(request, __instance.m_currentContainer);
                     }
 
                     return false;
@@ -215,18 +217,10 @@ namespace ChestFix.Patches {
                                         InventoryHelper.FindEmptySlot(localPlayer.GetInventory(), InventoryHandler.blockedSlots);
 
                                     if (targetSlot.x != -1 && targetSlot.y != -1) {
-                                        ZPackage data = new ZPackage();
-                                        data.Write(pos);
-                                        data.Write(targetSlot);
-                                        data.Write(item.m_stack);
-                                        data.Write(false); // don't allow switch
+                                        RequestItemRemove request = new RequestItemRemove(pos, targetSlot, item
+                                            .m_stack, null);
 
-                                        InventoryHandler.BlockSlot(targetSlot);
-
-                                        Log.LogInfo("RequestItemRemove");
-                                        stopwatch.Reset();
-                                        stopwatch.Start();
-                                        __instance.m_currentContainer.m_nview.InvokeRPC("RequestItemRemove", data);
+                                        RemoveItemFromChest(request, __instance.m_currentContainer);
                                     }
                                 }
                             } else {
