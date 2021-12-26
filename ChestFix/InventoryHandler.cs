@@ -91,7 +91,7 @@ namespace ChestFix {
         }
 
         public static bool IsSlotBlocked(Vector2i slot) {
-            return blockedSlots.Any(i => i.x == slot.x && i.y == slot.y);
+            return blockedSlots.Contains(slot);
         }
     }
 }
