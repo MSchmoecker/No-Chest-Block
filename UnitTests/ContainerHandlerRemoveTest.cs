@@ -11,11 +11,11 @@ namespace UnitTests {
             Inventory inventory = new Inventory("inventory", null, 4, 5);
             inventory.AddItem(Helper.CreateItem("my item", 5, 10), 5, 2, 2);
 
-            ZPackage package = new ZPackage();
-            package.Write(new Vector2i(2, 2)); // from container pos
-            package.Write(new Vector2i(4, 4)); // to inventory pos
-            package.Write(5); // drag amount
-            package.Write(false); // no item
+            RequestRemove request = new RequestRemove(new Vector2i(2, 2),
+                                                      new Vector2i(4, 4),
+                                                      5,
+                                                      null);
+            ZPackage package = request.WriteToPackage();
             package.SetPos(0);
 
             ZPackage response = inventory.RequestItemRemove(0L, package);
@@ -37,11 +37,11 @@ namespace UnitTests {
             Inventory inventory = new Inventory("inventory", null, 4, 5);
             inventory.AddItem(Helper.CreateItem("my item", 5, 10), 5, 2, 2);
 
-            ZPackage package = new ZPackage();
-            package.Write(new Vector2i(2, 2)); // from container pos
-            package.Write(new Vector2i(4, 4)); // to inventory pos
-            package.Write(3); // drag amount
-            package.Write(false); // no item
+            RequestRemove request = new RequestRemove(new Vector2i(2, 2),
+                                                      new Vector2i(4, 4),
+                                                      3,
+                                                      null);
+            ZPackage package = request.WriteToPackage();
             package.SetPos(0);
 
             ZPackage response = inventory.RequestItemRemove(0L, package);
@@ -64,11 +64,11 @@ namespace UnitTests {
             Inventory inventory = new Inventory("inventory", null, 4, 5);
             inventory.AddItem(Helper.CreateItem("my item", 5, 10), 5, 2, 2);
 
-            ZPackage package = new ZPackage();
-            package.Write(new Vector2i(2, 2)); // from container pos
-            package.Write(new Vector2i(4, 4)); // to inventory pos
-            package.Write(7); // drag amount
-            package.Write(false); // no item
+            RequestRemove request = new RequestRemove(new Vector2i(2, 2),
+                                                      new Vector2i(4, 4),
+                                                      7,
+                                                      null);
+            ZPackage package = request.WriteToPackage();
             package.SetPos(0);
 
             ZPackage response = inventory.RequestItemRemove(0L, package);
@@ -89,11 +89,11 @@ namespace UnitTests {
         public void RPC_RequestItemRemoveToEmptyInventorySlotItemNotInContainer() {
             Inventory inventory = new Inventory("inventory", null, 4, 5);
 
-            ZPackage package = new ZPackage();
-            package.Write(new Vector2i(2, 2)); // from container pos
-            package.Write(new Vector2i(4, 4)); // to inventory pos
-            package.Write(5); // drag amount
-            package.Write(false); // no item
+            RequestRemove request = new RequestRemove(new Vector2i(2, 2),
+                                                      new Vector2i(4, 4),
+                                                      5,
+                                                      null);
+            ZPackage package = request.WriteToPackage();
             package.SetPos(0);
 
             ZPackage response = inventory.RequestItemRemove(0L, package);
@@ -115,13 +115,11 @@ namespace UnitTests {
             Inventory inventory = new Inventory("inventory", null, 4, 5);
             inventory.AddItem(Helper.CreateItem("my item A", 5, 10), 5, 2, 2);
 
-            ZPackage package = new ZPackage();
-            package.Write(new Vector2i(2, 2)); // from container pos
-            package.Write(new Vector2i(4, 4)); // to inventory pos
-            package.Write(5); // drag amount
-            package.Write(true); // switch with item
-            InventoryHelper.WriteItemToPackage(Helper.CreateItem("my item B", 3, 15), package, true); //item to switch
-
+            RequestRemove request = new RequestRemove(new Vector2i(2, 2),
+                                                      new Vector2i(4, 4),
+                                                      5,
+                                                      Helper.CreateItem("my item B", 3, 15));
+            ZPackage package = request.WriteToPackage();
             package.SetPos(0);
 
             ZPackage response = inventory.RequestItemRemove(0L, package);
@@ -145,13 +143,11 @@ namespace UnitTests {
             Inventory inventory = new Inventory("inventory", null, 4, 5);
             inventory.AddItem(Helper.CreateItem("my item A", 5, 10), 5, 2, 2);
 
-            ZPackage package = new ZPackage();
-            package.Write(new Vector2i(2, 2)); // from container pos
-            package.Write(new Vector2i(4, 4)); // to inventory pos
-            package.Write(3); // drag amount
-            package.Write(true); // switch with item
-            InventoryHelper.WriteItemToPackage(Helper.CreateItem("my item B", 3, 15), package, true); //item to switch
-
+            RequestRemove request = new RequestRemove(new Vector2i(2, 2),
+                                                      new Vector2i(4, 4),
+                                                      3,
+                                                      Helper.CreateItem("my item B", 3, 15));
+            ZPackage package = request.WriteToPackage();
             package.SetPos(0);
 
             ZPackage response = inventory.RequestItemRemove(0L, package);
@@ -175,13 +171,11 @@ namespace UnitTests {
             Inventory inventory = new Inventory("inventory", null, 4, 5);
             inventory.AddItem(Helper.CreateItem("my item A", 5, 20), 5, 2, 2);
 
-            ZPackage package = new ZPackage();
-            package.Write(new Vector2i(2, 2)); // from container pos
-            package.Write(new Vector2i(4, 4)); // to inventory pos
-            package.Write(5); // drag amount
-            package.Write(true); // switch with item
-            InventoryHelper.WriteItemToPackage(Helper.CreateItem("my item A", 5, 20), package, true); //item to stack
-
+            RequestRemove request = new RequestRemove(new Vector2i(2, 2),
+                                                      new Vector2i(4, 4),
+                                                      5,
+                                                      Helper.CreateItem("my item A", 5, 20));
+            ZPackage package = request.WriteToPackage();
             package.SetPos(0);
 
             ZPackage response = inventory.RequestItemRemove(0L, package);
@@ -203,13 +197,11 @@ namespace UnitTests {
             Inventory inventory = new Inventory("inventory", null, 4, 5);
             inventory.AddItem(Helper.CreateItem("my item A", 5, 20), 5, 2, 2);
 
-            ZPackage package = new ZPackage();
-            package.Write(new Vector2i(2, 2)); // from container pos
-            package.Write(new Vector2i(4, 4)); // to inventory pos
-            package.Write(3); // drag amount
-            package.Write(true); // switch with item
-            InventoryHelper.WriteItemToPackage(Helper.CreateItem("my item A", 5, 20), package, true); //item to stack
-
+            RequestRemove request = new RequestRemove(new Vector2i(2, 2),
+                                                      new Vector2i(4, 4),
+                                                      3,
+                                                      Helper.CreateItem("my item A", 5, 20));
+            ZPackage package = request.WriteToPackage();
             package.SetPos(0);
 
             ZPackage response = inventory.RequestItemRemove(0L, package);
@@ -232,13 +224,11 @@ namespace UnitTests {
             Inventory inventory = new Inventory("inventory", null, 4, 5);
             inventory.AddItem(Helper.CreateItem("my item A", 5, 20), 5, 2, 2);
 
-            ZPackage package = new ZPackage();
-            package.Write(new Vector2i(2, 2)); // from container pos
-            package.Write(new Vector2i(4, 4)); // to inventory pos
-            package.Write(5); // drag amount
-            package.Write(true); // switch with item
-            InventoryHelper.WriteItemToPackage(Helper.CreateItem("my item A", 19, 20), package, true); //item to stack
-
+            RequestRemove request = new RequestRemove(new Vector2i(2, 2),
+                                                      new Vector2i(4, 4),
+                                                      5,
+                                                      Helper.CreateItem("my item A", 19, 20));
+            ZPackage package = request.WriteToPackage();
             package.SetPos(0);
 
             ZPackage response = inventory.RequestItemRemove(0L, package);
@@ -261,12 +251,11 @@ namespace UnitTests {
             Inventory inventory = new Inventory("inventory", null, 4, 5);
             inventory.AddItem(Helper.CreateItem("my item A", 5, 20), 5, 2, 2);
 
-            ZPackage package = new ZPackage();
-            package.Write(new Vector2i(2, 2)); // from container pos
-            package.Write(new Vector2i(4, 4)); // to inventory pos
-            package.Write(5); // drag amount
-            package.Write(false); // switch with item
-
+            RequestRemove request = new RequestRemove(new Vector2i(2, 2),
+                                                      new Vector2i(4, 4),
+                                                      5,
+                                                      null);
+            ZPackage package = request.WriteToPackage();
             package.SetPos(0);
 
             ZPackage response = inventory.RequestItemRemove(0L, package);
@@ -293,10 +282,14 @@ namespace UnitTests {
             Inventory inventory = new Inventory("inventory", null, 4, 5);
             inventory.AddItem(Helper.CreateItem("my item A", 5, 20), 5, 2, 2);
 
-            ZPackage request = new RequestRemove(new Vector2i(2, 2), new Vector2i(4, 4), 3, null).WriteToPackage();
-            request.SetPos(0);
+            RequestRemove request = new RequestRemove(new Vector2i(2, 2),
+                                                      new Vector2i(4, 4),
+                                                      3,
+                                                      null);
+            ZPackage package = request.WriteToPackage();
+            package.SetPos(0);
 
-            ZPackage responseData = inventory.RequestItemRemove(0L, request);
+            ZPackage responseData = inventory.RequestItemRemove(0L, package);
             responseData.SetPos(0);
             RequestRemoveResponse response = new RequestRemoveResponse(responseData);
 
@@ -314,10 +307,14 @@ namespace UnitTests {
             Inventory inventory = new Inventory("inventory", null, 4, 5);
             inventory.AddItem(Helper.CreateItem("my item A", 5, 20), 5, 2, 2);
 
-            ZPackage request = new RequestRemove(new Vector2i(2, 2), new Vector2i(4, 4), 2, null).WriteToPackage();
-            request.SetPos(0);
+            RequestRemove request = new RequestRemove(new Vector2i(2, 2),
+                                                      new Vector2i(4, 4),
+                                                      2,
+                                                      null);
+            ZPackage package = request.WriteToPackage();
+            package.SetPos(0);
 
-            ZPackage responseData = inventory.RequestItemRemove(0L, request);
+            ZPackage responseData = inventory.RequestItemRemove(0L, package);
             responseData.SetPos(0);
             RequestRemoveResponse response = new RequestRemoveResponse(responseData);
 
