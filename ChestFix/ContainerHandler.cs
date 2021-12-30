@@ -13,6 +13,11 @@ namespace ChestFix {
             container.m_nview.InvokeRPC(l, "RequestItemRemoveResponse", response);
         }
 
+        public static void RPC_RequestItemConsume(Container container, long l, ZPackage package) {
+            ZPackage response = container.GetInventory().RequestItemConsume(l, package);
+            container.m_nview.InvokeRPC(l, "RequestItemConsumeResponse", response);
+        }
+
         public static void RPC_RequestItemMove(Container container, long sender, ZPackage package) {
             Log.LogInfo("RPC_RequestItemMove");
 
@@ -121,6 +126,19 @@ namespace ChestFix {
             ItemDrop.ItemData responseItem = from.Clone();
             responseItem.m_stack = removedAmount;
             return new RequestRemoveResponse(removed, removedAmount, switched, toInventory, responseItem).WriteToPackage();
+        }
+
+        private static ZPackage RequestItemConsume(this Inventory inventory, long sender, ZPackage package) {
+            RequestConsume request = new RequestConsume(package);
+
+            ItemDrop.ItemData toConsume = inventory.GetItemAt(request.itemPosX, request.itemPosY);
+
+            if (toConsume == null || toConsume.m_stack <= 0) {
+                return new RequestConsumeResponse(item: null).WriteToPackage();
+            }
+
+            inventory.RemoveOneItem(toConsume);
+            return new RequestConsumeResponse(toConsume).WriteToPackage();;
         }
     }
 }

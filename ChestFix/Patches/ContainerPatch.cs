@@ -22,10 +22,12 @@ namespace ChestFix.Patches {
             nview.Register<ZPackage>("RequestItemMove", (l, package) => ContainerHandler.RPC_RequestItemMove(__instance, l, package));
             nview.Register<ZPackage>("RequestItemAdd", (l, package) => ContainerHandler.RPC_RequestItemAdd(__instance, l, package));
             nview.Register<ZPackage>("RequestItemRemove", (l, package) => ContainerHandler.RPC_RequestItemRemove(__instance, l, package));
+            nview.Register<ZPackage>("RequestItemConsume", (l, package) => ContainerHandler.RPC_RequestItemConsume(__instance, l, package));
 
             nview.Register<bool>("RequestItemMoveResponse", InventoryHandler.RPC_RequestItemMoveResponse);
             nview.Register<ZPackage>("RequestItemAddResponse", InventoryHandler.RPC_RequestItemAddResponse);
             nview.Register<ZPackage>("RequestItemRemoveResponse", InventoryHandler.RPC_RequestItemRemoveResponse);
+            nview.Register<ZPackage>("RequestItemConsumeResponse", InventoryHandler.RPC_RequestItemConsumeResponse);
         }
 
         [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.Update)), HarmonyPrefix]
@@ -33,6 +35,33 @@ namespace ChestFix.Patches {
             if (__instance.m_currentContainer) {
                 __instance.m_currentContainer.CheckForChanges();
             }
+        }
+
+        [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.OnRightClickItem)), HarmonyPrefix]
+        public static bool InventoryGuiOnRightClickItemPatch(InventoryGui __instance, InventoryGrid grid, ItemDrop.ItemData item) {
+            if (item == null || !Player.m_localPlayer) {
+                return true;
+            }
+
+            if (grid.GetInventory() == Player.m_localPlayer.GetInventory()) {
+                return true;
+            }
+
+            if (!__instance.m_currentContainer || __instance.m_currentContainer.IsOwner()) {
+                return true;
+            }
+
+            if (InventoryHandler.blockConsume) {
+                return false;
+            }
+
+            if (Player.m_localPlayer.CanConsumeItem(item)) {
+                InventoryHandler.blockConsume = true;
+                RequestConsume request = new RequestConsume(item);
+                __instance.m_currentContainer.m_nview.InvokeRPC("RequestItemConsume", request.WriteToPackage());
+            }
+
+            return false;
         }
 
         [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.UpdateContainer)), HarmonyPrefix]
@@ -65,28 +94,6 @@ namespace ChestFix.Patches {
 
             return false;
         }
-
-        /*[HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.OnSelectedItem)), HarmonyPrefix]
-        public static void OnSelectedItemPatch(InventoryGui __instance) {
-            if (!__instance.m_currentContainer.IsOwner()) {
-                Logger.LogInfo("Claimed ownership for inventory!");
-                long owner = __instance.m_currentContainer.m_nview.GetZDO().m_owner;
-                __instance.m_currentContainer.m_nview.ClaimOwnership();
-                ZDOMan.instance.ForceSendZDO(owner, __instance.m_currentContainer.m_nview.GetZDO().m_uid);
-
-            }
-        }*/
-
-        /*[HarmonyPatch(typeof(InventoryGrid), nameof(InventoryGrid.DropItem)), HarmonyPrefix]
-        public static void OnSelectedItemPatch(InventoryGrid __instance) {
-            if (!__instance.m_inventory.IsOwner()) {
-                __instance.dr
-                Logger.LogInfo("Claimed ownership for inventory!");
-                long owner = __instance.m_currentContainer.m_nview.GetZDO().m_owner;
-                __instance.m_currentContainer.m_nview.ClaimOwnership();
-                ZDOMan.instance.ForceSendZDO(owner, __instance.m_currentContainer.m_nview.GetZDO().m_uid);
-            }
-        }*/
 
         public static void AddItemToChest(RequestItemAdd request, Inventory playerInventory, Container container) {
             playerInventory.RemoveItem(playerInventory.GetItemAt(request.fromInventory.x, request.fromInventory.y), request.dragAmount);

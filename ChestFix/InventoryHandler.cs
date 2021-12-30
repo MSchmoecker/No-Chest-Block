@@ -6,6 +6,7 @@ using HarmonyLib;
 namespace ChestFix {
     public class InventoryHandler {
         public static readonly List<Vector2i> blockedSlots = new List<Vector2i>();
+        public static bool blockConsume;
 
         public static void RPC_RequestItemAddResponse(long sender, ZPackage package) {
             RPC_RequestItemAddResponse(Player.m_localPlayer.GetInventory(), sender, package);
@@ -64,7 +65,7 @@ namespace ChestFix {
             ItemDrop.ItemData switchItem = response.switchItem;
 
             ReleaseSlot(inventoryPos);
-            
+
             // if (success) {
             //     ItemDrop.ItemData toRemove = inventory.GetItemAt(inventoryPos.x, inventoryPos.y);
             //
@@ -79,6 +80,28 @@ namespace ChestFix {
 
             if (InventoryGui.instance != null) {
                 InventoryGui.instance.SetupDragItem(null, null, 0);
+            }
+        }
+
+        public static void RPC_RequestItemConsumeResponse(long sender, ZPackage package) {
+            RequestConsumeResponse response = new RequestConsumeResponse(package);
+            Player player = Player.m_localPlayer;
+            blockConsume = false;
+
+            if (response.item == null) {
+                return;
+            }
+
+            if (!player.CanConsumeItem(response.item)) {
+                return;
+            }
+
+            if (response.item.m_shared.m_consumeStatusEffect) {
+                player.m_seman.AddStatusEffect(response.item.m_shared.m_consumeStatusEffect, true);
+            }
+
+            if (response.item.m_shared.m_food > 0.0) {
+                player.EatFood(response.item);
             }
         }
 
