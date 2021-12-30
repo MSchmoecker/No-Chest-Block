@@ -4,49 +4,58 @@ using UnityEngine;
 namespace ChestFix {
     public static class ContainerHandler {
         public static void RPC_RequestItemAdd(Container container, long l, ZPackage package) {
-            ZPackage response = container.GetInventory().RequestItemAdd(l, package);
+            Log.LogInfo("RPC_RequestItemAdd");
+            ZPackage response;
+
+            if (container.IsOwner()) {
+                response = container.GetInventory().RequestItemAdd(l, package);
+            } else {
+                response = new RequestAddResponse(false, Vector2i.zero, 0, null).WriteToPackage();
+            }
+
             container.m_nview.InvokeRPC(l, "RequestItemAddResponse", response);
         }
 
         public static void RPC_RequestItemRemove(Container container, long l, ZPackage package) {
-            ZPackage response = container.GetInventory().RequestItemRemove(l, package);
+            Log.LogInfo("RPC_RequestItemRemove");
+            ZPackage response;
+
+            if (container.IsOwner()) {
+                response = container.GetInventory().RequestItemRemove(l, package);
+            } else {
+                response = new RequestRemoveResponse(false, 0, false, Vector2i.zero, null).WriteToPackage();
+            }
+
             container.m_nview.InvokeRPC(l, "RequestItemRemoveResponse", response);
         }
 
         public static void RPC_RequestItemConsume(Container container, long l, ZPackage package) {
-            ZPackage response = container.GetInventory().RequestItemConsume(l, package);
+            Log.LogInfo("RPC_RequestItemConsume");
+            ZPackage response;
+
+            if (container.IsOwner()) {
+                response = container.GetInventory().RequestItemConsume(l, package);
+            } else {
+                response = new RequestConsumeResponse(item: null).WriteToPackage();
+            }
+
             container.m_nview.InvokeRPC(l, "RequestItemConsumeResponse", response);
         }
 
         public static void RPC_RequestItemMove(Container container, long sender, ZPackage package) {
             Log.LogInfo("RPC_RequestItemMove");
+            bool success;
 
-            RequestMove request = new RequestMove(package);
-
-            Vector2i fromPos = request.fromPos;
-            Vector2i toPos = request.toPos;
-            int dragAmount = request.dragAmount;
-
-            ItemDrop.ItemData from = container.GetInventory().GetItemAt(fromPos.x, fromPos.y);
-
-            if (from == null) {
-                Log.LogInfo("from == null: true");
-                container.m_nview.InvokeRPC(sender, "RequestItemMoveResponse", false);
-                return;
+            if (container.IsOwner()) {
+                success = container.GetInventory().RequestItemMove(sender, package);
+            } else {
+                success = false;
             }
 
-            if (InventoryHelper.MoveItem(container.GetInventory(), from, dragAmount, toPos)) {
-                ZDOMan.instance.ForceSendZDO(container.m_nview.GetZDO().m_uid);
-                container.m_nview.InvokeRPC(sender, "RequestItemMoveResponse", true);
-                return;
-            }
-
-            container.m_nview.InvokeRPC(sender, "RequestItemMoveResponse", false);
+            container.m_nview.InvokeRPC(sender, "RequestItemMoveResponse", success);
         }
 
         public static ZPackage RequestItemAdd(this Inventory inventory, long sender, ZPackage package) {
-            Log.LogInfo("RPC_RequestItemAdd");
-
             RequestAdd request = new RequestAdd(package);
             request.PrintDebug();
 
@@ -88,8 +97,6 @@ namespace ChestFix {
         }
 
         public static ZPackage RequestItemRemove(this Inventory inventory, long sender, ZPackage package) {
-            Log.LogInfo("RPC_RequestItemRemove");
-
             RequestRemove request = new RequestRemove(package);
             request.PrintDebug();
 
@@ -138,7 +145,24 @@ namespace ChestFix {
             }
 
             inventory.RemoveOneItem(toConsume);
-            return new RequestConsumeResponse(toConsume).WriteToPackage();;
+            return new RequestConsumeResponse(toConsume).WriteToPackage();
+            ;
+        }
+
+        private static bool RequestItemMove(this Inventory inventory, long sender, ZPackage package) {
+            RequestMove request = new RequestMove(package);
+
+            Vector2i fromPos = request.fromPos;
+            Vector2i toPos = request.toPos;
+            int dragAmount = request.dragAmount;
+
+            ItemDrop.ItemData from = inventory.GetItemAt(fromPos.x, fromPos.y);
+
+            if (from == null) {
+                return false;
+            }
+
+            return InventoryHelper.MoveItem(inventory, from, dragAmount, toPos);
         }
     }
 }
