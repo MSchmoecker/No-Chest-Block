@@ -1,12 +1,12 @@
 namespace ChestFix {
-    public class RequestItemAdd : IPackage<RequestItemAdd> {
+    public class RequestAdd : IPackage<RequestAdd> {
         public Vector2i fromInventory;
         public Vector2i toContainer;
         public int dragAmount;
         public ItemDrop.ItemData dragItem;
         public bool allowSwitch;
 
-        public RequestItemAdd(Vector2i fromInventory, Vector2i toContainer, int dragAmount, ItemDrop.ItemData dragItem, bool allowSwitch) {
+        public RequestAdd(Vector2i fromInventory, Vector2i toContainer, int dragAmount, ItemDrop.ItemData dragItem, bool allowSwitch) {
             this.fromInventory = fromInventory;
             this.toContainer = toContainer;
             this.dragAmount = dragAmount;
@@ -14,7 +14,7 @@ namespace ChestFix {
             this.allowSwitch = allowSwitch;
         }
 
-        public RequestItemAdd(ZPackage package) {
+        public RequestAdd(ZPackage package) {
             ReadFromPackage(package);
         }
 
@@ -30,7 +30,7 @@ namespace ChestFix {
             return package;
         }
 
-        public RequestItemAdd ReadFromPackage(ZPackage package) {
+        public RequestAdd ReadFromPackage(ZPackage package) {
             fromInventory = package.ReadVector2i();
             toContainer = package.ReadVector2i();
             dragAmount = package.ReadInt();

@@ -95,7 +95,7 @@ namespace ChestFix.Patches {
             return false;
         }
 
-        public static void AddItemToChest(RequestItemAdd request, Inventory playerInventory, Container container) {
+        public static void AddItemToChest(RequestAdd request, Inventory playerInventory, Container container) {
             playerInventory.RemoveItem(playerInventory.GetItemAt(request.fromInventory.x, request.fromInventory.y), request.dragAmount);
             InventoryHandler.BlockSlot(request.fromInventory);
 
@@ -107,7 +107,7 @@ namespace ChestFix.Patches {
             }
         }
 
-        private static void RemoveItemFromChest(RequestItemRemove request, Container container) {
+        private static void RemoveItemFromChest(RequestRemove request, Container container) {
             InventoryHandler.BlockSlot(request.toInventory);
 
             Log.LogInfo("RequestItemRemove");
@@ -160,13 +160,13 @@ namespace ChestFix.Patches {
                         stopwatch.Restart();
                         __instance.m_currentContainer.m_nview.InvokeRPC("RequestItemMove", request);
                     } else if (grid.m_inventory == __instance.m_currentContainer.GetInventory()) {
-                        RequestItemAdd request = new RequestItemAdd(__instance.m_dragItem.m_gridPos, pos,
+                        RequestAdd request = new RequestAdd(__instance.m_dragItem.m_gridPos, pos,
                                                                     __instance.m_dragAmount, __instance.m_dragItem, true);
                         AddItemToChest(request, localPlayer.GetInventory(), __instance.m_currentContainer);
                     } else {
                         ItemDrop.ItemData prevItem = grid.GetInventory().GetItemAt(pos.x, pos.y);
 
-                        RequestItemRemove request = new RequestItemRemove(__instance.m_dragItem.m_gridPos, pos,
+                        RequestRemove request = new RequestRemove(__instance.m_dragItem.m_gridPos, pos,
                                                                           __instance.m_dragAmount, prevItem);
 
                         RemoveItemFromChest(request, __instance.m_currentContainer);
@@ -228,7 +228,7 @@ namespace ChestFix.Patches {
                                         InventoryHelper.FindEmptySlot(localPlayer.GetInventory(), InventoryHandler.blockedSlots);
 
                                     if (targetSlot.x != -1 && targetSlot.y != -1) {
-                                        RequestItemRemove request = new RequestItemRemove(pos, targetSlot, item
+                                        RequestRemove request = new RequestRemove(pos, targetSlot, item
                                             .m_stack, null);
 
                                         RemoveItemFromChest(request, __instance.m_currentContainer);
@@ -236,7 +236,7 @@ namespace ChestFix.Patches {
                                 }
                             } else {
                                 Vector2i targetPos = __instance.m_currentContainer.GetInventory().FindEmptySlot(true);
-                                RequestItemAdd request = new RequestItemAdd(pos, targetPos, item.m_stack, item, false);
+                                RequestAdd request = new RequestAdd(pos, targetPos, item.m_stack, item, false);
 
                                 AddItemToChest(request, localPlayer.GetInventory(), __instance.m_currentContainer);
                             }

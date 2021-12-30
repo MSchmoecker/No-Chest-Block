@@ -293,7 +293,7 @@ namespace UnitTests {
             Inventory inventory = new Inventory("inventory", null, 4, 5);
             inventory.AddItem(Helper.CreateItem("my item A", 5, 20), 5, 2, 2);
 
-            ZPackage request = new RequestItemRemove(new Vector2i(2, 2), new Vector2i(4, 4), 3, null).WriteToPackage();
+            ZPackage request = new RequestRemove(new Vector2i(2, 2), new Vector2i(4, 4), 3, null).WriteToPackage();
             request.SetPos(0);
 
             ZPackage responseData = inventory.RequestItemRemove(0L, request);
@@ -314,7 +314,7 @@ namespace UnitTests {
             Inventory inventory = new Inventory("inventory", null, 4, 5);
             inventory.AddItem(Helper.CreateItem("my item A", 5, 20), 5, 2, 2);
 
-            ZPackage request = new RequestItemRemove(new Vector2i(2, 2), new Vector2i(4, 4), 2, null).WriteToPackage();
+            ZPackage request = new RequestRemove(new Vector2i(2, 2), new Vector2i(4, 4), 2, null).WriteToPackage();
             request.SetPos(0);
 
             ZPackage responseData = inventory.RequestItemRemove(0L, request);
