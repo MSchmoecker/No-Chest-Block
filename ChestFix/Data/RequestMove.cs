@@ -1,5 +1,5 @@
 namespace ChestFix {
-    public class RequestMove : IPackage<RequestMove> {
+    public class RequestMove : IPackage {
         public Vector2i fromPos;
         public Vector2i toPos;
         public int dragAmount;
@@ -23,11 +23,17 @@ namespace ChestFix {
             return package;
         }
 
-        public RequestMove ReadFromPackage(ZPackage package) {
+        public void ReadFromPackage(ZPackage package) {
             fromPos = package.ReadVector2i();
             toPos = package.ReadVector2i();
             dragAmount = package.ReadInt();
-            return this;
+        }
+
+        public void PrintDebug() {
+            Log.LogInfo($"RequestMove:");
+            Log.LogInfo($"  fromPos: {fromPos}");
+            Log.LogInfo($"  toPos: {toPos}");
+            Log.LogInfo($"  dragAmount: {dragAmount}");
         }
     }
 }

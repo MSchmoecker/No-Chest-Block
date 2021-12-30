@@ -1,5 +1,5 @@
 namespace ChestFix {
-    public class RequestAdd : IPackage<RequestAdd> {
+    public class RequestAdd : IPackage {
         public Vector2i fromInventory;
         public Vector2i toContainer;
         public int dragAmount;
@@ -30,22 +30,21 @@ namespace ChestFix {
             return package;
         }
 
-        public RequestAdd ReadFromPackage(ZPackage package) {
+        public void ReadFromPackage(ZPackage package) {
             fromInventory = package.ReadVector2i();
             toContainer = package.ReadVector2i();
             dragAmount = package.ReadInt();
             dragItem = InventoryHelper.LoadItemFromPackage(package, toContainer);
             allowSwitch = package.ReadBool();
-            return this;
         }
 
         public void PrintDebug() {
             Log.LogInfo($"RequestItemAdd:");
-            Log.LogInfo($"\tfromInventory: {fromInventory}");
-            Log.LogInfo($"\ttoContainer: {toContainer}");
-            Log.LogInfo($"\tdragAmount: {dragAmount}");
-            Log.LogInfo($"\tdragItem: {dragItem != null}");
-            Log.LogInfo($"\tallowSwitch: {allowSwitch}");
+            Log.LogInfo($"  fromInventory: {fromInventory}");
+            Log.LogInfo($"  toContainer: {toContainer}");
+            Log.LogInfo($"  dragAmount: {dragAmount}");
+            Log.LogInfo($"  dragItem: {dragItem != null}");
+            Log.LogInfo($"  allowSwitch: {allowSwitch}");
         }
     }
 }

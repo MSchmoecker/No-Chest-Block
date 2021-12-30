@@ -1,5 +1,5 @@
 ﻿namespace ChestFix {
-    public class RequestConsumeResponse : IPackage<RequestConsumeResponse> {
+    public class RequestConsumeResponse : IPackage {
         public ItemDrop.ItemData item;
 
         public RequestConsumeResponse(ZPackage package) {
@@ -20,10 +20,14 @@
             return package;
         }
 
-        public RequestConsumeResponse ReadFromPackage(ZPackage package) {
+        public void ReadFromPackage(ZPackage package) {
             bool hasItem = package.ReadBool();
             item = hasItem ? InventoryHelper.LoadItemFromPackage(package, new Vector2i(0, 0)) : null;
-            return this;
+        }
+
+        public void PrintDebug() {
+            Log.LogInfo($"RequestConsumeResponse:");
+            Log.LogInfo($"  item: {item != null}");
         }
     }
 }

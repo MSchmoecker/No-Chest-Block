@@ -1,6 +1,7 @@
 namespace ChestFix {
-    public interface IPackage<T> {
+    public interface IPackage {
         ZPackage WriteToPackage();
-        T ReadFromPackage(ZPackage package);
+        void ReadFromPackage(ZPackage package);
+        void PrintDebug();
     }
 }

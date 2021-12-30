@@ -9,19 +9,19 @@ namespace ChestFix {
         public static bool blockConsume;
 
         public static void RPC_RequestItemAddResponse(long sender, ZPackage package) {
+            ContainerPatch.StopTimer("RPC_RequestItemAddResponse");
             RPC_RequestItemAddResponse(Player.m_localPlayer.GetInventory(), sender, package);
         }
 
         public static void RPC_RequestItemMoveResponse(long sender, bool success) {
-            ContainerPatch.stopwatch.Stop();
-            Log.LogInfo($"RPC_RequestItemMoveResponse: {ContainerPatch.stopwatch.ElapsedMilliseconds}ms, success: {success}");
-
+            ContainerPatch.StopTimer("RPC_RequestItemMoveResponse");
             InventoryGui.instance.SetupDragItem(null, null, 0);
+            Log.LogInfo($"RequestItemMoveResponse:");
+            Log.LogInfo($"\tsuccess: {success}");
         }
 
         public static void RPC_RequestItemRemoveResponse(long sender, ZPackage package) {
-            ContainerPatch.stopwatch.Stop();
-            Log.LogInfo($"RPC_RequestItemRemoveResponse: {ContainerPatch.stopwatch.ElapsedMilliseconds}ms");
+            ContainerPatch.StopTimer("RPC_RequestItemRemoveResponse");
 
             RequestRemoveResponse response = new RequestRemoveResponse(package);
             response.PrintDebug();
@@ -51,11 +51,6 @@ namespace ChestFix {
         }
 
         public static void RPC_RequestItemAddResponse(Inventory inventory, long sender, ZPackage package) {
-            if (ContainerPatch.stopwatch != null) {
-                ContainerPatch.stopwatch.Stop();
-                Log.LogInfo($"RPC_RequestItemAddResponse: {ContainerPatch.stopwatch.ElapsedMilliseconds}ms");
-            }
-
             RequestAddResponse response = new RequestAddResponse(package);
             response.PrintDebug();
 
@@ -84,7 +79,11 @@ namespace ChestFix {
         }
 
         public static void RPC_RequestItemConsumeResponse(long sender, ZPackage package) {
+            ContainerPatch.StopTimer("RPC_RequestItemConsumeResponse");
+
             RequestConsumeResponse response = new RequestConsumeResponse(package);
+            response.PrintDebug();
+
             Player player = Player.m_localPlayer;
             blockConsume = false;
 

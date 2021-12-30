@@ -1,5 +1,5 @@
 namespace ChestFix {
-    public class RequestRemoveResponse : IPackage<RequestRemoveResponse> {
+    public class RequestRemoveResponse : IPackage {
         public bool success;
         public int amount;
         public bool hasSwitched;
@@ -34,23 +34,22 @@ namespace ChestFix {
             return package;
         }
 
-        public RequestRemoveResponse ReadFromPackage(ZPackage package) {
+        public void ReadFromPackage(ZPackage package) {
             success = package.ReadBool();
             amount = package.ReadInt();
             hasSwitched = package.ReadBool();
             inventoryPos = package.ReadVector2i();
             bool hasResponseItem = package.ReadBool();
             responseItem = hasResponseItem ? InventoryHelper.LoadItemFromPackage(package, inventoryPos) : null;
-            return this;
         }
 
         public void PrintDebug() {
             Log.LogInfo($"RequestRemoveResponse:");
-            Log.LogInfo($"\tsuccess: {success}");
-            Log.LogInfo($"\tamount: {amount}");
-            Log.LogInfo($"\thasSwitched: {hasSwitched}");
-            Log.LogInfo($"\tinventoryPos: {inventoryPos}");
-            Log.LogInfo($"\tresponseItem: {responseItem != null}");
+            Log.LogInfo($"  success: {success}");
+            Log.LogInfo($"  amount: {amount}");
+            Log.LogInfo($"  hasSwitched: {hasSwitched}");
+            Log.LogInfo($"  inventoryPos: {inventoryPos}");
+            Log.LogInfo($"  responseItem: {responseItem != null}");
         }
     }
 }

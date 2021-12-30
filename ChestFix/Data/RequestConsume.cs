@@ -1,5 +1,5 @@
 ﻿namespace ChestFix {
-    public class RequestConsume : IPackage<RequestConsume> {
+    public class RequestConsume : IPackage {
         public int itemPosX;
         public int itemPosY;
 
@@ -19,10 +19,15 @@
             return package;
         }
 
-        public RequestConsume ReadFromPackage(ZPackage package) {
+        public void ReadFromPackage(ZPackage package) {
             itemPosX = package.ReadInt();
             itemPosY = package.ReadInt();
-            return this;
+        }
+
+        public void PrintDebug() {
+            Log.LogInfo($"RequestConsume:");
+            Log.LogInfo($"  itemPosX: {itemPosX}");
+            Log.LogInfo($"  itemPosY: {itemPosY}");
         }
     }
 }

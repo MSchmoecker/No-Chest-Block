@@ -1,5 +1,5 @@
 namespace ChestFix {
-    public class RequestAddResponse : IPackage<RequestAddResponse> {
+    public class RequestAddResponse : IPackage {
         public bool success;
         public Vector2i inventoryPos;
         public int amount;
@@ -30,7 +30,7 @@ namespace ChestFix {
             return package;
         }
 
-        public RequestAddResponse ReadFromPackage(ZPackage package) {
+        public void ReadFromPackage(ZPackage package) {
             inventoryPos = package.ReadVector2i();
             success = package.ReadBool();
             amount = package.ReadInt();
@@ -38,16 +38,14 @@ namespace ChestFix {
             if (hasSwitchItem) {
                 switchItem = InventoryHelper.LoadItemFromPackage(package, inventoryPos);
             }
-
-            return this;
         }
 
         public void PrintDebug() {
             Log.LogInfo($"RequestAddResponse:");
-            Log.LogInfo($"\tinventoryPos: {inventoryPos}");
-            Log.LogInfo($"\tsuccess: {success}");
-            Log.LogInfo($"\tamount: {amount}");
-            Log.LogInfo($"\tswitchItem: {switchItem != null}");
+            Log.LogInfo($"  inventoryPos: {inventoryPos}");
+            Log.LogInfo($"  success: {success}");
+            Log.LogInfo($"  amount: {amount}");
+            Log.LogInfo($"  switchItem: {switchItem != null}");
         }
     }
 }
