@@ -22,7 +22,6 @@ namespace ChestFix.Patches {
         [HarmonyPatch(typeof(Container), nameof(Container.IsInUse)), HarmonyPostfix]
         public static void IsInUsePatch(ref bool __result, ref bool ___m_inUse) {
             __result = false;
-            ___m_inUse = false;
         }
 
         [HarmonyPatch(typeof(Container), nameof(Container.Awake)), HarmonyPostfix]
@@ -38,6 +37,32 @@ namespace ChestFix.Patches {
             nview.Register<ZPackage>("RequestItemAddResponse", InventoryHandler.RPC_RequestItemAddResponse);
             nview.Register<ZPackage>("RequestItemRemoveResponse", InventoryHandler.RPC_RequestItemRemoveResponse);
             nview.Register<ZPackage>("RequestItemConsumeResponse", InventoryHandler.RPC_RequestItemConsumeResponse);
+        }
+
+        [HarmonyPatch(typeof(Container), nameof(Container.RPC_RequestOpen)), HarmonyPrefix]
+        public static bool ContainerRPC_RequestOpenPatch(Container __instance, long uid, long playerID) {
+            if (!__instance.m_nview.IsOwner()) {
+                return false;
+            }
+
+            if (!__instance.CheckAccess(playerID)) {
+                ZLog.Log("  not yours");
+                __instance.m_nview.InvokeRPC(uid, "OpenRespons", false);
+            }
+
+            bool containerUse = __instance.m_inUse;
+            bool wagonUse = __instance.m_wagon && __instance.m_wagon.m_container && __instance.m_wagon.m_container.m_inUse;
+
+            if ((containerUse || wagonUse) && uid != ZNet.instance.GetUID()) {
+                __instance.m_nview.InvokeRPC(uid, "OpenRespons", true);
+                return false;
+            }
+
+            ZDOMan.instance.ForceSendZDO(uid, __instance.m_nview.GetZDO().m_uid);
+            __instance.m_nview.GetZDO().SetOwner(uid);
+            __instance.m_nview.InvokeRPC(uid, "OpenRespons", true);
+
+            return false;
         }
 
         [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.Update)), HarmonyPrefix]
