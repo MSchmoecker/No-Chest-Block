@@ -68,12 +68,29 @@ namespace UnitTests {
             inventory.AddItem(Helper.CreateItem("my item 2", 10, 15), 10, 3, 3);
 
             ItemDrop.ItemData item = inventory.GetItemAt(3, 3);
-            
+
             bool success = InventoryHelper.MoveItem(inventory, item, item.m_stack, new Vector2i(2, 2));
             Assert.True(success);
-            
+
             Assert.AreEqual("my item 2", inventory.GetItemAt(2, 2).m_shared.m_name);
             Assert.AreEqual("my item 1", inventory.GetItemAt(3, 3).m_shared.m_name);
+        }
+
+        [Test]
+        public void MoveItemSplitCannotSwitch() {
+            Inventory inventory = new Inventory("inventory", null, 4, 5);
+            inventory.AddItem(Helper.CreateItem("my item 1", 10, 15), 10, 2, 2);
+            inventory.AddItem(Helper.CreateItem("my item 2", 10, 15), 10, 3, 3);
+
+            ItemDrop.ItemData item = inventory.GetItemAt(3, 3);
+
+            bool success = InventoryHelper.MoveItem(inventory, item, 5, new Vector2i(2, 2));
+            Assert.False(success);
+
+            Assert.AreEqual("my item 1", inventory.GetItemAt(2, 2).m_shared.m_name);
+            Assert.AreEqual(10, inventory.GetItemAt(2, 2).m_stack);
+            Assert.AreEqual("my item 2", inventory.GetItemAt(3, 3).m_shared.m_name);
+            Assert.AreEqual(10, inventory.GetItemAt(3, 3).m_stack);
         }
     }
 }

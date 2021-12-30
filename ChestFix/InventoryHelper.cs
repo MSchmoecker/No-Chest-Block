@@ -121,6 +121,10 @@ namespace ChestFix {
                 return inventory.MoveItemToThis(inventory, item, amount, toPos.x, toPos.y);
             }
 
+            if (item.m_stack != amount) {
+                return false;
+            }
+
             // items must be switched
             inventory.RemoveItem(item);
             inventory.MoveItemToThis(inventory, itemAt, itemAt.m_stack, item.m_gridPos.x, item.m_gridPos.y);
