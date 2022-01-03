@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using ChestFix.Patches;
 using UnityEngine;
 
@@ -150,6 +151,41 @@ namespace ChestFix {
             }
 
             return new Vector2i(-1, -1);
+        }
+
+        public static List<ItemDrop.ItemData> GetAllMoveableItems(Inventory from, Inventory to) {
+            List<ItemDrop.ItemData> moved = new List<ItemDrop.ItemData>();
+            Inventory fromCopy = CopyInventory(from);
+            Inventory toCopy = CopyInventory(to);
+
+            toCopy.MoveAll(fromCopy);
+
+            for (int y = 0; y < fromCopy.m_height; y++) {
+                for (int x = 0; x < fromCopy.m_width; x++) {
+                    ItemDrop.ItemData originalItem = from.GetItemAt(x, y);
+                    ItemDrop.ItemData nowItem = fromCopy.GetItemAt(x, y);
+
+                    if (originalItem == null) {
+                        continue;
+                    }
+
+                    if (nowItem == null) {
+                        moved.Add(originalItem);
+                    } else if (originalItem.m_stack > nowItem.m_stack) {
+                        ItemDrop.ItemData clone = originalItem.Clone();
+                        clone.m_stack = originalItem.m_stack - nowItem.m_stack;
+                        moved.Add(clone);
+                    }
+                }
+            }
+
+            return moved;
+        }
+
+        public static Inventory CopyInventory(Inventory target) {
+            return new Inventory(target.m_name, target.m_bkg, target.m_width, target.m_height) {
+                m_inventory = new List<ItemDrop.ItemData>(target.GetAllItems().Select(x => x.Clone()))
+            };
         }
     }
 }

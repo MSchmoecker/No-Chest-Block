@@ -75,6 +75,7 @@
     <ItemGroup>
         <Compile Include="ContainerHandlerAddTest.cs" />
         <Compile Include="ContainerHandlerRemoveTest.cs" />
+        <Compile Include="GetAllMoveableItemsTest.cs" />
         <Compile Include="Helper.cs" />
         <Compile Include="InventoryHandlerTest.cs" />
         <Compile Include="InventoryHelperTest.cs" />
