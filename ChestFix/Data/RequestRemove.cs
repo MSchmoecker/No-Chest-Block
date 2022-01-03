@@ -36,7 +36,7 @@ namespace ChestFix {
             toInventory = package.ReadVector2i();
             dragAmount = package.ReadInt();
             bool hasSwitchItem = package.ReadBool();
-            switchItem = hasSwitchItem ? InventoryHelper.LoadItemFromPackage(package, fromContainer) : null;
+            switchItem = hasSwitchItem ? InventoryHelper.LoadItemFromPackage(package) : null;
         }
 
         public void PrintDebug() {

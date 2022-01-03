@@ -22,7 +22,7 @@
 
         public void ReadFromPackage(ZPackage package) {
             bool hasItem = package.ReadBool();
-            item = hasItem ? InventoryHelper.LoadItemFromPackage(package, new Vector2i(0, 0)) : null;
+            item = hasItem ? InventoryHelper.LoadItemFromPackage(package) : null;
         }
 
         public void PrintDebug() {

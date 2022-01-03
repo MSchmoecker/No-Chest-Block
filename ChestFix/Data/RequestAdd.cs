@@ -34,7 +34,7 @@ namespace ChestFix {
             fromInventory = package.ReadVector2i();
             toContainer = package.ReadVector2i();
             dragAmount = package.ReadInt();
-            dragItem = InventoryHelper.LoadItemFromPackage(package, toContainer);
+            dragItem = InventoryHelper.LoadItemFromPackage(package);
             allowSwitch = package.ReadBool();
         }
 

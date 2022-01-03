@@ -9,6 +9,7 @@ namespace ChestFix {
             string name = pkg.ReadString();
             int stack = pkg.ReadInt();
             float durability = pkg.ReadSingle();
+            pkg.ReadVector2i();
             bool equipped = pkg.ReadBool();
             int quality = pkg.ReadInt();
             int variant = pkg.ReadInt();
@@ -27,10 +28,11 @@ namespace ChestFix {
             return inventory.AddItem(name, actualAmount, durability, pos, equipped, quality, variant, crafterID, crafterName);
         }
 
-        public static ItemDrop.ItemData LoadItemFromPackage(ZPackage pkg, Vector2i pos, bool nameHack = false) {
+        public static ItemDrop.ItemData LoadItemFromPackage(ZPackage pkg, bool nameHack = false) {
             string name = pkg.ReadString();
             int stack = pkg.ReadInt();
             float durability = pkg.ReadSingle();
+            Vector2i pos = pkg.ReadVector2i();
             bool equipped = pkg.ReadBool();
             int quality = pkg.ReadInt();
             int variant = pkg.ReadInt();
@@ -97,6 +99,7 @@ namespace ChestFix {
 
             pkg.Write(itemData.m_stack);
             pkg.Write(itemData.m_durability);
+            pkg.Write(itemData.m_gridPos);
             pkg.Write(itemData.m_equiped);
             pkg.Write(itemData.m_quality);
             pkg.Write(itemData.m_variant);

@@ -36,7 +36,7 @@ namespace ChestFix {
             amount = package.ReadInt();
             bool hasSwitchItem = package.ReadBool();
             if (hasSwitchItem) {
-                switchItem = InventoryHelper.LoadItemFromPackage(package, inventoryPos);
+                switchItem = InventoryHelper.LoadItemFromPackage(package);
             }
         }
 

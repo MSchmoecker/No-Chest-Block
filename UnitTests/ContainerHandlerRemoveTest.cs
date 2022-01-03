@@ -266,7 +266,7 @@ namespace UnitTests {
             bool hasSwitched = response.ReadBool();
             Vector2i inventoryPos = response.ReadVector2i();
             bool hasResponseItem = response.ReadBool();
-            ItemDrop.ItemData returnedItem = InventoryHelper.LoadItemFromPackage(response, inventoryPos);
+            ItemDrop.ItemData returnedItem = InventoryHelper.LoadItemFromPackage(response);
 
             Assert.True(success);
             Assert.AreEqual(5, addedAmount);

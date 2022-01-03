@@ -40,7 +40,7 @@ namespace ChestFix {
             hasSwitched = package.ReadBool();
             inventoryPos = package.ReadVector2i();
             bool hasResponseItem = package.ReadBool();
-            responseItem = hasResponseItem ? InventoryHelper.LoadItemFromPackage(package, inventoryPos) : null;
+            responseItem = hasResponseItem ? InventoryHelper.LoadItemFromPackage(package) : null;
         }
 
         public void PrintDebug() {
