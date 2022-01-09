@@ -94,6 +94,7 @@
     </ItemGroup>
     <ItemGroup>
         <Compile Include="ContainerHandler.cs" />
+        <Compile Include="ContainerRPCHandler.cs" />
         <Compile Include="Data\IPackage.cs" />
         <Compile Include="Data\RequestAdd.cs" />
         <Compile Include="Data\RequestAddResponse.cs" />
@@ -103,10 +104,12 @@
         <Compile Include="Data\RequestRemove.cs" />
         <Compile Include="Data\RequestRemoveResponse.cs" />
         <Compile Include="Data\RequestTakeAll.cs" />
+        <Compile Include="Helper\InventoryHelper.cs" />
+        <Compile Include="Helper\Log.cs" />
+        <Compile Include="Helper\Timer.cs" />
         <Compile Include="InventoryHandler.cs" />
-        <Compile Include="InventoryHelper.cs" />
-        <Compile Include="Log.cs" />
         <Compile Include="Patches\ContainerPatch.cs" />
+        <Compile Include="Patches\InventoryGuiPatch.cs" />
         <Compile Include="Plugin.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
     </ItemGroup>
