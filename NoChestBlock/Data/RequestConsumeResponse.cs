@@ -10,6 +10,10 @@
             this.item = item;
         }
 
+        public RequestConsumeResponse() {
+            item = null;
+        }
+
         public ZPackage WriteToPackage() {
             ZPackage package = new ZPackage();
             package.Write(item != null);

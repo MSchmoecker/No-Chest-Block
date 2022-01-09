@@ -16,6 +16,13 @@ namespace NoChestBlock {
             ReadFromPackage(package);
         }
 
+        public RequestAddResponse() {
+            success = false;
+            inventoryPos = new Vector2i(-1, -1);
+            amount = 0;
+            switchItem = null;
+        }
+
         public ZPackage WriteToPackage() {
             ZPackage package = new ZPackage();
             package.Write(inventoryPos);

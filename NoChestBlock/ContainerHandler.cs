@@ -4,69 +4,39 @@ using UnityEngine;
 
 namespace NoChestBlock {
     public static class ContainerHandler {
-        public static void RPC_RequestItemAdd(Container container, long l, ZPackage package) {
-            Log.LogInfo("RPC_RequestItemAdd");
-            ZPackage response;
-
-            if (container.IsOwner()) {
-                response = container.GetInventory().RequestItemAdd(l, package);
-            } else {
-                response = new RequestAddResponse(false, Vector2i.zero, 0, null).WriteToPackage();
-            }
-
-            container.m_nview.InvokeRPC(l, "RequestItemAddResponse", response);
+        public static void RPC_RequestItemAdd(Container container, long sender, ZPackage package) {
+            ZPackage Message() => container.GetInventory().RequestItemAdd(sender, package);
+            ZPackage NotOwner() => new RequestAddResponse().WriteToPackage();
+            HandleRPC(container, sender, nameof(RPC_RequestItemAdd), "RequestItemAddResponse", Message, NotOwner);
         }
 
-        public static void RPC_RequestItemRemove(Container container, long l, ZPackage package) {
-            Log.LogInfo("RPC_RequestItemRemove");
-            ZPackage response;
-
-            if (container.IsOwner()) {
-                response = container.GetInventory().RequestItemRemove(l, package);
-            } else {
-                response = new RequestRemoveResponse(false, 0, false, Vector2i.zero, null).WriteToPackage();
-            }
-
-            container.m_nview.InvokeRPC(l, "RequestItemRemoveResponse", response);
+        public static void RPC_RequestItemRemove(Container container, long sender, ZPackage package) {
+            ZPackage Message() => container.GetInventory().RequestItemRemove(sender, package);
+            ZPackage NotOwner() => new RequestRemoveResponse().WriteToPackage();
+            HandleRPC(container, sender, nameof(RPC_RequestItemRemove), "RequestItemRemoveResponse", Message, NotOwner);
         }
 
-        public static void RPC_RequestItemConsume(Container container, long l, ZPackage package) {
-            Log.LogInfo("RPC_RequestItemConsume");
-            ZPackage response;
-
-            if (container.IsOwner()) {
-                response = container.GetInventory().RequestItemConsume(l, package);
-            } else {
-                response = new RequestConsumeResponse(item: null).WriteToPackage();
-            }
-
-            container.m_nview.InvokeRPC(l, "RequestItemConsumeResponse", response);
+        public static void RPC_RequestItemConsume(Container container, long sender, ZPackage package) {
+            ZPackage Message() => container.GetInventory().RequestItemConsume(sender, package);
+            ZPackage NotOwner() => new RequestConsumeResponse().WriteToPackage();
+            HandleRPC(container, sender, nameof(RPC_RequestItemConsume), "RequestItemConsumeResponse", Message, NotOwner);
         }
 
         public static void RPC_RequestItemMove(Container container, long sender, ZPackage package) {
-            Log.LogInfo("RPC_RequestItemMove");
-            bool success;
-
-            if (container.IsOwner()) {
-                success = container.GetInventory().RequestItemMove(sender, package);
-            } else {
-                success = false;
-            }
-
-            container.m_nview.InvokeRPC(sender, "RequestItemMoveResponse", success);
+            bool Message() => container.GetInventory().RequestItemMove(sender, package);
+            bool NotOwner() => false;
+            HandleRPC(container, sender, nameof(RPC_RequestItemMove), "RequestItemMoveResponse", Message, NotOwner);
         }
 
         public static void RPC_RequestTakeAllItems(Container container, long sender, ZPackage package) {
-            Log.LogInfo("RPC_RequestTakeAllItems");
-            ZPackage response;
+            ZPackage Message() => container.GetInventory().RequestTakeAllItems(sender, package);
+            ZPackage NotOwner() => new RequestTakeAll(new List<ItemDrop.ItemData>()).WriteToPackage();
+            HandleRPC(container, sender, nameof(RPC_RequestTakeAllItems), "RequestTakeAllItemsResponse", Message, NotOwner);
+        }
 
-            if (container.IsOwner()) {
-                response = container.GetInventory().RequestTakeAllItems(sender, package);
-            } else {
-                response = new RequestTakeAll(new List<ItemDrop.ItemData>()).WriteToPackage();
-            }
-
-            container.m_nview.InvokeRPC(sender, "RequestTakeAllItemsResponse", response);
+        private static void HandleRPC<T>(Container container, long target, string callName, string rpcInvoke, Func<T> message, Func<T> notOwner) {
+            Log.LogInfo(callName);
+            container.m_nview.InvokeRPC(target, rpcInvoke, container.IsOwner() ? message() : notOwner());
         }
 
         public static ZPackage RequestItemAdd(this Inventory inventory, long sender, ZPackage package) {

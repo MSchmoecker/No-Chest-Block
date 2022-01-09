@@ -18,6 +18,14 @@ namespace NoChestBlock {
             ReadFromPackage(package);
         }
 
+        public RequestRemoveResponse() {
+            success = false;
+            amount = 0;
+            hasSwitched = false;
+            inventoryPos = new Vector2i(-1, -1);
+            responseItem = null;
+        }
+
         public ZPackage WriteToPackage() {
             ZPackage package = new ZPackage();
 
