@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using ChestFix;
+using NoChestBlock;
 using NUnit.Framework;
 
 namespace UnitTests {

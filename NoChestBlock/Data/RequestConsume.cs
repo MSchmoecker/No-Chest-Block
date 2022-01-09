@@ -1,4 +1,4 @@
-﻿namespace ChestFix {
+﻿namespace NoChestBlock {
     public class RequestConsume : IPackage {
         public int itemPosX;
         public int itemPosY;

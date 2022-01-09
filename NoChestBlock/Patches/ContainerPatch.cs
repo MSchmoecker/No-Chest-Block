@@ -4,7 +4,7 @@ using System.Diagnostics;
 using HarmonyLib;
 using UnityEngine;
 
-namespace ChestFix.Patches {
+namespace NoChestBlock.Patches {
     [HarmonyPatch]
     public class ContainerPatch {
         public static readonly Stopwatch stopwatch = new Stopwatch();

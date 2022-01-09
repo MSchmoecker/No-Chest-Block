@@ -83,9 +83,9 @@
         <Compile Include="Properties\AssemblyInfo.cs" />
     </ItemGroup>
     <ItemGroup>
-      <ProjectReference Include="..\ChestFix\ChestFix.csproj">
+      <ProjectReference Include="..\NoChestBlock\NoChestBlock.csproj">
         <Project>{fe8b42e3-7082-4dff-a5cc-6b62b0315aca}</Project>
-        <Name>ChestFix</Name>
+        <Name>NoChestBlock</Name>
       </ProjectReference>
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

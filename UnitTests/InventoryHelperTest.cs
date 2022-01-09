@@ -1,5 +1,5 @@
 ﻿using System;
-using ChestFix;
+using NoChestBlock;
 using HarmonyLib;
 using NUnit.Framework;
 

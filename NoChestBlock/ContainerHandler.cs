@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ChestFix {
+namespace NoChestBlock {
     public static class ContainerHandler {
         public static void RPC_RequestItemAdd(Container container, long l, ZPackage package) {
             Log.LogInfo("RPC_RequestItemAdd");

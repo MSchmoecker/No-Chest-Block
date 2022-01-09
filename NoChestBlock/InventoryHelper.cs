@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
-using ChestFix.Patches;
+using NoChestBlock.Patches;
 using UnityEngine;
 
-namespace ChestFix {
+namespace NoChestBlock {
     public static class InventoryHelper {
         public static bool LoadItemIntoInventory(ZPackage pkg, Inventory inventory, Vector2i pos, int amount, int maxAmount) {
             string name = pkg.ReadString();

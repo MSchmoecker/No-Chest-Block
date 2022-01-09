@@ -1,6 +1,6 @@
 ﻿using BepInEx.Logging;
 
-namespace ChestFix {
+namespace NoChestBlock {
     /// <summary>
     /// Helper class for properly logging from static contexts.
     /// </summary>

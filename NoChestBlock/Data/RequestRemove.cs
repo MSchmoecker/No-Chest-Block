@@ -1,4 +1,4 @@
-namespace ChestFix {
+namespace NoChestBlock {
     public class RequestRemove : IPackage {
         public Vector2i fromContainer;
         public Vector2i toInventory;

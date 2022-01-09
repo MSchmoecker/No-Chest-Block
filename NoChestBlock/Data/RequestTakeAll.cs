@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace ChestFix {
+namespace NoChestBlock {
     public class RequestTakeAll : IPackage {
         public List<ItemDrop.ItemData> items = new List<ItemDrop.ItemData>();
 

@@ -1,4 +1,4 @@
-using ChestFix;
+using NoChestBlock;
 using HarmonyLib;
 using NUnit.Framework;
 using UnityEngine;

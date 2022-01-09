@@ -1,4 +1,4 @@
-namespace ChestFix {
+namespace NoChestBlock {
     public class RequestAddResponse : IPackage {
         public bool success;
         public Vector2i inventoryPos;

@@ -1,4 +1,4 @@
-namespace ChestFix {
+namespace NoChestBlock {
     public interface IPackage {
         ZPackage WriteToPackage();
         void ReadFromPackage(ZPackage package);

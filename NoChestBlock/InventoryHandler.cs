@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
-using ChestFix.Patches;
 using HarmonyLib;
+using NoChestBlock.Patches;
 
-namespace ChestFix {
+namespace NoChestBlock {
     public class InventoryHandler {
         public static readonly List<Vector2i> blockedSlots = new List<Vector2i>();
         public static bool blockConsume;

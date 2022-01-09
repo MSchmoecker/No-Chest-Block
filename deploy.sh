@@ -1,5 +1,5 @@
 ModName="NoChestBlock"
-ModPath="ChestFix"
+ModPath="NoChestBlock"
 
 # function for xml reading
 read_dom () {

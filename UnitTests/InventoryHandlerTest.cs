@@ -1,5 +1,5 @@
-using ChestFix;
-using ChestFix.Patches;
+using NoChestBlock;
+using NoChestBlock.Patches;
 using NUnit.Framework;
 
 namespace UnitTests {

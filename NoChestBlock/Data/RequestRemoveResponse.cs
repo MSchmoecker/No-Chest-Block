@@ -1,4 +1,4 @@
-namespace ChestFix {
+namespace NoChestBlock {
     public class RequestRemoveResponse : IPackage {
         public bool success;
         public int amount;

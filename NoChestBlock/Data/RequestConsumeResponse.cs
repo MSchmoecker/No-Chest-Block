@@ -1,4 +1,4 @@
-﻿namespace ChestFix {
+﻿namespace NoChestBlock {
     public class RequestConsumeResponse : IPackage {
         public ItemDrop.ItemData item;
 

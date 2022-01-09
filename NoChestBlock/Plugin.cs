@@ -3,7 +3,7 @@ using BepInEx;
 using HarmonyLib;
 using UnityEngine;
 
-namespace ChestFix {
+namespace NoChestBlock {
     [BepInPlugin(ModGuid, ModName, ModVersion)]
     public class Plugin : BaseUnityPlugin {
         public const string ModName = "NoChestBlock";

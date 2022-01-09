@@ -1,4 +1,4 @@
-namespace ChestFix {
+namespace NoChestBlock {
     public class RequestMove : IPackage {
         public Vector2i fromPos;
         public Vector2i toPos;
