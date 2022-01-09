@@ -102,6 +102,7 @@
         <Compile Include="Data\RequestMove.cs" />
         <Compile Include="Data\RequestRemove.cs" />
         <Compile Include="Data\RequestRemoveResponse.cs" />
+        <Compile Include="Data\RequestTakeAll.cs" />
         <Compile Include="InventoryHandler.cs" />
         <Compile Include="InventoryHelper.cs" />
         <Compile Include="Log.cs" />

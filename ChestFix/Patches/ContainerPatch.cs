@@ -32,11 +32,13 @@ namespace ChestFix.Patches {
             nview.Register<ZPackage>("RequestItemAdd", (l, package) => ContainerHandler.RPC_RequestItemAdd(__instance, l, package));
             nview.Register<ZPackage>("RequestItemRemove", (l, package) => ContainerHandler.RPC_RequestItemRemove(__instance, l, package));
             nview.Register<ZPackage>("RequestItemConsume", (l, package) => ContainerHandler.RPC_RequestItemConsume(__instance, l, package));
+            nview.Register<ZPackage>("RequestTakeAllItems", (l, package) => ContainerHandler.RPC_RequestTakeAllItems(__instance, l, package));
 
             nview.Register<bool>("RequestItemMoveResponse", InventoryHandler.RPC_RequestItemMoveResponse);
             nview.Register<ZPackage>("RequestItemAddResponse", InventoryHandler.RPC_RequestItemAddResponse);
             nview.Register<ZPackage>("RequestItemRemoveResponse", InventoryHandler.RPC_RequestItemRemoveResponse);
             nview.Register<ZPackage>("RequestItemConsumeResponse", InventoryHandler.RPC_RequestItemConsumeResponse);
+            nview.Register<ZPackage>("RequestTakeAllItemsResponse", InventoryHandler.RPC_RequestTakeAllItemsResponse);
         }
 
         [HarmonyPatch(typeof(Container), nameof(Container.RPC_RequestOpen)), HarmonyPrefix]
@@ -69,6 +71,59 @@ namespace ChestFix.Patches {
         public static void InventoryGuiUpdatePatch(InventoryGui __instance) {
             if (__instance.m_currentContainer) {
                 __instance.m_currentContainer.CheckForChanges();
+            }
+        }
+
+        [HarmonyPatch(typeof(Container), nameof(Container.TakeAll)), HarmonyPrefix]
+        public static bool TakeAllPatch(ref bool __result, Container __instance, Humanoid character) {
+            if (__instance.IsOwner()) {
+                Log.LogInfo("TakeAll self");
+                return true;
+            }
+
+            __result = false;
+
+            if (__instance.m_checkGuardStone && !PrivateArea.CheckAccess(__instance.transform.position)) {
+                return false;
+            }
+
+            long playerID = Game.instance.GetPlayerProfile().GetPlayerID();
+
+            if (!__instance.CheckAccess(playerID)) {
+                character.Message(MessageHud.MessageType.Center, "$msg_cantopen");
+                return false;
+            }
+
+            TakeAll(__instance);
+
+            return false;
+        }
+
+        [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.OnTakeAll)), HarmonyPrefix]
+        public static bool InventoryGuiTakeAllPatch(InventoryGui __instance) {
+            if (Player.m_localPlayer.IsTeleporting() || !__instance.m_currentContainer) {
+                return false;
+            }
+
+            if (__instance.m_currentContainer.IsOwner()) {
+                return true;
+            }
+
+            TakeAll(__instance.m_currentContainer);
+            return false;
+        }
+
+        private static void TakeAll(Container container) {
+            Inventory playerInventory = Player.m_localPlayer.GetInventory();
+            List<ItemDrop.ItemData> wanted = InventoryHelper.GetAllMoveableItems(container.GetInventory(), playerInventory);
+
+            InventoryHandler.blockAllSlots = true;
+
+            RequestTakeAll request = new RequestTakeAll(wanted);
+            StartTimer(request);
+
+            if (container.m_nview != null) {
+                container.m_nview.InvokeRPC("RequestTakeAllItems", request.WriteToPackage());
             }
         }
 
@@ -112,7 +167,8 @@ namespace ChestFix.Patches {
                 __instance.m_container.gameObject.SetActive(value: true);
                 __instance.m_containerGrid.UpdateInventory(__instance.m_currentContainer.GetInventory(), null,
                                                            __instance.m_dragItem);
-                __instance.m_containerName.text = Localization.instance.Localize(__instance.m_currentContainer.GetInventory().GetName());
+                __instance.m_containerName.text =
+                    Localization.instance.Localize(__instance.m_currentContainer.GetInventory().GetName());
                 if (__instance.m_firstContainerUpdate) {
                     __instance.m_containerGrid.ResetView();
                     __instance.m_firstContainerUpdate = false;

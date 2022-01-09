@@ -7,6 +7,7 @@ namespace ChestFix {
     public class InventoryHandler {
         public static readonly List<Vector2i> blockedSlots = new List<Vector2i>();
         public static bool blockConsume;
+        public static bool blockAllSlots;
 
         public static void RPC_RequestItemAddResponse(long sender, ZPackage package) {
             ContainerPatch.StopTimer("RPC_RequestItemAddResponse");
@@ -18,6 +19,11 @@ namespace ChestFix {
             InventoryGui.instance.SetupDragItem(null, null, 0);
             Log.LogInfo($"RequestItemMoveResponse:");
             Log.LogInfo($"\tsuccess: {success}");
+        }
+
+        public static void RPC_RequestTakeAllItemsResponse(long sender, ZPackage package) {
+            ContainerPatch.StopTimer("RPC_RequestTakeAllItemsResponse");
+            RPC_RequestTakeAllItemsResponse(Player.m_localPlayer.GetInventory(), sender, package);
         }
 
         public static void RPC_RequestItemRemoveResponse(long sender, ZPackage package) {
@@ -104,6 +110,16 @@ namespace ChestFix {
             }
         }
 
+        private static void RPC_RequestTakeAllItemsResponse(Inventory inventory, long sender, ZPackage package) {
+            blockAllSlots = false;
+
+            RequestTakeAll response = new RequestTakeAll(package);
+
+            foreach (ItemDrop.ItemData item in response.items) {
+                inventory.AddItem(item);
+            }
+        }
+
         public static void BlockSlot(Vector2i slot) {
             blockedSlots.Add(slot);
         }
@@ -113,7 +129,7 @@ namespace ChestFix {
         }
 
         public static bool IsSlotBlocked(Vector2i slot) {
-            return blockedSlots.Contains(slot);
+            return !blockAllSlots && blockedSlots.Contains(slot);
         }
     }
 }

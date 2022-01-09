@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace ChestFix {
@@ -53,6 +54,19 @@ namespace ChestFix {
             }
 
             container.m_nview.InvokeRPC(sender, "RequestItemMoveResponse", success);
+        }
+
+        public static void RPC_RequestTakeAllItems(Container container, long sender, ZPackage package) {
+            Log.LogInfo("RPC_RequestTakeAllItems");
+            ZPackage response;
+
+            if (container.IsOwner()) {
+                response = container.GetInventory().RequestTakeAllItems(sender, package);
+            } else {
+                response = new RequestTakeAll(new List<ItemDrop.ItemData>()).WriteToPackage();
+            }
+
+            container.m_nview.InvokeRPC(sender, "RequestTakeAllItemsResponse", response);
         }
 
         public static ZPackage RequestItemAdd(this Inventory inventory, long sender, ZPackage package) {
@@ -146,7 +160,6 @@ namespace ChestFix {
 
             inventory.RemoveOneItem(toConsume);
             return new RequestConsumeResponse(toConsume).WriteToPackage();
-            ;
         }
 
         private static bool RequestItemMove(this Inventory inventory, long sender, ZPackage package) {
@@ -163,6 +176,23 @@ namespace ChestFix {
             }
 
             return InventoryHelper.MoveItem(inventory, from, dragAmount, toPos);
+        }
+
+        private static ZPackage RequestTakeAllItems(this Inventory inventory, long sender, ZPackage package) {
+            RequestTakeAll request = new RequestTakeAll(package);
+
+            List<ItemDrop.ItemData> moved = new List<ItemDrop.ItemData>();
+
+            foreach (ItemDrop.ItemData item in request.items) {
+                ItemDrop.ItemData existing = inventory.GetItemAt(item.m_gridPos.x, item.m_gridPos.y);
+
+                if (existing != null) {
+                    moved.Add(existing.Clone());
+                    inventory.RemoveItem(existing, item.m_stack);
+                }
+            }
+
+            return new RequestTakeAll(moved).WriteToPackage();
         }
     }
 }
