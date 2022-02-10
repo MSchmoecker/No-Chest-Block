@@ -67,14 +67,6 @@ namespace NoChestBlock {
 
             ReleaseSlot(inventoryPos);
 
-            // if (success) {
-            //     ItemDrop.ItemData toRemove = inventory.GetItemAt(inventoryPos.x, inventoryPos.y);
-            //
-            //     if (toRemove != null) {
-            //         inventory.RemoveItem(toRemove, amount);
-            //     }
-            // } 
-
             if (switchItem != null) {
                 inventory.AddItem(switchItem, switchItem.m_stack, inventoryPos.x, inventoryPos.y);
             }

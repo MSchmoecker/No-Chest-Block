@@ -50,34 +50,36 @@ namespace NoChestBlock {
             bool allowSwitch = request.allowSwitch;
 
             bool added = false;
-            bool switched = false;
-            bool dontAdd = false;
+            bool allowAdding = true;
             int amount = Mathf.Min(dragAmount, dragItem.m_stack);
 
             ItemDrop.ItemData prevItem = inventory.GetItemAt(toContainer.x, toContainer.y);
+            ItemDrop.ItemData switched = null;
 
             if (prevItem != null) {
                 if (InventoryHelper.IsSameItem(prevItem, dragItem)) {
                     amount = Mathf.Min(prevItem.m_shared.m_maxStackSize - prevItem.m_stack, dragAmount);
                 } else if (dragItem.m_stack != dragAmount) {
-                    dontAdd = true;
+                    allowAdding = false;
                     amount = 0;
                 } else {
                     if (allowSwitch) {
                         inventory.RemoveItem(prevItem, prevItem.m_stack);
-                        switched = true;
+                        switched = prevItem;
                     } else {
-                        dontAdd = true;
+                        allowAdding = false;
                         amount = 0;
                     }
                 }
             }
 
-            if (!dontAdd) {
+            if (allowAdding) {
                 added = inventory.AddItem(dragItem, amount, toContainer.x, toContainer.y);
+            } else {
+                switched = dragItem;
             }
 
-            return new RequestAddResponse(added, fromInventory, amount, switched ? prevItem : null).WriteToPackage();
+            return new RequestAddResponse(added, fromInventory, amount, switched).WriteToPackage();
         }
 
         public static ZPackage RequestItemRemove(this Inventory inventory, long sender, ZPackage package) {

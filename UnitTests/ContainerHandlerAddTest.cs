@@ -62,7 +62,6 @@ namespace UnitTests {
             Assert.AreEqual("my item", inventory.m_inventory[0].m_shared.m_name);
         }
 
-
         [Test]
         public void RPC_RequestItemAddToEmptySlotMoreAmountAsInventory() {
             Inventory inventory = new Inventory("inventory", null, 4, 5);
@@ -170,17 +169,17 @@ namespace UnitTests {
             ZPackage data = request.WriteToPackage();
             data.SetPos(0);
 
-            ZPackage response = inventory.RequestItemAdd(0L, data);
-            response.SetPos(0);
+            ZPackage r = inventory.RequestItemAdd(0L, data);
+            r.SetPos(0);
 
-            Vector2i inventoryPos = response.ReadVector2i();
-            bool success = response.ReadBool();
-            int addedAmount = response.ReadInt();
-            bool hasSwitched = response.ReadBool();
+            RequestAddResponse response = new RequestAddResponse(r);
 
-            Assert.False(success);
-            Assert.AreEqual(0, addedAmount);
-            Assert.False(hasSwitched);
+            Assert.False(response.success);
+            Assert.AreEqual(0, response.amount);
+            Assert.NotNull(response.switchItem);
+
+            Assert.AreEqual("my item B", response.switchItem.m_shared.m_name);
+            Assert.AreEqual(5, response.switchItem.m_stack);
 
             Assert.AreEqual(1, inventory.m_inventory.Count);
             Assert.AreEqual(5, inventory.m_inventory[0].m_stack);
@@ -195,22 +194,22 @@ namespace UnitTests {
             RequestAdd request = new RequestAdd(new Vector2i(2, 2),
                                                 new Vector2i(3, 3),
                                                 5,
-                                                Helper.CreateItem("my item B", 5, 20),
+                                                Helper.CreateItem("my item B", 6, 20),
                                                 false);
             ZPackage data = request.WriteToPackage();
             data.SetPos(0);
 
-            ZPackage response = inventory.RequestItemAdd(0L, data);
-            response.SetPos(0);
+            ZPackage r = inventory.RequestItemAdd(0L, data);
+            r.SetPos(0);
 
-            Vector2i inventoryPos = response.ReadVector2i();
-            bool success = response.ReadBool();
-            int addedAmount = response.ReadInt();
-            bool hasSwitched = response.ReadBool();
+            RequestAddResponse response = new RequestAddResponse(r);
 
-            Assert.False(success);
-            Assert.AreEqual(0, addedAmount);
-            Assert.False(hasSwitched);
+            Assert.False(response.success);
+            Assert.AreEqual(0, response.amount);
+            Assert.NotNull(response.switchItem);
+
+            Assert.AreEqual("my item B", response.switchItem.m_shared.m_name);
+            Assert.AreEqual(6, response.switchItem.m_stack);
 
             Assert.AreEqual(1, inventory.m_inventory.Count);
             Assert.AreEqual(5, inventory.m_inventory[0].m_stack);
