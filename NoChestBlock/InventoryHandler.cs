@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using HarmonyLib;
 using NoChestBlock.Patches;
+using UnityEngine;
 
 namespace NoChestBlock {
     public class InventoryHandler {
@@ -48,11 +49,25 @@ namespace NoChestBlock {
                     playerInv.RemoveItem(atSlot);
                 }
 
-                playerInv.AddItem(responseItem, amount, inventoryPos.x, inventoryPos.y);
+                if (inventoryPos.x >= 0 && inventoryPos.y >= 0) {
+                    playerInv.AddItem(responseItem, amount, inventoryPos.x, inventoryPos.y);
+                } else {
+                    Transform player = Player.m_localPlayer.transform;
+                    ItemDrop drop = ItemDrop.DropItem(responseItem, amount, player.position + player.forward + player.up, player.rotation);
+                    drop.OnPlayerDrop();
+                    drop.GetComponent<Rigidbody>().velocity = (player.forward + Vector3.up) * 5f;
+                    Player.m_localPlayer.m_zanim.SetTrigger("interact");
+                    Player.m_localPlayer.m_dropEffects.Create(player.position, Quaternion.identity);
+
+                    ItemDrop.ItemData dropData = drop.m_itemData;
+                    Player.m_localPlayer.Message(MessageHud.MessageType.TopLeft, "$msg_dropped " + dropData.m_shared.m_name, dropData.m_stack, dropData.GetIcon());
+                }
             }
 
             if (InventoryGui.instance != null) {
                 InventoryGui.instance.SetupDragItem(null, null, 0);
+                InventoryGui.instance.m_moveItemEffects.Create(InventoryGui.instance.transform.position, Quaternion.identity);
+                InventoryGui.instance.UpdateCraftingPanel();
             }
         }
 

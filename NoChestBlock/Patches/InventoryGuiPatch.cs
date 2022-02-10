@@ -164,5 +164,27 @@ namespace NoChestBlock.Patches {
 
             gui.m_moveItemEffects.Create(gui.transform.position, Quaternion.identity);
         }
+        
+        [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.OnDropOutside)), HarmonyPrefix]
+        public static bool InventoryGuiOnDropOutsidePatch() {
+            InventoryGui gui = InventoryGui.instance;
+            Player player = Player.m_localPlayer;
+
+            if (!gui.m_dragGo) {
+                return false;
+            }
+
+            bool isOwnerOfContainer = gui.m_currentContainer && gui.m_currentContainer.IsOwner();
+            bool isPlayerInventory = gui.m_dragInventory == player.m_inventory;
+
+            if (isOwnerOfContainer || isPlayerInventory) {
+                Log.LogInfo("Drop item from own inventory");
+                return true;
+            }
+
+            RequestRemove request = new RequestRemove(gui.m_dragItem.m_gridPos, new Vector2i(-1, -1), gui.m_dragItem.m_stack, null);
+            ContainerHandler.RemoveItemFromChest(request, gui.m_currentContainer);
+            return false;
+        }
     }
 }
