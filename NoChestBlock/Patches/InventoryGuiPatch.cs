@@ -69,140 +69,100 @@ namespace NoChestBlock.Patches {
                    .InstructionEnumeration();
         }
 
-        [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.OnSelectedItem)), HarmonyPrefix]
-        public static bool OnSelectedItemPatch(InventoryGui __instance, InventoryGrid grid, ItemDrop.ItemData item, Vector2i pos, InventoryGrid.Modifier mod) {
-            Player localPlayer = Player.m_localPlayer;
-            if (localPlayer.IsTeleporting()) {
+        private static bool IsVirtCall(CodeInstruction i, string declaringType, string name) {
+            return i.opcode == OpCodes.Callvirt && i.operand is MethodInfo methodInfo && methodInfo.DeclaringType?.Name == declaringType && methodInfo.Name == name;
+        }
+
+        [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.OnSelectedItem)), HarmonyTranspiler]
+        public static IEnumerable<CodeInstruction> OnSelectedItemPatch(IEnumerable<CodeInstruction> instructions) {
+            Label label = new Label();
+
+            return new CodeMatcher(instructions)
+                   .MatchForward(true, new CodeMatch(i => IsVirtCall(i, nameof(InventoryGrid), nameof(InventoryGrid.DropItem))))
+                   .Advance(-8)
+                   .InsertAndAdvance(
+                                     new CodeInstruction(OpCodes.Ldarg_1),
+                                     new CodeInstruction(OpCodes.Ldarg_3),
+                                     new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(InventoryGuiPatch), nameof(MoveItem))),
+                                     new CodeInstruction(OpCodes.Brfalse, label),
+                                     new CodeInstruction(OpCodes.Ret))
+                   .AddLabels(new[] { label })
+                   .MatchForward(false,
+                                 new CodeMatch(i => IsVirtCall(i, nameof(Humanoid), nameof(Humanoid.UnequipItem))),
+                                 new CodeMatch(OpCodes.Ldarg_1),
+                                 new CodeMatch(i => IsVirtCall(i, nameof(InventoryGrid), nameof(InventoryGrid.GetInventory))))
+                   .Advance(1)
+                   .InsertAndAdvance(
+                                     new CodeInstruction(OpCodes.Ldarg_1),
+                                     new CodeInstruction(OpCodes.Ldarg_2),
+                                     new CodeInstruction(OpCodes.Ldarg_3),
+                                     new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(InventoryGuiPatch), nameof(FastMoveItem))),
+                                     new CodeInstruction(OpCodes.Ret))
+                   .InstructionEnumeration();
+        }
+
+        private static bool MoveItem(InventoryGrid grid, Vector2i toPos) {
+            InventoryGui gui = InventoryGui.instance;
+            Player player = Player.m_localPlayer;
+
+            bool isOwnerOfContainer = gui.m_currentContainer && gui.m_currentContainer.IsOwner();
+            bool isPlayerInventory = grid.m_inventory == player.m_inventory && gui.m_dragInventory == player.m_inventory;
+
+            if (isOwnerOfContainer || isPlayerInventory) {
+                Log.LogInfo("MoveItem in own inventory");
                 return false;
             }
 
-            if ((bool)__instance.m_dragGo) {
-                __instance.m_moveItemEffects.Create(__instance.transform.position, Quaternion.identity);
-                bool flag = localPlayer.IsItemEquiped(__instance.m_dragItem);
-                bool flag2 = item != null && localPlayer.IsItemEquiped(item);
-                Vector2i gridPos = __instance.m_dragItem.m_gridPos;
-                if ((__instance.m_dragItem.m_shared.m_questItem || (item != null && item.m_shared.m_questItem)) &&
-                    __instance.m_dragInventory != grid.GetInventory()) {
-                    return false;
-                }
+            Vector2i fromPos = gui.m_dragItem.m_gridPos;
+            int dragAmount = gui.m_dragAmount;
 
-                if (!__instance.m_dragInventory.ContainsItem(__instance.m_dragItem)) {
-                    __instance.SetupDragItem(null, null, 1);
-                    return false;
-                }
+            if (grid.GetInventory() == gui.m_dragInventory) {
+                RequestMove request = new RequestMove(fromPos, toPos, dragAmount);
+                Timer.Start(request);
 
-                localPlayer.RemoveFromEquipQueue(item);
-                localPlayer.RemoveFromEquipQueue(__instance.m_dragItem);
-                localPlayer.UnequipItem(__instance.m_dragItem, triggerEquipEffects: false);
-                localPlayer.UnequipItem(item, triggerEquipEffects: false);
+                gui.m_currentContainer.m_nview.InvokeRPC("RequestItemMove", request.WriteToPackage());
+            } else if (grid.m_inventory == gui.m_currentContainer.GetInventory()) {
+                RequestAdd request = new RequestAdd(fromPos, toPos, dragAmount, gui.m_dragItem, true);
+                Timer.Start(request);
 
-                if (!__instance.m_currentContainer.IsOwner() && !(grid.GetInventory() == localPlayer.m_inventory && __instance.m_dragInventory == localPlayer.m_inventory)) {
-                    if (grid.GetInventory() == __instance.m_dragInventory) {
-                        RequestMove request = new RequestMove(__instance.m_dragItem.m_gridPos, pos, __instance.m_dragAmount);
-
-                        Timer.Start(request);
-                        __instance.m_currentContainer.m_nview.InvokeRPC("RequestItemMove", request.WriteToPackage());
-                    } else if (grid.m_inventory == __instance.m_currentContainer.GetInventory()) {
-                        RequestAdd request = new RequestAdd(__instance.m_dragItem.m_gridPos, pos,
-                                                            __instance.m_dragAmount, __instance.m_dragItem, true);
-                        ContainerHandler.AddItemToChest(request, localPlayer.GetInventory(), __instance.m_currentContainer);
-                    } else {
-                        ItemDrop.ItemData prevItem = grid.GetInventory().GetItemAt(pos.x, pos.y);
-
-                        RequestRemove request = new RequestRemove(__instance.m_dragItem.m_gridPos, pos,
-                                                                  __instance.m_dragAmount, prevItem);
-
-                        ContainerHandler.RemoveItemFromChest(request, __instance.m_currentContainer);
-                    }
-
-                    return false;
-                }
-
-                Log.LogInfo("Move inside own inventory");
-                bool num = grid.DropItem(__instance.m_dragInventory, __instance.m_dragItem, __instance.m_dragAmount, pos);
-                if (__instance.m_dragItem.m_stack < __instance.m_dragAmount) {
-                    __instance.m_dragAmount = __instance.m_dragItem.m_stack;
-                }
-
-                if (flag) {
-                    ItemDrop.ItemData itemAt = grid.GetInventory().GetItemAt(pos.x, pos.y);
-                    if (itemAt != null) {
-                        localPlayer.EquipItem(itemAt, triggerEquipEffects: false);
-                    }
-
-                    if (localPlayer.GetInventory().ContainsItem(__instance.m_dragItem)) {
-                        localPlayer.EquipItem(__instance.m_dragItem, triggerEquipEffects: false);
-                    }
-                }
-
-                if (flag2) {
-                    ItemDrop.ItemData itemAt2 = __instance.m_dragInventory.GetItemAt(gridPos.x, gridPos.y);
-                    if (itemAt2 != null) {
-                        localPlayer.EquipItem(itemAt2, triggerEquipEffects: false);
-                    }
-
-                    if (localPlayer.GetInventory().ContainsItem(item)) {
-                        localPlayer.EquipItem(item, triggerEquipEffects: false);
-                    }
-                }
-
-                if (num) {
-                    __instance.SetupDragItem(null, null, 1);
-                    __instance.UpdateCraftingPanel();
-                }
+                ContainerHandler.AddItemToChest(request, player.GetInventory(), gui.m_currentContainer);
             } else {
-                if (item == null) {
-                    return false;
-                }
+                ItemDrop.ItemData prevItem = grid.GetInventory().GetItemAt(toPos.x, toPos.y);
+                RequestRemove request = new RequestRemove(fromPos, toPos, dragAmount, prevItem);
+                Timer.Start(request);
 
-                switch (mod) {
-                    case InventoryGrid.Modifier.Move:
-                        if (item.m_shared.m_questItem) {
-                            return false;
-                        }
-
-                        if (__instance.m_currentContainer != null) {
-                            localPlayer.RemoveFromEquipQueue(item);
-                            localPlayer.UnequipItem(item);
-
-                            if (grid.GetInventory() == __instance.m_currentContainer.GetInventory()) {
-                                if (localPlayer.GetInventory().CanAddItem(item)) {
-                                    Vector2i targetSlot =
-                                        InventoryHelper.FindEmptySlot(localPlayer.GetInventory(), InventoryHandler.blockedSlots);
-
-                                    if (targetSlot.x != -1 && targetSlot.y != -1) {
-                                        RequestRemove request = new RequestRemove(pos, targetSlot, item
-                                                                                      .m_stack, null);
-
-                                        ContainerHandler.RemoveItemFromChest(request, __instance.m_currentContainer);
-                                    }
-                                }
-                            } else {
-                                Vector2i targetPos = __instance.m_currentContainer.GetInventory().FindEmptySlot(true);
-                                RequestAdd request = new RequestAdd(pos, targetPos, item.m_stack, item, false);
-
-                                ContainerHandler.AddItemToChest(request, localPlayer.GetInventory(), __instance.m_currentContainer);
-                            }
-
-                            __instance.m_moveItemEffects.Create(__instance.transform.position, Quaternion.identity);
-                        } else if (Player.m_localPlayer.DropItem(localPlayer.GetInventory(), item, item.m_stack)) {
-                            __instance.m_moveItemEffects.Create(__instance.transform.position, Quaternion.identity);
-                        }
-
-                        return false;
-                    case InventoryGrid.Modifier.Split:
-                        if (item.m_stack > 1) {
-                            __instance.ShowSplitDialog(item, grid.GetInventory());
-                            return false;
-                        }
-
-                        break;
-                }
-
-                __instance.SetupDragItem(item, grid.GetInventory(), item.m_stack);
+                ContainerHandler.RemoveItemFromChest(request, gui.m_currentContainer);
             }
 
-            return false;
+            Log.LogDebug("MoveItem in other inventory");
+            return true;
+        }
+
+        private static void FastMoveItem(InventoryGrid grid, ItemDrop.ItemData item, Vector2i toPos) {
+            InventoryGui gui = InventoryGui.instance;
+            Player player = Player.m_localPlayer;
+
+            if (grid.GetInventory() == gui.m_currentContainer.GetInventory()) {
+                if (!player.GetInventory().CanAddItem(item)) {
+                    return;
+                }
+
+                Vector2i targetSlot = InventoryHelper.FindEmptySlot(player.GetInventory(), InventoryHandler.blockedSlots);
+
+                if (targetSlot.x == -1 || targetSlot.y == -1) {
+                    return;
+                }
+
+                RequestRemove request = new RequestRemove(toPos, targetSlot, item.m_stack, null);
+                ContainerHandler.RemoveItemFromChest(request, gui.m_currentContainer);
+            } else {
+                Vector2i targetPos = gui.m_currentContainer.GetInventory().FindEmptySlot(true);
+                RequestAdd request = new RequestAdd(toPos, targetPos, item.m_stack, item, false);
+
+                ContainerHandler.AddItemToChest(request, player.GetInventory(), gui.m_currentContainer);
+            }
+
+            gui.m_moveItemEffects.Create(gui.transform.position, Quaternion.identity);
         }
     }
 }
