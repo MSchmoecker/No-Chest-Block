@@ -6,9 +6,15 @@ using NUnit.Framework;
 namespace UnitTests {
     [TestFixture]
     public class InventoryHelperTest {
+        private Inventory inventory;
+
+        [SetUp]
+        public void SetUp() {
+            inventory = new Inventory("inventory", null, 4, 5);
+        }
+
         [Test]
         public void MoveItemEmptyExceptOneItem() {
-            Inventory inventory = new Inventory("inventory", null, 4, 5);
             ItemDrop.ItemData item = Helper.CreateItem("my item", 5, 10);
             inventory.AddItem(item, 5, 3, 3);
 
@@ -18,14 +24,12 @@ namespace UnitTests {
 
         [Test]
         public void MoveItemNull() {
-            Inventory inventory = new Inventory("inventory", null, 4, 5);
             bool success = InventoryHelper.MoveItem(inventory, null, 5, new Vector2i(2, 2));
             Assert.False(success);
         }
 
         [Test]
         public void MoveItemOnEqualSame() {
-            Inventory inventory = new Inventory("inventory", null, 4, 5);
             ItemDrop.ItemData item = Helper.CreateItem("my item", 5, 10);
             inventory.AddItem(item, 5, 3, 3);
 
@@ -35,7 +39,6 @@ namespace UnitTests {
 
         [Test]
         public void MoveItemOnSameEnoughSpaceToStack() {
-            Inventory inventory = new Inventory("inventory", null, 4, 5);
             inventory.AddItem(Helper.CreateItem("my item", 5, 15), 5, 2, 2);
             inventory.AddItem(Helper.CreateItem("my item", 5, 15), 5, 3, 3);
 
@@ -49,7 +52,6 @@ namespace UnitTests {
 
         [Test]
         public void MoveItemOnSameNotEnoughSpaceToStack() {
-            Inventory inventory = new Inventory("inventory", null, 4, 5);
             inventory.AddItem(Helper.CreateItem("my item", 10, 15), 10, 2, 2);
             inventory.AddItem(Helper.CreateItem("my item", 10, 15), 10, 3, 3);
 
@@ -63,7 +65,6 @@ namespace UnitTests {
 
         [Test]
         public void MoveItemSwitch() {
-            Inventory inventory = new Inventory("inventory", null, 4, 5);
             inventory.AddItem(Helper.CreateItem("my item 1", 10, 15), 10, 2, 2);
             inventory.AddItem(Helper.CreateItem("my item 2", 10, 15), 10, 3, 3);
 
@@ -78,7 +79,6 @@ namespace UnitTests {
 
         [Test]
         public void MoveItemSplitCannotSwitch() {
-            Inventory inventory = new Inventory("inventory", null, 4, 5);
             inventory.AddItem(Helper.CreateItem("my item 1", 10, 15), 10, 2, 2);
             inventory.AddItem(Helper.CreateItem("my item 2", 10, 15), 10, 3, 3);
 
