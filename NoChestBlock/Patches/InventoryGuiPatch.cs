@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using System.Reflection;
+using System.Reflection.Emit;
 using HarmonyLib;
 using UnityEngine;
 
@@ -54,41 +57,20 @@ namespace NoChestBlock.Patches {
             return false;
         }
 
-        [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.UpdateContainer)), HarmonyPrefix]
-        public static bool UpdateContainerPatch(InventoryGui __instance, Player player) {
-            if (!__instance.m_animator.GetBool("visible")) {
-                return false;
-            }
-
-            if ((bool)__instance.m_currentContainer /*&& __instance.m_currentContainer.IsOwner()*/) {
-                __instance.m_currentContainer.SetInUse(inUse: true);
-                __instance.m_container.gameObject.SetActive(value: true);
-                __instance.m_containerGrid.UpdateInventory(__instance.m_currentContainer.GetInventory(), null,
-                                                           __instance.m_dragItem);
-                __instance.m_containerName.text =
-                    Localization.instance.Localize(__instance.m_currentContainer.GetInventory().GetName());
-                if (__instance.m_firstContainerUpdate) {
-                    __instance.m_containerGrid.ResetView();
-                    __instance.m_firstContainerUpdate = false;
-                }
-
-                if (Vector3.Distance(__instance.m_currentContainer.transform.position, player.transform.position) >
-                    __instance.m_autoCloseDistance) {
-                    __instance.CloseContainer();
-                }
-            } else {
-                __instance.m_container.gameObject.SetActive(value: false);
-                if (__instance.m_dragInventory != null && __instance.m_dragInventory != Player.m_localPlayer.GetInventory()) {
-                    __instance.SetupDragItem(null, null, 1);
-                }
-            }
-
-            return false;
+        // Remove IsOwner() check
+        [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.UpdateContainer)), HarmonyTranspiler]
+        public static IEnumerable<CodeInstruction> UpdateContainerPatch(IEnumerable<CodeInstruction> instructions) {
+            return new CodeMatcher(instructions)
+                   .MatchForward(false,
+                                 new CodeMatch(OpCodes.Ldarg_0),
+                                 new CodeMatch(i => i.opcode == OpCodes.Ldfld && ((FieldInfo)i.operand).Name == "m_currentContainer"),
+                                 new CodeMatch(i => i.opcode == OpCodes.Callvirt && ((MethodInfo)i.operand).Name == "IsOwner"))
+                   .RemoveInstructions(4)
+                   .InstructionEnumeration();
         }
-        
+
         [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.OnSelectedItem)), HarmonyPrefix]
-        public static bool OnSelectedItemPatch(InventoryGui __instance, InventoryGrid grid, ItemDrop.ItemData item, Vector2i pos,
-            InventoryGrid.Modifier mod) {
+        public static bool OnSelectedItemPatch(InventoryGui __instance, InventoryGrid grid, ItemDrop.ItemData item, Vector2i pos, InventoryGrid.Modifier mod) {
             Player localPlayer = Player.m_localPlayer;
             if (localPlayer.IsTeleporting()) {
                 return false;
@@ -115,7 +97,6 @@ namespace NoChestBlock.Patches {
                 localPlayer.UnequipItem(item, triggerEquipEffects: false);
 
                 if (!__instance.m_currentContainer.IsOwner() && !(grid.GetInventory() == localPlayer.m_inventory && __instance.m_dragInventory == localPlayer.m_inventory)) {
-
                     if (grid.GetInventory() == __instance.m_dragInventory) {
                         RequestMove request = new RequestMove(__instance.m_dragItem.m_gridPos, pos, __instance.m_dragAmount);
 

@@ -29,6 +29,7 @@ namespace NoChestBlock.Patches {
             nview.Register<ZPackage>("RequestTakeAllItemsResponse", InventoryHandler.RPC_RequestTakeAllItemsResponse);
         }
 
+        // This could maybe converted to a transpiler but is currently not worth it as the order of the statements have to be changed
         [HarmonyPatch(typeof(Container), nameof(Container.RPC_RequestOpen)), HarmonyPrefix]
         public static bool ContainerRPC_RequestOpenPatch(Container __instance, long uid, long playerID) {
             if (!__instance.m_nview.IsOwner()) {

@@ -93,6 +93,7 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="CodeMatcherExtensions.cs" />
         <Compile Include="ContainerHandler.cs" />
         <Compile Include="ContainerRPCHandler.cs" />
         <Compile Include="Data\IPackage.cs" />
