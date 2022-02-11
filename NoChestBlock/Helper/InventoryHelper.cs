@@ -5,29 +5,6 @@ using UnityEngine;
 
 namespace NoChestBlock {
     public static class InventoryHelper {
-        public static bool LoadItemIntoInventory(ZPackage pkg, Inventory inventory, Vector2i pos, int amount, int maxAmount) {
-            string name = pkg.ReadString();
-            int stack = pkg.ReadInt();
-            float durability = pkg.ReadSingle();
-            pkg.ReadVector2i();
-            bool equipped = pkg.ReadBool();
-            int quality = pkg.ReadInt();
-            int variant = pkg.ReadInt();
-            long crafterID = pkg.ReadLong();
-            string crafterName = pkg.ReadString();
-
-            if (name == string.Empty) {
-                return false;
-            }
-
-            int actualAmount = amount >= 0 ? amount : stack;
-            if (maxAmount >= 0) {
-                actualAmount = Mathf.Min(actualAmount, maxAmount);
-            }
-
-            return inventory.AddItem(name, actualAmount, durability, pos, equipped, quality, variant, crafterID, crafterName);
-        }
-
         public static ItemDrop.ItemData LoadItemFromPackage(ZPackage pkg, bool nameHack = false) {
             string name = pkg.ReadString();
             int stack = pkg.ReadInt();
@@ -189,6 +166,12 @@ namespace NoChestBlock {
             return new Inventory(target.m_name, target.m_bkg, target.m_width, target.m_height) {
                 m_inventory = new List<ItemDrop.ItemData>(target.GetAllItems().Select(x => x.Clone()))
             };
+        }
+
+        public static bool AddItemToInventory(this Inventory target, ItemDrop.ItemData item, int amount, Vector2i pos) {
+            string name = item.m_dropPrefab != null ? item.m_dropPrefab.name : item.m_shared.m_name;
+            return target.AddItem(name, amount, item.m_durability, pos, item.m_equiped, item.m_quality,
+                                  item.m_variant, item.m_crafterID, item.m_crafterName);
         }
     }
 }

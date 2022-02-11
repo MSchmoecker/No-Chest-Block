@@ -74,7 +74,7 @@ namespace NoChestBlock {
             }
 
             if (allowAdding) {
-                added = inventory.AddItem(dragItem, amount, toContainer.x, toContainer.y);
+                added = inventory.AddItemToInventory(dragItem, amount, toContainer);
             } else {
                 switched = dragItem;
                 switched.m_stack = dragAmount;
@@ -113,7 +113,7 @@ namespace NoChestBlock {
                 } else if (dragAmount == from.m_stack) {
                     removed = inventory.RemoveItem(from, dragAmount);
                     removedAmount = Mathf.Min(from.m_stack, dragAmount);
-                    switched = inventory.AddItem(switchItem, switchItem.m_stack, fromContainer.x, fromContainer.y);
+                    switched = inventory.AddItemToInventory(switchItem, switchItem.m_stack, fromContainer);
                 }
             }
 

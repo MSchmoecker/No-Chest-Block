@@ -50,7 +50,7 @@ namespace NoChestBlock {
                 }
 
                 if (inventoryPos.x >= 0 && inventoryPos.y >= 0) {
-                    playerInv.AddItem(responseItem, amount, inventoryPos.x, inventoryPos.y);
+                    playerInv.AddItemToInventory(responseItem, amount, inventoryPos);
                 } else {
                     Transform player = Player.m_localPlayer.transform;
                     ItemDrop drop = ItemDrop.DropItem(responseItem, amount, player.position + player.forward + player.up, player.rotation);
@@ -83,7 +83,7 @@ namespace NoChestBlock {
             ReleaseSlot(inventoryPos);
 
             if (switchItem != null) {
-                inventory.AddItem(switchItem, switchItem.m_stack, inventoryPos.x, inventoryPos.y);
+                inventory.AddItemToInventory(switchItem, switchItem.m_stack, inventoryPos);
             }
 
             if (InventoryGui.instance != null) {
@@ -123,7 +123,7 @@ namespace NoChestBlock {
             RequestTakeAll response = new RequestTakeAll(package);
 
             foreach (ItemDrop.ItemData item in response.items) {
-                inventory.AddItem(item);
+                inventory.AddItemToInventory(item, item.m_stack, item.m_gridPos);
             }
         }
 
