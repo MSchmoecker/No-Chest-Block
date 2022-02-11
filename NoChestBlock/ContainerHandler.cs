@@ -16,14 +16,19 @@ namespace NoChestBlock {
             }
         }
 
-        public static void AddItemToChest(RequestAdd request, Inventory playerInventory, Container container) {
-            playerInventory.RemoveItem(playerInventory.GetItemAt(request.fromInventory.x, request.fromInventory.y), request.dragAmount);
+        public static RequestAdd AddItemToChest(Vector2i from, Vector2i to, int dragAmount, bool allowSwitch, Inventory playerInventory, Container container) {
+            ItemDrop.ItemData item = playerInventory.GetItemAt(from.x, from.y).Clone();
+            RequestAdd request = new RequestAdd(from, to, dragAmount, item, allowSwitch);
+
+            playerInventory.RemoveItem(playerInventory.GetItemAt(from.x, from.y), dragAmount);
             InventoryHandler.BlockSlot(request.fromInventory);
 
-            if (container.m_nview) {
+            if (container != null && container.m_nview) {
                 Timer.Start(request);
                 container.m_nview.InvokeRPC("RequestItemAdd", request.WriteToPackage());
             }
+
+            return request;
         }
 
         public static void RemoveItemFromChest(RequestRemove request, Container container) {

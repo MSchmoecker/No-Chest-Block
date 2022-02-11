@@ -77,6 +77,7 @@ namespace NoChestBlock {
                 added = inventory.AddItem(dragItem, amount, toContainer.x, toContainer.y);
             } else {
                 switched = dragItem;
+                switched.m_stack = dragAmount;
             }
 
             return new RequestAddResponse(added, fromInventory, amount, switched).WriteToPackage();

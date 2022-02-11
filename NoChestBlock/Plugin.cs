@@ -11,7 +11,6 @@ namespace NoChestBlock {
         public const string ModVersion = "0.0.0";
 
         public static Plugin Instance { get; private set; }
-        public static AssetBundle AssetBundle { get; private set; }
 
         private Harmony harmony;
 

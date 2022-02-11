@@ -122,15 +122,10 @@ namespace NoChestBlock.Patches {
 
                 gui.m_currentContainer.m_nview.InvokeRPC("RequestItemMove", request.WriteToPackage());
             } else if (grid.m_inventory == gui.m_currentContainer.GetInventory()) {
-                RequestAdd request = new RequestAdd(fromPos, toPos, dragAmount, gui.m_dragItem, true);
-                Timer.Start(request);
-
-                ContainerHandler.AddItemToChest(request, player.GetInventory(), gui.m_currentContainer);
+                ContainerHandler.AddItemToChest(fromPos, toPos, dragAmount, true, player.GetInventory(), gui.m_currentContainer);
             } else {
                 ItemDrop.ItemData prevItem = grid.GetInventory().GetItemAt(toPos.x, toPos.y);
                 RequestRemove request = new RequestRemove(fromPos, toPos, dragAmount, prevItem);
-                Timer.Start(request);
-
                 ContainerHandler.RemoveItemFromChest(request, gui.m_currentContainer);
             }
 
@@ -157,14 +152,12 @@ namespace NoChestBlock.Patches {
                 ContainerHandler.RemoveItemFromChest(request, gui.m_currentContainer);
             } else {
                 Vector2i targetPos = gui.m_currentContainer.GetInventory().FindEmptySlot(true);
-                RequestAdd request = new RequestAdd(toPos, targetPos, item.m_stack, item, false);
-
-                ContainerHandler.AddItemToChest(request, player.GetInventory(), gui.m_currentContainer);
+                ContainerHandler.AddItemToChest(toPos, targetPos, item.m_stack, false, player.GetInventory(), gui.m_currentContainer);
             }
 
             gui.m_moveItemEffects.Create(gui.transform.position, Quaternion.identity);
         }
-        
+
         [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.OnDropOutside)), HarmonyPrefix]
         public static bool InventoryGuiOnDropOutsidePatch() {
             InventoryGui gui = InventoryGui.instance;

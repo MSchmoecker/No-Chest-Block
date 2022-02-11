@@ -138,7 +138,7 @@ namespace UnitTests {
             Assert.NotNull(response.switchItem);
 
             Assert.AreEqual("my item B", response.switchItem.m_shared.m_name);
-            Assert.AreEqual(5, response.switchItem.m_stack);
+            Assert.AreEqual(3, response.switchItem.m_stack);
 
             Assert.AreEqual(1, container.m_inventory.Count);
             Assert.AreEqual(5, container.m_inventory[0].m_stack);
@@ -162,7 +162,7 @@ namespace UnitTests {
             Assert.NotNull(response.switchItem);
 
             Assert.AreEqual("my item B", response.switchItem.m_shared.m_name);
-            Assert.AreEqual(6, response.switchItem.m_stack);
+            Assert.AreEqual(5, response.switchItem.m_stack);
 
             Assert.AreEqual(1, container.m_inventory.Count);
             Assert.AreEqual(5, container.m_inventory[0].m_stack);
