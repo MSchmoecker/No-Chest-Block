@@ -11,8 +11,7 @@ namespace UnitTests {
             harmony.PatchAll(typeof(ZLogPatch));
             harmony.PatchAll(typeof(LogPatch));
             harmony.PatchAll(typeof(InventoryAddItemPatch));
-            harmony.PatchAll(typeof(WriteItemToPackageAlwaysNameHackPatch));
-            harmony.PatchAll(typeof(LoadItemFromPackageAlwaysNameHackPatch));
+            harmony.PatchAll(typeof(WriteItemToPackageNoObjectDB));
         }
 
         [HarmonyPatch]
@@ -28,6 +27,12 @@ namespace UnitTests {
         public static class LogPatch {
             [HarmonyPatch(typeof(Log), nameof(Log.LogInfo)), HarmonyPrefix]
             public static bool NoLogPatch(object data) {
+                System.Console.WriteLine(data);
+                return false;
+            }
+
+            [HarmonyPatch(typeof(Log), nameof(Log.LogWarning)), HarmonyPrefix]
+            public static bool NoWarningPatch(object data) {
                 System.Console.WriteLine(data);
                 return false;
             }
@@ -60,18 +65,17 @@ namespace UnitTests {
         }
 
         [HarmonyPatch]
-        public static class WriteItemToPackageAlwaysNameHackPatch {
-            [HarmonyPatch(typeof(InventoryHelper), nameof(InventoryHelper.WriteItemToPackage)), HarmonyPrefix]
-            public static void WriteItemToPackagePatch(ref bool nameHack) {
-                nameHack = true;
-            }
-        }
+        public static class WriteItemToPackageNoObjectDB {
+            [HarmonyPatch(typeof(InventoryHelper), nameof(InventoryHelper.GetItemDataFromObjectDB)), HarmonyPrefix]
+            public static bool WriteItemToPackagePatch(ref ItemDrop.ItemData __result, string name) {
+                __result = new ItemDrop.ItemData() {
+                    m_shared = new ItemDrop.ItemData.SharedData() {
+                        m_name = name,
+                        m_maxStackSize = 20,
+                    }
+                };
 
-        [HarmonyPatch]
-        public static class LoadItemFromPackageAlwaysNameHackPatch {
-            [HarmonyPatch(typeof(InventoryHelper), nameof(InventoryHelper.LoadItemFromPackage)), HarmonyPrefix]
-            public static void LoadItemFromPackagePatch(ref bool nameHack) {
-                nameHack = true;
+                return false;
             }
         }
     }

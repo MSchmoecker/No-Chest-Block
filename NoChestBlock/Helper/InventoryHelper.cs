@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace NoChestBlock {
     public static class InventoryHelper {
-        public static ItemDrop.ItemData LoadItemFromPackage(ZPackage pkg, bool nameHack = false) {
+        public static ItemDrop.ItemData LoadItemFromPackage(ZPackage pkg) {
             string name = pkg.ReadString();
             int stack = pkg.ReadInt();
             float durability = pkg.ReadSingle();
@@ -16,38 +16,10 @@ namespace NoChestBlock {
             long crafterID = pkg.ReadLong();
             string crafterName = pkg.ReadString();
 
-            if (name == string.Empty) {
+            ItemDrop.ItemData itemData = GetItemDataFromObjectDB(name);
+
+            if (itemData == null) {
                 return null;
-            }
-
-            ItemDrop.ItemData itemData;
-            GameObject gameObject = null;
-
-            if (!nameHack) {
-                GameObject itemPrefab = ObjectDB.instance.GetItemPrefab(name);
-                if (itemPrefab == null) {
-                    ZLog.Log("Failed to find item prefab " + name);
-                    return null;
-                }
-
-                ZNetView.m_forceDisableInit = true;
-                gameObject = Object.Instantiate(itemPrefab);
-                ZNetView.m_forceDisableInit = false;
-                ItemDrop component = gameObject.GetComponent<ItemDrop>();
-                if (component == null) {
-                    ZLog.Log("Missing itemdrop in " + name);
-                    UnityEngine.Object.Destroy(gameObject);
-                    return null;
-                }
-
-                itemData = component.m_itemData;
-            } else {
-                itemData = new ItemDrop.ItemData {
-                    m_shared = new ItemDrop.ItemData.SharedData() {
-                        m_name = name,
-                        m_maxStackSize = 20,
-                    }
-                };
             }
 
             itemData.m_stack = Mathf.Min(stack, itemData.m_shared.m_maxStackSize);
@@ -59,17 +31,33 @@ namespace NoChestBlock {
             itemData.m_crafterName = crafterName;
             itemData.m_gridPos = new Vector2i(pos.x, pos.y);
 
-            if (!nameHack) {
-                Object.Destroy(gameObject);
-            }
-
             return itemData;
         }
 
-        public static void WriteItemToPackage(ItemDrop.ItemData itemData, ZPackage pkg, bool nameHack = false) {
+        public static ItemDrop.ItemData GetItemDataFromObjectDB(string name) {
+            GameObject itemPrefab = ObjectDB.instance.GetItemPrefab(name);
+
+            if (itemPrefab == null) {
+                Log.LogWarning("Failed to find item prefab " + name);
+                return null;
+            }
+
+            ItemDrop component = itemPrefab.GetComponent<ItemDrop>();
+
+            if (component == null) {
+                Log.LogWarning("Missing itemdrop in " + name);
+                return null;
+            }
+
+            return new ItemDrop.ItemData {
+                m_shared = component.m_itemData.m_shared
+            };
+        }
+
+        public static void WriteItemToPackage(ItemDrop.ItemData itemData, ZPackage pkg) {
             if (itemData.m_dropPrefab == null) {
-                Log.LogInfo("Item missing prefab " + itemData.m_shared.m_name);
-                pkg.Write(nameHack ? itemData.m_shared.m_name : "");
+                Log.LogWarning("Item missing prefab " + itemData.m_shared.m_name);
+                pkg.Write(itemData.m_shared.m_name);
             } else {
                 pkg.Write(itemData.m_dropPrefab.name);
             }
