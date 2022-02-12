@@ -29,46 +29,51 @@ namespace NoChestBlock {
 
         public static void RPC_RequestItemRemoveResponse(long sender, ZPackage package) {
             Timer.Stop("RPC_RequestItemRemoveResponse");
+            RPC_RequestItemRemoveResponse(Player.m_localPlayer.GetInventory(), package);
+        }
 
+        public static void RPC_RequestItemRemoveResponse(Inventory inventory, ZPackage package) {
             RequestRemoveResponse response = new RequestRemoveResponse(package);
             response.PrintDebug();
 
-            bool success = response.success;
-            int amount = response.amount;
-            bool hasSwitched = response.hasSwitched;
             Vector2i inventoryPos = response.inventoryPos;
-            ItemDrop.ItemData responseItem = response.responseItem;
-
-            Inventory playerInv = Player.m_localPlayer.GetInventory();
 
             ReleaseSlot(inventoryPos);
 
-            if (success) {
-                if (hasSwitched) {
-                    ItemDrop.ItemData atSlot = playerInv.GetItemAt(inventoryPos.x, inventoryPos.y);
-                    playerInv.RemoveItem(atSlot);
+            if (response.success) {
+                if (response.hasSwitched) {
+                    ItemDrop.ItemData atSlot = inventory.GetItemAt(inventoryPos.x, inventoryPos.y);
+                    inventory.RemoveItem(atSlot);
                 }
 
                 if (inventoryPos.x >= 0 && inventoryPos.y >= 0) {
-                    playerInv.AddItemToInventory(responseItem, amount, inventoryPos);
+                    inventory.AddItemToInventory(response.responseItem, response.amount, inventoryPos);
                 } else {
-                    Transform player = Player.m_localPlayer.transform;
-                    ItemDrop drop = ItemDrop.DropItem(responseItem, amount, player.position + player.forward + player.up, player.rotation);
-                    drop.OnPlayerDrop();
-                    drop.GetComponent<Rigidbody>().velocity = (player.forward + Vector3.up) * 5f;
-                    Player.m_localPlayer.m_zanim.SetTrigger("interact");
-                    Player.m_localPlayer.m_dropEffects.Create(player.position, Quaternion.identity);
-
-                    ItemDrop.ItemData dropData = drop.m_itemData;
-                    Player.m_localPlayer.Message(MessageHud.MessageType.TopLeft, "$msg_dropped " + dropData.m_shared.m_name, dropData.m_stack, dropData.GetIcon());
+                    DropItem(response.responseItem, response.amount);
                 }
             }
 
             if (InventoryGui.instance != null) {
-                InventoryGui.instance.SetupDragItem(null, null, 0);
-                InventoryGui.instance.m_moveItemEffects.Create(InventoryGui.instance.transform.position, Quaternion.identity);
-                InventoryGui.instance.UpdateCraftingPanel();
+                UpdateGUIAfterMove();
             }
+        }
+
+        private static void UpdateGUIAfterMove() {
+            InventoryGui.instance.SetupDragItem(null, null, 0);
+            InventoryGui.instance.m_moveItemEffects.Create(InventoryGui.instance.transform.position, Quaternion.identity);
+            InventoryGui.instance.UpdateCraftingPanel();
+        }
+
+        private static void DropItem(ItemDrop.ItemData responseItem, int amount) {
+            Transform player = Player.m_localPlayer.transform;
+            ItemDrop drop = ItemDrop.DropItem(responseItem, amount, player.position + player.forward + player.up, player.rotation);
+            drop.OnPlayerDrop();
+            drop.GetComponent<Rigidbody>().velocity = (player.forward + Vector3.up) * 5f;
+            Player.m_localPlayer.m_zanim.SetTrigger("interact");
+            Player.m_localPlayer.m_dropEffects.Create(player.position, Quaternion.identity);
+
+            ItemDrop.ItemData dropData = drop.m_itemData;
+            Player.m_localPlayer.Message(MessageHud.MessageType.TopLeft, "$msg_dropped " + dropData.m_shared.m_name, dropData.m_stack, dropData.GetIcon());
         }
 
         public static void RPC_RequestItemAddResponse(Inventory inventory, long sender, ZPackage package) {
@@ -76,8 +81,6 @@ namespace NoChestBlock {
             response.PrintDebug();
 
             Vector2i inventoryPos = response.inventoryPos;
-            bool success = response.success;
-            int amount = response.amount;
             ItemDrop.ItemData switchItem = response.switchItem;
 
             ReleaseSlot(inventoryPos);

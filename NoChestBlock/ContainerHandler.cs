@@ -11,7 +11,7 @@ namespace NoChestBlock {
             RequestTakeAll request = new RequestTakeAll(wanted);
             Timer.Start(request);
 
-            if (container.m_nview != null) {
+            if (container != null && container.m_nview) {
                 container.m_nview.InvokeRPC("RequestTakeAllItems", request.WriteToPackage());
             }
         }
@@ -34,7 +34,7 @@ namespace NoChestBlock {
         public static void RemoveItemFromChest(RequestRemove request, Container container) {
             InventoryHandler.BlockSlot(request.toInventory);
 
-            if (container.m_nview) {
+            if (container != null && container.m_nview) {
                 Timer.Start(request);
                 container.m_nview.InvokeRPC("RequestItemRemove", request.WriteToPackage());
             }
