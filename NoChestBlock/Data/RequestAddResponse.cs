@@ -53,6 +53,7 @@ namespace NoChestBlock {
             Log.LogInfo($"  success: {success}");
             Log.LogInfo($"  amount: {amount}");
             Log.LogInfo($"  switchItem: {switchItem != null}");
+            InventoryHelper.PrintItem(switchItem);
         }
     }
 }

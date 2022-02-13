@@ -58,6 +58,7 @@ namespace NoChestBlock {
             Log.LogInfo($"  hasSwitched: {hasSwitched}");
             Log.LogInfo($"  inventoryPos: {inventoryPos}");
             Log.LogInfo($"  responseItem: {responseItem != null}");
+            InventoryHelper.PrintItem(responseItem);
         }
     }
 }

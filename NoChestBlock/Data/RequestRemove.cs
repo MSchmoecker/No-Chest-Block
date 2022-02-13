@@ -45,6 +45,7 @@ namespace NoChestBlock {
             Log.LogInfo($"  toInventory: {toInventory}");
             Log.LogInfo($"  dragAmount: {dragAmount}");
             Log.LogInfo($"  switchItem: {switchItem != null}");
+            InventoryHelper.PrintItem(switchItem);
         }
     }
 }

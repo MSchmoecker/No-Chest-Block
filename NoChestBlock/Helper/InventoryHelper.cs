@@ -34,26 +34,6 @@ namespace NoChestBlock {
             return itemData;
         }
 
-        public static ItemDrop.ItemData GetItemDataFromObjectDB(string name) {
-            GameObject itemPrefab = ObjectDB.instance.GetItemPrefab(name);
-
-            if (itemPrefab == null) {
-                Log.LogWarning("Failed to find item prefab " + name);
-                return null;
-            }
-
-            ItemDrop component = itemPrefab.GetComponent<ItemDrop>();
-
-            if (component == null) {
-                Log.LogWarning("Missing itemdrop in " + name);
-                return null;
-            }
-
-            return new ItemDrop.ItemData {
-                m_shared = component.m_itemData.m_shared
-            };
-        }
-
         public static void WriteItemToPackage(ItemDrop.ItemData itemData, ZPackage pkg) {
             if (itemData.m_dropPrefab == null) {
                 Log.LogWarning("Item missing prefab " + itemData.m_shared.m_name);
@@ -70,6 +50,28 @@ namespace NoChestBlock {
             pkg.Write(itemData.m_variant);
             pkg.Write(itemData.m_crafterID);
             pkg.Write(itemData.m_crafterName);
+        }
+
+
+        public static ItemDrop.ItemData GetItemDataFromObjectDB(string name) {
+            GameObject itemPrefab = ObjectDB.instance.GetItemPrefab(name);
+
+            if (itemPrefab == null) {
+                Log.LogWarning("Failed to find item prefab " + name);
+                return null;
+            }
+
+            ItemDrop component = itemPrefab.GetComponent<ItemDrop>();
+
+            if (component == null) {
+                Log.LogWarning("Missing itemdrop in " + name);
+                return null;
+            }
+
+            return new ItemDrop.ItemData {
+                m_shared = component.m_itemData.m_shared,
+                m_dropPrefab = itemPrefab,
+            };
         }
 
         public static bool MoveItem(Inventory inventory, ItemDrop.ItemData item, int amount, Vector2i toPos) {
@@ -160,6 +162,16 @@ namespace NoChestBlock {
             string name = item.m_dropPrefab != null ? item.m_dropPrefab.name : item.m_shared.m_name;
             return target.AddItem(name, amount, item.m_durability, pos, item.m_equiped, item.m_quality,
                                   item.m_variant, item.m_crafterID, item.m_crafterName);
+        }
+
+        public static void PrintItem(ItemDrop.ItemData itemData) {
+            if (itemData == null) {
+                return;
+            }
+
+            Log.LogInfo($"    drop name: {(itemData.m_dropPrefab != null ? itemData.m_dropPrefab.name : "null!!!")}");
+            Log.LogInfo($"    shared name: {itemData.m_shared.m_name}");
+            Log.LogInfo($"    stack: {itemData.m_stack}");
         }
     }
 }
