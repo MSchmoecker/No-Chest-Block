@@ -110,6 +110,8 @@
         <Compile Include="Helper\Timer.cs" />
         <Compile Include="InventoryHandler.cs" />
         <Compile Include="Patches\ContainerPatch.cs" />
+        <Compile Include="Patches\InventoryGuiOnSelectedItemMovePatch.cs" />
+        <Compile Include="Patches\InventoryGuiOnSelectedItemFastMovePatch.cs" />
         <Compile Include="Patches\InventoryGuiPatch.cs" />
         <Compile Include="Plugin.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />

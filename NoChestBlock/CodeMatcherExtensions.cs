@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using System.Reflection.Emit;
 using HarmonyLib;
 
@@ -45,6 +46,10 @@ namespace NoChestBlock {
             }
 
             return codeMatcher;
+        }
+
+        public static bool IsVirtCall(CodeInstruction i, string declaringType, string name) {
+            return i.opcode == OpCodes.Callvirt && i.operand is MethodInfo methodInfo && methodInfo.DeclaringType?.Name == declaringType && methodInfo.Name == name;
         }
     }
 }
