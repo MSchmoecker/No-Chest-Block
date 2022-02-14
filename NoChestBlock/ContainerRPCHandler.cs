@@ -71,13 +71,18 @@ namespace NoChestBlock {
                         amount = 0;
                     }
                 }
+            } else if (toContainer.x < 0 || toContainer.y < 0) {
+                allowAdding = false;
+                amount = 0;
             }
 
             if (allowAdding) {
                 added = inventory.AddItemToInventory(dragItem, amount, toContainer);
-            } else {
+            }
+
+            if (!added || amount != dragAmount) {
                 switched = dragItem;
-                switched.m_stack = dragAmount;
+                switched.m_stack = dragAmount - amount;
             }
 
             return new RequestAddResponse(added, fromInventory, amount, switched).WriteToPackage();

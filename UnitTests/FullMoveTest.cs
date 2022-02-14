@@ -63,6 +63,41 @@ namespace UnitTests {
         }
 
         [Test]
+        public void AddToChest_Full_FastMove() {
+            player.AddItem(Helper.CreateItem("itemA", 5, 20), 5, 2, 2);
+            container = new Inventory("container", null, 1, 1);
+            container.AddItem(Helper.CreateItem("itemB", 5, 20), 5, 0, 0);
+
+            Vector2i targetPos = container.FindEmptySlot(true);
+            RequestAdd request = ContainerHandler.AddItemToChest(new Vector2i(2, 2), targetPos, 5, false, player, null);
+            ZPackage response = GetAddResponse(request);
+            InventoryHandler.RPC_RequestItemAddResponse(player, 0L, response);
+
+            Assert.AreEqual("itemA", player.GetItemAt(2, 2).m_shared.m_name);
+            Assert.AreEqual(5, player.GetItemAt(2, 2).m_stack);
+            Assert.AreEqual("itemB", container.GetItemAt(0, 0).m_shared.m_name);
+            Assert.AreEqual(5, container.GetItemAt(0, 0).m_stack);
+        }
+
+        [Test]
+        public void AddToChest_SlotOccupied_SameItem_CannotStackAll() {
+            player.AddItem(Helper.CreateItem("itemA", 10, 20), 10, 2, 2);
+            container.AddItem(Helper.CreateItem("itemA", 15, 20), 15, 2, 2);
+
+            RequestAdd request = ContainerHandler.AddItemToChest(new Vector2i(2, 2), new Vector2i(2, 2), 10, true, player, null);
+            ZPackage response = GetAddResponse(request);
+            InventoryHandler.RPC_RequestItemAddResponse(player, 0L, response);
+
+            Assert.NotNull(player.GetItemAt(2, 2));
+            Assert.NotNull(container.GetItemAt(2, 2));
+
+            Assert.AreEqual("itemA", player.GetItemAt(2, 2).m_shared.m_name);
+            Assert.AreEqual(5, player.GetItemAt(2, 2).m_stack);
+            Assert.AreEqual("itemA", container.GetItemAt(2, 2).m_shared.m_name);
+            Assert.AreEqual(20, container.GetItemAt(2, 2).m_stack);
+        }
+
+        [Test]
         public void RemoveFromChest_SlotOccupied_DifferentItem_SplitMove() {
             player.AddItem(Helper.CreateItem("itemA", 5, 20), 5, 2, 2);
             container.AddItem(Helper.CreateItem("itemB", 5, 20), 5, 2, 2);

@@ -71,7 +71,10 @@ namespace UnitTests {
 
             Assert.True(response.success);
             Assert.AreEqual(3, response.amount);
-            Assert.Null(response.switchItem);
+            Assert.NotNull(response.switchItem);
+
+            Assert.AreEqual(2, response.switchItem.m_stack);
+            Assert.AreEqual("my item", response.switchItem.m_shared.m_name);
 
             Assert.AreEqual(1, container.m_inventory.Count);
             Assert.AreEqual(3, container.m_inventory[0].m_stack);
@@ -203,7 +206,10 @@ namespace UnitTests {
 
             Assert.True(response.success);
             Assert.AreEqual(1, response.amount);
-            Assert.Null(response.switchItem);
+            Assert.NotNull(response.switchItem);
+
+            Assert.AreEqual("my item A", response.switchItem.m_shared.m_name);
+            Assert.AreEqual(4, response.switchItem.m_stack);
 
             Assert.AreEqual(1, container.m_inventory.Count);
             Assert.AreEqual(20, container.m_inventory[0].m_stack);
@@ -224,7 +230,10 @@ namespace UnitTests {
 
             Assert.False(response.success);
             Assert.AreEqual(0, response.amount);
-            Assert.Null(response.switchItem);
+            Assert.NotNull(response.switchItem);
+
+            Assert.AreEqual("my item A", response.switchItem.m_shared.m_name);
+            Assert.AreEqual(5, response.switchItem.m_stack);
 
             Assert.AreEqual(1, container.m_inventory.Count);
             Assert.AreEqual(20, container.m_inventory[0].m_stack);
@@ -240,7 +249,7 @@ namespace UnitTests {
                                                 5,
                                                 Helper.CreateItem("my item B", 5, 20),
                                                 true);
-            
+
             RequestAddResponse response = GetResponse(request);
 
             Assert.True(response.success);
