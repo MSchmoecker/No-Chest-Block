@@ -44,17 +44,10 @@ namespace NoChestBlock.Patches {
                     return false;
                 }
 
-                Vector2i targetSlot = InventoryHelper.FindEmptySlot(player.GetInventory(), InventoryHandler.blockedSlots);
-
-                if (targetSlot.x == -1 || targetSlot.y == -1) {
-                    return false;
-                }
-
-                RequestRemove request = new RequestRemove(fromPos, targetSlot, item.m_stack, player.GetInventory().m_name, null);
+                RequestRemove request = new RequestRemove(fromPos, new Vector2i(-1, -1), item.m_stack, player.GetInventory().m_name, null);
                 ContainerHandler.RemoveItemFromChest(request, gui.m_currentContainer);
             } else {
-                Vector2i targetPos = gui.m_currentContainer.GetInventory().FindEmptySlot(true);
-                ContainerHandler.AddItemToChest(fromPos, targetPos, item.m_stack, false, grid.m_inventory, gui.m_currentContainer);
+                ContainerHandler.AddItemToChest(fromPos, new Vector2i(-1, -1), item.m_stack, false, grid.m_inventory, gui.m_currentContainer);
             }
 
             gui.m_moveItemEffects.Create(gui.transform.position, Quaternion.identity);

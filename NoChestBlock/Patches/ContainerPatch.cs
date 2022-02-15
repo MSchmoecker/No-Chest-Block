@@ -21,12 +21,14 @@ namespace NoChestBlock.Patches {
             nview.Register<ZPackage>("RequestItemRemove", (l, package) => ContainerRPCHandler.RPC_RequestItemRemove(__instance, l, package));
             nview.Register<ZPackage>("RequestItemConsume", (l, package) => ContainerRPCHandler.RPC_RequestItemConsume(__instance, l, package));
             nview.Register<ZPackage>("RequestTakeAllItems", (l, package) => ContainerRPCHandler.RPC_RequestTakeAllItems(__instance, l, package));
+            nview.Register<ZPackage>("RequestDropItems", (l, package) => ContainerRPCHandler.RPC_RequestDrop(__instance, l, package));
 
             nview.Register<bool>("RequestItemMoveResponse", InventoryHandler.RPC_RequestItemMoveResponse);
             nview.Register<ZPackage>("RequestItemAddResponse", InventoryHandler.RPC_RequestItemAddResponse);
             nview.Register<ZPackage>("RequestItemRemoveResponse", InventoryHandler.RPC_RequestItemRemoveResponse);
             nview.Register<ZPackage>("RequestItemConsumeResponse", InventoryHandler.RPC_RequestItemConsumeResponse);
             nview.Register<ZPackage>("RequestTakeAllItemsResponse", InventoryHandler.RPC_RequestTakeAllItemsResponse);
+            nview.Register<ZPackage>("RequestDropResponse", InventoryHandler.RPC_RequestDropResponse);
         }
 
         // This could maybe converted to a transpiler but is currently not worth it as the order of the statements have to be changed

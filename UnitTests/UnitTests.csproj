@@ -73,6 +73,7 @@
         </Reference>
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="ContainerDropTest.cs" />
         <Compile Include="ContainerHandlerAddTest.cs" />
         <Compile Include="ContainerHandlerRemoveTest.cs" />
         <Compile Include="GetAllMoveableItemsTest.cs" />

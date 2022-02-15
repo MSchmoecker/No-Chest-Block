@@ -25,6 +25,9 @@ namespace UnitTests {
         private const string RequestTakeAllRPC = "RequestTakeAllItems";
         private const string RequestTakeAllResponseRPC = "RequestTakeAllItemsResponse";
 
+        private const string RequestDropRPC = "RequestDropItems";
+        private const string RequestDropResponseRPC = "RequestDropResponse";
+
         [SetUp]
         public void SetUp() {
             container = Helper.CreateContainer();
@@ -79,6 +82,9 @@ namespace UnitTests {
 
             Assert.IsTrue(container.m_nview.m_functions.ContainsKey(RequestTakeAllRPC.GetStableHashCode()));
             Assert.IsTrue(container.m_nview.m_functions.ContainsKey(RequestTakeAllResponseRPC.GetStableHashCode()));
+
+            Assert.IsTrue(container.m_nview.m_functions.ContainsKey(RequestDropRPC.GetStableHashCode()));
+            Assert.IsTrue(container.m_nview.m_functions.ContainsKey(RequestDropResponseRPC.GetStableHashCode()));
         }
 
         private static ZPackage NewSendAbleRPC_ZPackage() {
@@ -127,6 +133,11 @@ namespace UnitTests {
         [Test]
         public void RequestTakeAllCallsResponse() {
             TestRPCCallsResponse(RequestTakeAllRPC, RequestTakeAllResponseRPC, NewSendAbleRPC_ZPackage());
+        }
+
+        [Test]
+        public void RequestDropResponse() {
+            TestRPCCallsResponse(RequestDropRPC, RequestDropResponseRPC, NewSendAbleRPC_ZPackage());
         }
     }
 }

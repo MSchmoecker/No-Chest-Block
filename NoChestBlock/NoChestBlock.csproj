@@ -101,6 +101,8 @@
         <Compile Include="Data\RequestAddResponse.cs" />
         <Compile Include="Data\RequestConsume.cs" />
         <Compile Include="Data\RequestConsumeResponse.cs" />
+        <Compile Include="Data\RequestDrop.cs" />
+        <Compile Include="Data\RequestDropResponse.cs" />
         <Compile Include="Data\RequestMove.cs" />
         <Compile Include="Data\RequestRemove.cs" />
         <Compile Include="Data\RequestRemoveResponse.cs" />

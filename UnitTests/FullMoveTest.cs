@@ -29,7 +29,7 @@ namespace UnitTests {
 
             ZPackage response = container.RequestItemRemove(0L, data);
             response.SetPos(0);
-            return new RequestRemoveResponse(response);;
+            return new RequestRemoveResponse(response);
         }
 
         [Test]

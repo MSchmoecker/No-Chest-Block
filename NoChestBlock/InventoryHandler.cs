@@ -34,6 +34,12 @@ namespace NoChestBlock {
             RPC_RequestItemRemoveResponse(GetPlayerInventory(response.inventoryName), response);
         }
 
+        public static void RPC_RequestDropResponse(long sender, ZPackage package) {
+            Timer.Stop("RPC_RequestItemRemoveResponse");
+            RequestDropResponse response = new RequestDropResponse(package);
+            RPC_RequestDropResponse(response);
+        }
+
         public static void RPC_RequestItemRemoveResponse(Inventory inventory, RequestRemoveResponse response) {
             response.PrintDebug();
 
@@ -49,9 +55,19 @@ namespace NoChestBlock {
                 if (inventoryPos.x >= 0 && inventoryPos.y >= 0) {
                     inventory.AddItemToInventory(response.responseItem, response.amount, inventoryPos);
                 } else {
-                    DropItem(response.responseItem, response.amount);
+                    Inventory tmp = new Inventory("tmp", null, 1, 1);
+                    tmp.AddItem(response.responseItem);
+                    inventory.MoveItemToThis(tmp, response.responseItem);
                 }
             }
+
+            if (InventoryGui.instance != null) {
+                UpdateGUIAfterMove();
+            }
+        }
+
+        private static void RPC_RequestDropResponse(RequestDropResponse response) {
+            DropItem(response.responseItem, response.responseItem.m_stack);
 
             if (InventoryGui.instance != null) {
                 UpdateGUIAfterMove();

@@ -34,6 +34,12 @@ namespace NoChestBlock {
             HandleRPC(container, sender, nameof(RPC_RequestTakeAllItems), "RequestTakeAllItemsResponse", Message, NotOwner);
         }
 
+        public static void RPC_RequestDrop(Container container, long sender, ZPackage package) {
+            ZPackage Message() => container.GetInventory().RequestDrop(sender, package);
+            ZPackage NotOwner() => new RequestDropResponse((ItemDrop.ItemData)null).WriteToPackage();
+            HandleRPC(container, sender, nameof(RPC_RequestDrop), "RequestDropResponse", Message, NotOwner);
+        }
+
         private static void HandleRPC<T>(Container container, long target, string callName, string rpcInvoke, Func<T> message, Func<T> notOwner) {
             Log.LogInfo(callName);
             container.m_nview.InvokeRPC(target, rpcInvoke, container.IsOwner() ? message() : notOwner());
@@ -48,6 +54,21 @@ namespace NoChestBlock {
             int dragAmount = request.dragAmount;
             ItemDrop.ItemData dragItem = request.dragItem;
             bool allowSwitch = request.allowSwitch;
+
+            if (toContainer.x < 0 || toContainer.y < 0) {
+                Inventory tmp = new Inventory("tmp", null, 1, 1);
+                tmp.AddItem(dragItem.Clone());
+                inventory.MoveAll(tmp);
+                ItemDrop.ItemData now = tmp.GetItemAt(0, 0);
+
+                if (now == null) {
+                    return new RequestAddResponse(true, fromInventory, dragAmount, request.inventoryName, null).WriteToPackage();
+                } else {
+                    ItemDrop.ItemData back = dragItem.Clone();
+                    back.m_stack -= dragItem.m_stack - now.m_stack;
+                    return new RequestAddResponse(now.m_stack != dragItem.m_stack, fromInventory, dragItem.m_stack - now.m_stack, request.inventoryName, back).WriteToPackage();
+                }
+            }
 
             bool added = false;
             bool allowAdding = true;
@@ -171,6 +192,21 @@ namespace NoChestBlock {
             }
 
             return new RequestTakeAll(moved).WriteToPackage();
+        }
+
+        public static ZPackage RequestDrop(this Inventory inventory, long sender, ZPackage package) {
+            RequestDrop request = new RequestDrop(package);
+            request.PrintDebug();
+
+            ItemDrop.ItemData from = inventory.GetItemAt(request.targetContainerSlot.x, request.targetContainerSlot.y);
+
+            int removedAmount = Mathf.Min(from.m_stack, request.amount);
+            inventory.RemoveItem(from, removedAmount);
+
+            ItemDrop.ItemData responseItem = from.Clone();
+            responseItem.m_stack = removedAmount;
+
+            return new RequestDropResponse(responseItem).WriteToPackage();
         }
     }
 }
