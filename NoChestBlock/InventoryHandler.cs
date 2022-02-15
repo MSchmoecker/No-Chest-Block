@@ -12,7 +12,8 @@ namespace NoChestBlock {
 
         public static void RPC_RequestItemAddResponse(long sender, ZPackage package) {
             Timer.Stop("RPC_RequestItemAddResponse");
-            RPC_RequestItemAddResponse(Player.m_localPlayer.GetInventory(), sender, package);
+            RequestAddResponse response = new RequestAddResponse(package);
+            RPC_RequestItemAddResponse(GetPlayerInventory(response.inventoryName), response);
         }
 
         public static void RPC_RequestItemMoveResponse(long sender, bool success) {
@@ -29,15 +30,14 @@ namespace NoChestBlock {
 
         public static void RPC_RequestItemRemoveResponse(long sender, ZPackage package) {
             Timer.Stop("RPC_RequestItemRemoveResponse");
-            RPC_RequestItemRemoveResponse(Player.m_localPlayer.GetInventory(), package);
+            RequestRemoveResponse response = new RequestRemoveResponse(package);
+            RPC_RequestItemRemoveResponse(GetPlayerInventory(response.inventoryName), response);
         }
 
-        public static void RPC_RequestItemRemoveResponse(Inventory inventory, ZPackage package) {
-            RequestRemoveResponse response = new RequestRemoveResponse(package);
+        public static void RPC_RequestItemRemoveResponse(Inventory inventory, RequestRemoveResponse response) {
             response.PrintDebug();
 
             Vector2i inventoryPos = response.inventoryPos;
-
             ReleaseSlot(inventoryPos);
 
             if (response.success) {
@@ -76,8 +76,7 @@ namespace NoChestBlock {
             Player.m_localPlayer.Message(MessageHud.MessageType.TopLeft, "$msg_dropped " + dropData.m_shared.m_name, dropData.m_stack, dropData.GetIcon());
         }
 
-        public static void RPC_RequestItemAddResponse(Inventory inventory, long sender, ZPackage package) {
-            RequestAddResponse response = new RequestAddResponse(package);
+        public static void RPC_RequestItemAddResponse(Inventory inventory, RequestAddResponse response) {
             response.PrintDebug();
 
             Vector2i inventoryPos = response.inventoryPos;
@@ -128,6 +127,15 @@ namespace NoChestBlock {
             foreach (ItemDrop.ItemData item in response.items) {
                 inventory.AddItemToInventory(item, item.m_stack, item.m_gridPos);
             }
+        }
+
+        private static Inventory GetPlayerInventory(string name) {
+            if (Player.m_localPlayer.m_inventory.IsType("ExtendedInventory") && Player.m_localPlayer.m_inventory.HasField("_inventories")) {
+                List<Inventory> inventories = Player.m_localPlayer.m_inventory.GetField<List<Inventory>>("_inventories");
+                return inventories.FirstOrDefault(i => i.m_name == name) ?? Player.m_localPlayer.m_inventory;
+            }
+
+            return Player.m_localPlayer.m_inventory;
         }
 
         public static void BlockSlot(Vector2i slot) {

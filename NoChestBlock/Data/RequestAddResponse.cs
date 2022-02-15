@@ -3,12 +3,14 @@ namespace NoChestBlock {
         public bool success;
         public Vector2i inventoryPos;
         public int amount;
+        public string inventoryName;
         public ItemDrop.ItemData switchItem;
 
-        public RequestAddResponse(bool success, Vector2i inventoryPos, int amount, ItemDrop.ItemData switchItem) {
+        public RequestAddResponse(bool success, Vector2i inventoryPos, int amount, string inventoryName, ItemDrop.ItemData switchItem) {
             this.success = success;
             this.inventoryPos = inventoryPos;
             this.amount = amount;
+            this.inventoryName = inventoryName;
             this.switchItem = switchItem;
         }
 
@@ -20,6 +22,7 @@ namespace NoChestBlock {
             success = false;
             inventoryPos = new Vector2i(-1, -1);
             amount = 0;
+            inventoryName = "";
             switchItem = null;
         }
 
@@ -28,6 +31,7 @@ namespace NoChestBlock {
             package.Write(inventoryPos);
             package.Write(success);
             package.Write(amount);
+            package.Write(inventoryName);
             package.Write(switchItem != null);
 
             if (switchItem != null) {
@@ -41,6 +45,7 @@ namespace NoChestBlock {
             inventoryPos = package.ReadVector2i();
             success = package.ReadBool();
             amount = package.ReadInt();
+            inventoryName = package.ReadString();
             bool hasSwitchItem = package.ReadBool();
             if (hasSwitchItem) {
                 switchItem = InventoryHelper.LoadItemFromPackage(package);
@@ -52,6 +57,7 @@ namespace NoChestBlock {
             Log.LogInfo($"  inventoryPos: {inventoryPos}");
             Log.LogInfo($"  success: {success}");
             Log.LogInfo($"  amount: {amount}");
+            Log.LogInfo($"  inventoryName: {inventoryName}");
             Log.LogInfo($"  switchItem: {switchItem != null}");
             InventoryHelper.PrintItem(switchItem);
         }

@@ -18,7 +18,7 @@ namespace NoChestBlock {
 
         public static RequestAdd AddItemToChest(Vector2i from, Vector2i to, int dragAmount, bool allowSwitch, Inventory playerInventory, Container container) {
             ItemDrop.ItemData item = playerInventory.GetItemAt(from.x, from.y).Clone();
-            RequestAdd request = new RequestAdd(from, to, dragAmount, item, allowSwitch);
+            RequestAdd request = new RequestAdd(from, to, dragAmount, item, playerInventory.m_name, allowSwitch);
 
             playerInventory.RemoveItem(playerInventory.GetItemAt(from.x, from.y), dragAmount);
             InventoryHandler.BlockSlot(request.fromInventory);

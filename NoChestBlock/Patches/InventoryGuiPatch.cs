@@ -86,7 +86,7 @@ namespace NoChestBlock.Patches {
                 return true;
             }
 
-            RequestRemove request = new RequestRemove(gui.m_dragItem.m_gridPos, new Vector2i(-1, -1), gui.m_dragItem.m_stack, null);
+            RequestRemove request = new RequestRemove(gui.m_dragItem.m_gridPos, new Vector2i(-1, -1), gui.m_dragItem.m_stack, gui.m_dragInventory.m_name, null);
             ContainerHandler.RemoveItemFromChest(request, gui.m_currentContainer);
             return false;
         }

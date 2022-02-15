@@ -43,14 +43,8 @@ namespace UnitTests {
         public void RPC_RequestItemAddResponseNoItemAtResponsePos() {
             Inventory inventory = new Inventory("inventory", null, 4, 5);
 
-            ZPackage data = new ZPackage();
-            data.Write(new Vector2i(2, 3)); // inventoryPos
-            data.Write(true); // is success
-            data.Write(3); // amount
-            data.Write(false); // not has switched
-            data.SetPos(0);
-
-            Assert.DoesNotThrow(() => InventoryHandler.RPC_RequestItemAddResponse(inventory, 0L, data));
+            RequestAddResponse response = new RequestAddResponse(true, new Vector2i(2, 3), 3, "inv", null);
+            Assert.DoesNotThrow(() => InventoryHandler.RPC_RequestItemAddResponse(inventory, response));
         }
 
         [Test]

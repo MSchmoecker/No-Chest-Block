@@ -21,13 +21,13 @@ namespace NoChestBlock.Patches {
                                      new CodeInstruction(OpCodes.Ldarg_2),
                                      new CodeInstruction(OpCodes.Ldarg_3),
                                      new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(InventoryGuiOnSelectedItemFastMovePatch), nameof(FastMoveItem))),
-                                     new CodeInstruction(OpCodes.Brfalse, label),
+                                     new CodeInstruction(OpCodes.Brtrue, label),
                                      new CodeInstruction(OpCodes.Ret))
                    .AddLabels(new[] { label })
                    .InstructionEnumeration();
         }
 
-        private static bool FastMoveItem(InventoryGrid grid, ItemDrop.ItemData item, Vector2i toPos) {
+        private static bool FastMoveItem(InventoryGrid grid, ItemDrop.ItemData item, Vector2i fromPos) {
             Log.LogInfo("FastMoveItem");
             InventoryGui gui = InventoryGui.instance;
             Player player = Player.m_localPlayer;
@@ -36,30 +36,30 @@ namespace NoChestBlock.Patches {
 
             if (isOwnerOfContainer) {
                 Log.LogInfo("FastMoveItem in own inventory");
-                return false;
+                return true;
             }
 
             if (grid.GetInventory() == gui.m_currentContainer.GetInventory()) {
                 if (!player.GetInventory().CanAddItem(item)) {
-                    return true;
+                    return false;
                 }
 
                 Vector2i targetSlot = InventoryHelper.FindEmptySlot(player.GetInventory(), InventoryHandler.blockedSlots);
 
                 if (targetSlot.x == -1 || targetSlot.y == -1) {
-                    return true;
+                    return false;
                 }
 
-                RequestRemove request = new RequestRemove(toPos, targetSlot, item.m_stack, null);
+                RequestRemove request = new RequestRemove(fromPos, targetSlot, item.m_stack, player.GetInventory().m_name, null);
                 ContainerHandler.RemoveItemFromChest(request, gui.m_currentContainer);
             } else {
                 Vector2i targetPos = gui.m_currentContainer.GetInventory().FindEmptySlot(true);
-                ContainerHandler.AddItemToChest(toPos, targetPos, item.m_stack, false, player.GetInventory(), gui.m_currentContainer);
+                ContainerHandler.AddItemToChest(fromPos, targetPos, item.m_stack, false, grid.m_inventory, gui.m_currentContainer);
             }
 
             gui.m_moveItemEffects.Create(gui.transform.position, Quaternion.identity);
             Log.LogDebug("FastMoveItem in other inventory");
-            return true;
+            return false;
         }
     }
 }

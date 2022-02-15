@@ -85,7 +85,7 @@ namespace NoChestBlock {
                 switched.m_stack = dragAmount - amount;
             }
 
-            return new RequestAddResponse(added, fromInventory, amount, switched).WriteToPackage();
+            return new RequestAddResponse(added, fromInventory, amount, request.inventoryName, switched).WriteToPackage();
         }
 
         public static ZPackage RequestItemRemove(this Inventory inventory, long sender, ZPackage package) {
@@ -101,7 +101,7 @@ namespace NoChestBlock {
 
             if (from == null) {
                 Log.LogInfo("from is null");
-                return new RequestRemoveResponse(false, 0, false, toInventory, null).WriteToPackage();
+                return new RequestRemoveResponse(false, 0, false, toInventory, request.inventoryName, null).WriteToPackage();
             }
 
             int removedAmount = 0;
@@ -124,7 +124,7 @@ namespace NoChestBlock {
 
             ItemDrop.ItemData responseItem = from.Clone();
             responseItem.m_stack = removedAmount;
-            return new RequestRemoveResponse(removed, removedAmount, switched, toInventory, responseItem).WriteToPackage();
+            return new RequestRemoveResponse(removed, removedAmount, switched, toInventory, request.inventoryName, responseItem).WriteToPackage();
         }
 
         private static ZPackage RequestItemConsume(this Inventory inventory, long sender, ZPackage package) {

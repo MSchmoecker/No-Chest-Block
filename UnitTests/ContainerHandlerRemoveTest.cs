@@ -23,15 +23,19 @@ namespace UnitTests {
             return new RequestRemoveResponse(response);
         }
 
+        private static RequestRemove MakeMessage(int dragAmount) {
+            return new RequestRemove(new Vector2i(2, 2),
+                                     new Vector2i(4, 4),
+                                     dragAmount,
+                                     "inv",
+                                     null);
+        }
+
         [Test]
         public void RPC_RequestItemRemoveToEmptyInventorySlotExactAmountAsContainer() {
             container.AddItem(Helper.CreateItem("my item", 5, 10), 5, 2, 2);
 
-            RequestRemove request = new RequestRemove(new Vector2i(2, 2),
-                                                      new Vector2i(4, 4),
-                                                      5,
-                                                      null);
-
+            RequestRemove request = MakeMessage(5);
             RequestRemoveResponse response = GetResponse(request);
 
             Assert.True(response.success);
@@ -45,11 +49,7 @@ namespace UnitTests {
         public void RPC_RequestItemRemoveToEmptyInventorySlotFewerAmountAsContainer() {
             container.AddItem(Helper.CreateItem("my item", 5, 10), 5, 2, 2);
 
-            RequestRemove request = new RequestRemove(new Vector2i(2, 2),
-                                                      new Vector2i(4, 4),
-                                                      3,
-                                                      null);
-
+            RequestRemove request = MakeMessage(3);
             RequestRemoveResponse response = GetResponse(request);
 
             Assert.True(response.success);
@@ -64,11 +64,7 @@ namespace UnitTests {
         public void RPC_RequestItemRemoveToEmptyInventorySlotMoreAmountAsContainer() {
             container.AddItem(Helper.CreateItem("my item", 5, 10), 5, 2, 2);
 
-            RequestRemove request = new RequestRemove(new Vector2i(2, 2),
-                                                      new Vector2i(4, 4),
-                                                      7,
-                                                      null);
-
+            RequestRemove request = MakeMessage(7);
             RequestRemoveResponse response = GetResponse(request);
 
             Assert.True(response.success);
@@ -80,11 +76,7 @@ namespace UnitTests {
 
         [Test]
         public void RPC_RequestItemRemoveToEmptyInventorySlotItemNotInContainer() {
-            RequestRemove request = new RequestRemove(new Vector2i(2, 2),
-                                                      new Vector2i(4, 4),
-                                                      5,
-                                                      null);
-
+            RequestRemove request = MakeMessage(5);
             RequestRemoveResponse response = GetResponse(request);
 
             Assert.False(response.success);
@@ -98,11 +90,8 @@ namespace UnitTests {
         public void RPC_RequestItemRemoveDifferentItemToInventory() {
             container.AddItem(Helper.CreateItem("my item A", 5, 10), 5, 2, 2);
 
-            RequestRemove request = new RequestRemove(new Vector2i(2, 2),
-                                                      new Vector2i(4, 4),
-                                                      5,
-                                                      Helper.CreateItem("my item B", 3, 15));
-
+            RequestRemove request = MakeMessage(5);
+            request.switchItem = Helper.CreateItem("my item B", 3, 15);
             RequestRemoveResponse response = GetResponse(request);
 
             Assert.True(response.success);
@@ -118,11 +107,8 @@ namespace UnitTests {
         public void RPC_RequestItemRemoveDifferentItemToInventoryWithTrySplit() {
             container.AddItem(Helper.CreateItem("my item A", 5, 10), 5, 2, 2);
 
-            RequestRemove request = new RequestRemove(new Vector2i(2, 2),
-                                                      new Vector2i(4, 4),
-                                                      3,
-                                                      Helper.CreateItem("my item B", 3, 15));
-
+            RequestRemove request = MakeMessage(3);
+            request.switchItem = Helper.CreateItem("my item B", 3, 15);
             RequestRemoveResponse response = GetResponse(request);
 
             Assert.False(response.success);
@@ -138,11 +124,8 @@ namespace UnitTests {
         public void RPC_RequestItemRemoveSameItemToInventoryCanStack() {
             container.AddItem(Helper.CreateItem("my item A", 5, 20), 5, 2, 2);
 
-            RequestRemove request = new RequestRemove(new Vector2i(2, 2),
-                                                      new Vector2i(4, 4),
-                                                      5,
-                                                      Helper.CreateItem("my item A", 5, 20));
-
+            RequestRemove request = MakeMessage(5);
+            request.switchItem = Helper.CreateItem("my item A", 5, 20);
             RequestRemoveResponse response = GetResponse(request);
 
             Assert.True(response.success);
@@ -156,11 +139,8 @@ namespace UnitTests {
         public void RPC_RequestItemRemoveSameItemNotAllToInventoryCanStack() {
             container.AddItem(Helper.CreateItem("my item A", 5, 20), 5, 2, 2);
 
-            RequestRemove request = new RequestRemove(new Vector2i(2, 2),
-                                                      new Vector2i(4, 4),
-                                                      3,
-                                                      Helper.CreateItem("my item A", 5, 20));
-
+            RequestRemove request = MakeMessage(3);
+            request.switchItem = Helper.CreateItem("my item A", 5, 20);
             RequestRemoveResponse response = GetResponse(request);
 
             Assert.True(response.success);
@@ -175,11 +155,8 @@ namespace UnitTests {
         public void RPC_RequestItemRemoveSameItemToInventoryCanStackNotAll() {
             container.AddItem(Helper.CreateItem("my item A", 5, 20), 5, 2, 2);
 
-            RequestRemove request = new RequestRemove(new Vector2i(2, 2),
-                                                      new Vector2i(4, 4),
-                                                      5,
-                                                      Helper.CreateItem("my item A", 19, 20));
-
+            RequestRemove request = MakeMessage(5);
+            request.switchItem = Helper.CreateItem("my item A", 19, 20);
             RequestRemoveResponse response = GetResponse(request);
 
             Assert.True(response.success);
@@ -194,11 +171,7 @@ namespace UnitTests {
         public void RPC_RequestItemRemoveGetItemDataBack() {
             container.AddItem(Helper.CreateItem("my item A", 5, 20), 5, 2, 2);
 
-            RequestRemove request = new RequestRemove(new Vector2i(2, 2),
-                                                      new Vector2i(4, 4),
-                                                      5,
-                                                      null);
-
+            RequestRemove request = MakeMessage(5);
             RequestRemoveResponse response = GetResponse(request);
 
             Assert.True(response.success);
@@ -214,11 +187,7 @@ namespace UnitTests {
         public void RPC_RequestItemRemoveOddSplitEvenContainer() {
             container.AddItem(Helper.CreateItem("my item A", 5, 20), 5, 2, 2);
 
-            RequestRemove request = new RequestRemove(new Vector2i(2, 2),
-                                                      new Vector2i(4, 4),
-                                                      3,
-                                                      null);
-
+            RequestRemove request = MakeMessage(3);
             RequestRemoveResponse response = GetResponse(request);
 
             Assert.True(response.success);
@@ -234,11 +203,7 @@ namespace UnitTests {
         public void RPC_RequestItemRemoveOddSplitOddContainer() {
             container.AddItem(Helper.CreateItem("my item A", 5, 20), 5, 2, 2);
 
-            RequestRemove request = new RequestRemove(new Vector2i(2, 2),
-                                                      new Vector2i(4, 4),
-                                                      2,
-                                                      null);
-
+            RequestRemove request = MakeMessage(2);
             RequestRemoveResponse response = GetResponse(request);
 
             Assert.True(response.success);

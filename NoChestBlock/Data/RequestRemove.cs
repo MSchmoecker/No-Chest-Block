@@ -3,12 +3,14 @@ namespace NoChestBlock {
         public Vector2i fromContainer;
         public Vector2i toInventory;
         public int dragAmount;
+        public string inventoryName;
         public ItemDrop.ItemData switchItem;
 
-        public RequestRemove(Vector2i fromContainer, Vector2i toInventory, int dragAmount, ItemDrop.ItemData switchItem) {
+        public RequestRemove(Vector2i fromContainer, Vector2i toInventory, int dragAmount, string inventoryName, ItemDrop.ItemData switchItem) {
             this.fromContainer = fromContainer;
             this.toInventory = toInventory;
             this.dragAmount = dragAmount;
+            this.inventoryName = inventoryName;
             this.switchItem = switchItem;
         }
 
@@ -22,6 +24,7 @@ namespace NoChestBlock {
             package.Write(fromContainer);
             package.Write(toInventory);
             package.Write(dragAmount);
+            package.Write(inventoryName);
             package.Write(switchItem != null);
 
             if (switchItem != null) {
@@ -35,6 +38,7 @@ namespace NoChestBlock {
             fromContainer = package.ReadVector2i();
             toInventory = package.ReadVector2i();
             dragAmount = package.ReadInt();
+            inventoryName = package.ReadString();
             bool hasSwitchItem = package.ReadBool();
             switchItem = hasSwitchItem ? InventoryHelper.LoadItemFromPackage(package) : null;
         }
@@ -44,6 +48,7 @@ namespace NoChestBlock {
             Log.LogInfo($"  fromContainer: {fromContainer}");
             Log.LogInfo($"  toInventory: {toInventory}");
             Log.LogInfo($"  dragAmount: {dragAmount}");
+            Log.LogInfo($"  inventoryName: {inventoryName}");
             Log.LogInfo($"  switchItem: {switchItem != null}");
             InventoryHelper.PrintItem(switchItem);
         }
