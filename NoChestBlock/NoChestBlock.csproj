@@ -7,8 +7,8 @@
         <ProjectGuid>{FE8B42E3-7082-4DFF-A5CC-6B62B0315ACA}</ProjectGuid>
         <OutputType>Library</OutputType>
         <AppDesignerFolder>Properties</AppDesignerFolder>
-        <RootNamespace>NoChestBlock</RootNamespace>
-        <AssemblyName>NoChestBlock</AssemblyName>
+        <RootNamespace>MultiUserChest</RootNamespace>
+        <AssemblyName>MultiUserChest</AssemblyName>
         <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
         <FileAlignment>512</FileAlignment>
     </PropertyGroup>

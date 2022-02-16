@@ -1,4 +1,4 @@
-ModName="NoChestBlock"
+ModName="MultiUserChest"
 ModPath="NoChestBlock"
 
 # function for xml reading
@@ -36,6 +36,7 @@ echo "$ModDir"
 # copy content
 mkdir -p "$ModDir"
 cp "$ModPath/bin/Debug/$ModName.dll" "$ModDir"
+cp "$ModPath/bin/Debug/$ModName.pdb" "$ModDir"
 cp README.md "$ModDir"
 cp manifest.json "$ModDir"
 cp icon.png "$ModDir"
@@ -46,8 +47,8 @@ cd "$ModDir" || exit
 [ -f "$ModName.zip" ] && rm "$ModName.zip"
 [ -f "$ModName-Nexus.zip" ] && rm "$ModName-Nexus.zip"
 
-mkdir -p plugins
-cp "$ModName.dll" plugins
+mkdir -p plugins/"$ModName"
+cp "$ModName.dll" plugins/"$ModName"
 
 zip "$ModName.zip" "$ModName.dll" README.md manifest.json icon.png
 zip -r "$ModName-Nexus.zip" plugins

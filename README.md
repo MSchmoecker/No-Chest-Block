@@ -1,4 +1,4 @@
-# No Chest Block
+# Multi User Chest
 
 
 ## **This mod is in alpha and items may be duplicated or deleted**
@@ -7,12 +7,12 @@ Please report all errors and desyncs that occur.
 
 
 ## About
-This mod allows two or more players to interact with the same chest at the same time.
+Allows multiple players to interact with the same chest at the same time
 
 
 ## Installation
 This mod requires BepInEx.\
-Extract the content of `NoChestBlock` into the `BepInEx/plugins` folder.
+Extract the content of `MultiUserChest` into the `BepInEx/plugins` folder.
 
 All player need to install this mod, it is not needed at a server. Otherwise items can be deleted.\
 It is highly recommended to force the installation.
@@ -27,6 +27,13 @@ It is highly recommended to force the installation.
   - Yes, you can add and remove this mod anytime. Just make sure it is the same for all players.
 - Does it work with other modded chests
   - Yes, most likely. But it can make problems when other mods change the behaviour of chests
+
+
+## Links
+- Thunderstore: https://valheim.thunderstore.io/package/MSchmoecker/MultiUserChest/
+- Nexus: https://www.nexusmods.com/valheim/mods/1766
+- Github: https://github.com/MSchmoecker/No-Chest-Block
+- Discord: Margmas#9562
 
 
 ## Development
@@ -48,3 +55,7 @@ If you use r2modman/Tunderstore Mod Manager you can set the path too, but this i
     </PropertyGroup>
 </Project>
 ```
+
+## Changelog
+0.1.0
+- Release
