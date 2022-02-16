@@ -1,11 +1,33 @@
 # No Chest Block
 
+
+## **This mod is in alpha and items may be duplicated or deleted**
+I have tested this mod to my best ability but cannot ensure there all edge cases covered, especially with other mods.
+Please report all errors and desyncs that occur.
+
+
 ## About
-This mod allows two or more players to be at the same chest at the same time
+This mod allows two or more players to interact with the same chest at the same time.
+
 
 ## Installation
 This mod requires BepInEx.\
 Extract the content of `NoChestBlock` into the `BepInEx/plugins` folder.
+
+All player need to install this mod, it is not needed at a server. Otherwise items can be deleted.\
+It is highly recommended to force the installation.
+
+
+## FAQ
+- Who needs this installed?
+  - Ever player, server is not needed.
+- When two players move an item at the exact same time, will it be duplicated?
+  - No, only one movement will be accepted.
+- Can this be added at an existing game?
+  - Yes, you can add and remove this mod anytime. Just make sure it is the same for all players.
+- Does it work with other modded chests
+  - Yes, most likely. But it can make problems when other mods change the behaviour of chests
+
 
 ## Development
 BepInEx must be setup at manual or with r2modman/Thunderstore Mod Manager.
