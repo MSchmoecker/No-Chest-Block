@@ -32,8 +32,8 @@ namespace NoChestBlock {
         }
 
         public void PrintDebug() {
-            Log.LogInfo($"TakeAll:");
-            Log.LogInfo($"  items: {items.Count}");
+            Log.LogDebug($"TakeAll:");
+            Log.LogDebug($"  items: {items.Count}");
         }
     }
 }

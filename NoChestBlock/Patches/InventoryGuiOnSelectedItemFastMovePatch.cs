@@ -28,14 +28,14 @@ namespace NoChestBlock.Patches {
         }
 
         private static bool FastMoveItem(InventoryGrid grid, ItemDrop.ItemData item, Vector2i fromPos) {
-            Log.LogInfo("FastMoveItem");
+            Log.LogDebug("FastMoveItem");
             InventoryGui gui = InventoryGui.instance;
             Player player = Player.m_localPlayer;
 
             bool isOwnerOfContainer = gui.m_currentContainer && gui.m_currentContainer.IsOwner();
 
             if (isOwnerOfContainer) {
-                Log.LogInfo("FastMoveItem in own inventory");
+                Log.LogDebug("FastMoveItem in own inventory");
                 return true;
             }
 

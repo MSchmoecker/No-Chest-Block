@@ -27,9 +27,9 @@
         }
 
         public void PrintDebug() {
-            Log.LogInfo($"RequestDrop:");
-            Log.LogInfo($"  targetContainerSlot: {targetContainerSlot}");
-            Log.LogInfo($"  amount: {amount}");
+            Log.LogDebug($"RequestDrop:");
+            Log.LogDebug($"  targetContainerSlot: {targetContainerSlot}");
+            Log.LogDebug($"  amount: {amount}");
         }
     }
 }

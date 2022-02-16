@@ -19,8 +19,8 @@ namespace NoChestBlock {
         public static void RPC_RequestItemMoveResponse(long sender, bool success) {
             Timer.Stop("RPC_RequestItemMoveResponse");
             InventoryGui.instance.SetupDragItem(null, null, 0);
-            Log.LogInfo($"RequestItemMoveResponse:");
-            Log.LogInfo($"\tsuccess: {success}");
+            Log.LogDebug($"RequestItemMoveResponse:");
+            Log.LogDebug($"\tsuccess: {success}");
         }
 
         public static void RPC_RequestTakeAllItemsResponse(long sender, ZPackage package) {

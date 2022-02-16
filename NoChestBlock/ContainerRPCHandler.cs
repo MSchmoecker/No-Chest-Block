@@ -41,7 +41,7 @@ namespace NoChestBlock {
         }
 
         private static void HandleRPC<T>(Container container, long target, string callName, string rpcInvoke, Func<T> message, Func<T> notOwner) {
-            Log.LogInfo(callName);
+            Log.LogDebug(callName);
             container.m_nview.InvokeRPC(target, rpcInvoke, container.IsOwner() ? message() : notOwner());
         }
 
@@ -121,7 +121,7 @@ namespace NoChestBlock {
             ItemDrop.ItemData from = inventory.GetItemAt(request.fromContainer.x, request.fromContainer.y);
 
             if (from == null) {
-                Log.LogInfo("from is null");
+                Log.LogDebug("from is null");
                 return new RequestRemoveResponse(false, 0, false, toInventory, request.inventoryName, null).WriteToPackage();
             }
 

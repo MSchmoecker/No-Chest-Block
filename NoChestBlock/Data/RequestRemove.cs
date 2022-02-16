@@ -44,12 +44,12 @@ namespace NoChestBlock {
         }
 
         public void PrintDebug() {
-            Log.LogInfo($"RequestItemRemove:");
-            Log.LogInfo($"  fromContainer: {fromContainer}");
-            Log.LogInfo($"  toInventory: {toInventory}");
-            Log.LogInfo($"  dragAmount: {dragAmount}");
-            Log.LogInfo($"  inventoryName: {inventoryName}");
-            Log.LogInfo($"  switchItem: {switchItem != null}");
+            Log.LogDebug($"RequestItemRemove:");
+            Log.LogDebug($"  fromContainer: {fromContainer}");
+            Log.LogDebug($"  toInventory: {toInventory}");
+            Log.LogDebug($"  dragAmount: {dragAmount}");
+            Log.LogDebug($"  inventoryName: {inventoryName}");
+            Log.LogDebug($"  switchItem: {switchItem != null}");
             InventoryHelper.PrintItem(switchItem);
         }
     }

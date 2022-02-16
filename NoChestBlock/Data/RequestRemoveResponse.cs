@@ -57,13 +57,13 @@ namespace NoChestBlock {
         }
 
         public void PrintDebug() {
-            Log.LogInfo($"RequestRemoveResponse:");
-            Log.LogInfo($"  success: {success}");
-            Log.LogInfo($"  amount: {amount}");
-            Log.LogInfo($"  hasSwitched: {hasSwitched}");
-            Log.LogInfo($"  inventoryPos: {inventoryPos}");
-            Log.LogInfo($"  inventoryName: {inventoryName}");
-            Log.LogInfo($"  responseItem: {responseItem != null}");
+            Log.LogDebug($"RequestRemoveResponse:");
+            Log.LogDebug($"  success: {success}");
+            Log.LogDebug($"  amount: {amount}");
+            Log.LogDebug($"  hasSwitched: {hasSwitched}");
+            Log.LogDebug($"  inventoryPos: {inventoryPos}");
+            Log.LogDebug($"  inventoryName: {inventoryName}");
+            Log.LogDebug($"  responseItem: {responseItem != null}");
             InventoryHelper.PrintItem(responseItem);
         }
     }

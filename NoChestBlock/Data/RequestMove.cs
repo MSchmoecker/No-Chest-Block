@@ -30,10 +30,10 @@ namespace NoChestBlock {
         }
 
         public void PrintDebug() {
-            Log.LogInfo($"RequestMove:");
-            Log.LogInfo($"  fromPos: {fromPos}");
-            Log.LogInfo($"  toPos: {toPos}");
-            Log.LogInfo($"  dragAmount: {dragAmount}");
+            Log.LogDebug($"RequestMove:");
+            Log.LogDebug($"  fromPos: {fromPos}");
+            Log.LogDebug($"  toPos: {toPos}");
+            Log.LogDebug($"  dragAmount: {dragAmount}");
         }
     }
 }

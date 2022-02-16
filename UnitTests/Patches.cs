@@ -25,7 +25,7 @@ namespace UnitTests {
 
         [HarmonyPatch]
         public static class LogPatch {
-            [HarmonyPatch(typeof(Log), nameof(Log.LogInfo)), HarmonyPrefix]
+            [HarmonyPatch(typeof(Log), nameof(Log.LogDebug)), HarmonyPrefix]
             public static bool NoLogPatch(object data) {
                 System.Console.WriteLine(data);
                 return false;

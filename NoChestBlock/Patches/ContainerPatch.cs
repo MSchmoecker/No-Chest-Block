@@ -61,7 +61,7 @@ namespace NoChestBlock.Patches {
         [HarmonyPatch(typeof(Container), nameof(Container.TakeAll)), HarmonyPrefix]
         public static bool TakeAllPatch(ref bool __result, Container __instance, Humanoid character) {
             if (__instance.IsOwner()) {
-                Log.LogInfo("TakeAll self");
+                Log.LogDebug("TakeAll self");
                 return true;
             }
 

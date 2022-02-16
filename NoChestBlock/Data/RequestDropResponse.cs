@@ -28,8 +28,8 @@
         }
 
         public void PrintDebug() {
-            Log.LogInfo($"RequestDropResponse:");
-            Log.LogInfo($"  switchItem: {responseItem != null}");
+            Log.LogDebug($"RequestDropResponse:");
+            Log.LogDebug($"  switchItem: {responseItem != null}");
             InventoryHelper.PrintItem(responseItem);
         }
     }

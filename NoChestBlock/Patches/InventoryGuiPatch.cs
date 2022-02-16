@@ -82,7 +82,7 @@ namespace NoChestBlock.Patches {
             bool isPlayerInventory = gui.m_dragInventory == player.m_inventory;
 
             if (isOwnerOfContainer || isPlayerInventory) {
-                Log.LogInfo("Drop item from own inventory");
+                Log.LogDebug("Drop item from own inventory");
                 return true;
             }
 

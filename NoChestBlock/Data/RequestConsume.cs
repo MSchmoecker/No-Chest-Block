@@ -25,9 +25,9 @@
         }
 
         public void PrintDebug() {
-            Log.LogInfo($"RequestConsume:");
-            Log.LogInfo($"  itemPosX: {itemPosX}");
-            Log.LogInfo($"  itemPosY: {itemPosY}");
+            Log.LogDebug($"RequestConsume:");
+            Log.LogDebug($"  itemPosX: {itemPosX}");
+            Log.LogDebug($"  itemPosY: {itemPosY}");
         }
     }
 }

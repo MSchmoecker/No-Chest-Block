@@ -10,7 +10,7 @@ namespace NoChestBlock {
         }
 
         public static void Stop(string method) {
-            Log.LogInfo($"{method}: {stopwatch.ElapsedMilliseconds}ms");
+            Log.LogDebug($"{method}: {stopwatch.ElapsedMilliseconds}ms");
             stopwatch.Restart();
         }
     }

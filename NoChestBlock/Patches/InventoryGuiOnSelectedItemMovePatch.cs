@@ -23,7 +23,7 @@ namespace NoChestBlock.Patches {
         }
 
         private static bool MoveItem(InventoryGrid grid, Vector2i toPos) {
-            Log.LogInfo("MoveItem");
+            Log.LogDebug("MoveItem");
 
             InventoryGui gui = InventoryGui.instance;
 
@@ -31,7 +31,7 @@ namespace NoChestBlock.Patches {
             bool isPlayerInventory = IsPlayerInventory(grid, gui);
 
             if (isOwnerOfContainer || isPlayerInventory) {
-                Log.LogInfo("MoveItem in own inventory");
+                Log.LogDebug("MoveItem in own inventory");
                 return true;
             }
 

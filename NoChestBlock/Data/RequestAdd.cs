@@ -43,13 +43,13 @@ namespace NoChestBlock {
         }
 
         public void PrintDebug() {
-            Log.LogInfo($"RequestItemAdd:");
-            Log.LogInfo($"  fromInventory: {fromInventory}");
-            Log.LogInfo($"  toContainer: {toContainer}");
-            Log.LogInfo($"  dragAmount: {dragAmount}");
-            Log.LogInfo($"  inventoryName: {inventoryName}");
-            Log.LogInfo($"  allowSwitch: {allowSwitch}");
-            Log.LogInfo($"  dragItem: {dragItem != null}");
+            Log.LogDebug($"RequestItemAdd:");
+            Log.LogDebug($"  fromInventory: {fromInventory}");
+            Log.LogDebug($"  toContainer: {toContainer}");
+            Log.LogDebug($"  dragAmount: {dragAmount}");
+            Log.LogDebug($"  inventoryName: {inventoryName}");
+            Log.LogDebug($"  allowSwitch: {allowSwitch}");
+            Log.LogDebug($"  dragItem: {dragItem != null}");
             InventoryHelper.PrintItem(dragItem);
         }
     }

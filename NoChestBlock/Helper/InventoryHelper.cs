@@ -169,9 +169,9 @@ namespace NoChestBlock {
                 return;
             }
 
-            Log.LogInfo($"    drop name: {(itemData.m_dropPrefab != null ? itemData.m_dropPrefab.name : "null!!!")}");
-            Log.LogInfo($"    shared name: {itemData.m_shared.m_name}");
-            Log.LogInfo($"    stack: {itemData.m_stack}");
+            Log.LogDebug($"    drop name: {(itemData.m_dropPrefab != null ? itemData.m_dropPrefab.name : "null!!!")}");
+            Log.LogDebug($"    shared name: {itemData.m_shared.m_name}");
+            Log.LogDebug($"    stack: {itemData.m_stack}");
         }
     }
 }
