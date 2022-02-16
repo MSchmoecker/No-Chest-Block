@@ -14,13 +14,7 @@ namespace UnitTests {
         }
 
         private RequestRemoveResponse GetResponse(RequestRemove request) {
-            ZPackage data = request.WriteToPackage();
-            data.SetPos(0);
-
-            ZPackage response = container.RequestItemRemove(0L, data);
-            response.SetPos(0);
-
-            return new RequestRemoveResponse(response);
+            return container.RequestItemRemove(request);
         }
 
         private static RequestRemove MakeMessage(int dragAmount) {

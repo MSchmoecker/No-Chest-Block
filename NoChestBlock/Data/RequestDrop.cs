@@ -12,6 +12,9 @@
             ReadFromPackage(package);
         }
 
+        public RequestDrop() {
+        }
+
         public ZPackage WriteToPackage() {
             ZPackage package = new ZPackage();
 

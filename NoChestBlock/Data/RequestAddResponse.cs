@@ -32,11 +32,7 @@ namespace NoChestBlock {
             package.Write(success);
             package.Write(amount);
             package.Write(inventoryName);
-            package.Write(switchItem != null);
-
-            if (switchItem != null) {
-                InventoryHelper.WriteItemToPackage(switchItem, package);
-            }
+            InventoryHelper.WriteItemToPackage(switchItem, package);
 
             return package;
         }
@@ -46,10 +42,7 @@ namespace NoChestBlock {
             success = package.ReadBool();
             amount = package.ReadInt();
             inventoryName = package.ReadString();
-            bool hasSwitchItem = package.ReadBool();
-            if (hasSwitchItem) {
-                switchItem = InventoryHelper.LoadItemFromPackage(package);
-            }
+            switchItem = InventoryHelper.LoadItemFromPackage(package);
         }
 
         public void PrintDebug() {

@@ -35,7 +35,7 @@ namespace NoChestBlock {
         }
 
         public static void RPC_RequestDropResponse(long sender, ZPackage package) {
-            Timer.Stop("RPC_RequestItemRemoveResponse");
+            Timer.Stop("RPC_RequestDropResponse");
             RequestDropResponse response = new RequestDropResponse(package);
             RPC_RequestDropResponse(response);
         }
@@ -67,6 +67,7 @@ namespace NoChestBlock {
         }
 
         private static void RPC_RequestDropResponse(RequestDropResponse response) {
+            response.PrintDebug();
             DropItem(response.responseItem, response.responseItem.m_stack);
 
             if (InventoryGui.instance != null) {

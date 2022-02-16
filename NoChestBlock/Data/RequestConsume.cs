@@ -12,6 +12,9 @@
             ReadFromPackage(package);
         }
 
+        public RequestConsume() {
+        }
+
         public ZPackage WriteToPackage() {
             ZPackage package = new ZPackage();
             package.Write(itemPosX);

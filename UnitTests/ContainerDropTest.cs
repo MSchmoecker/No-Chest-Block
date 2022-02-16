@@ -12,15 +12,8 @@ namespace UnitTests {
         }
 
         private RequestDropResponse GetDropResponse(RequestDrop request) {
-            ZPackage data = request.WriteToPackage();
-            data.SetPos(0);
-
-            ZPackage response = container.RequestDrop(0L, data);
-            response.SetPos(0);
-
-            return new RequestDropResponse(response);
+            return container.RequestDrop(request);
         }
-
 
         [Test]
         public void RPC_RequestDropItem_FullStack() {
@@ -35,7 +28,7 @@ namespace UnitTests {
 
             Assert.AreEqual(0, container.m_inventory.Count);
         }
-        
+
         [Test]
         public void RPC_RequestDropItem_SpkitStack() {
             container.AddItem(Helper.CreateItem("my item", 5, 20), 5, 2, 2);

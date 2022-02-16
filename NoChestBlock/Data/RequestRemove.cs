@@ -18,6 +18,9 @@ namespace NoChestBlock {
             ReadFromPackage(package);
         }
 
+        public RequestRemove() {
+        }
+
         public ZPackage WriteToPackage() {
             ZPackage package = new ZPackage();
 
@@ -25,11 +28,7 @@ namespace NoChestBlock {
             package.Write(toInventory);
             package.Write(dragAmount);
             package.Write(inventoryName);
-            package.Write(switchItem != null);
-
-            if (switchItem != null) {
-                InventoryHelper.WriteItemToPackage(switchItem, package);
-            }
+            InventoryHelper.WriteItemToPackage(switchItem, package);
 
             return package;
         }
@@ -39,8 +38,7 @@ namespace NoChestBlock {
             toInventory = package.ReadVector2i();
             dragAmount = package.ReadInt();
             inventoryName = package.ReadString();
-            bool hasSwitchItem = package.ReadBool();
-            switchItem = hasSwitchItem ? InventoryHelper.LoadItemFromPackage(package) : null;
+            switchItem = InventoryHelper.LoadItemFromPackage(package);
         }
 
         public void PrintDebug() {

@@ -6,6 +6,12 @@ using UnityEngine;
 namespace NoChestBlock {
     public static class InventoryHelper {
         public static ItemDrop.ItemData LoadItemFromPackage(ZPackage pkg) {
+            bool hasItem = pkg.ReadBool();
+
+            if (!hasItem) {
+                return null;
+            }
+
             string name = pkg.ReadString();
             int stack = pkg.ReadInt();
             float durability = pkg.ReadSingle();
@@ -35,6 +41,12 @@ namespace NoChestBlock {
         }
 
         public static void WriteItemToPackage(ItemDrop.ItemData itemData, ZPackage pkg) {
+            pkg.Write(itemData != null);
+
+            if (itemData == null) {
+                return;
+            }
+
             if (itemData.m_dropPrefab == null) {
                 Log.LogWarning("Item missing prefab " + itemData.m_shared.m_name);
                 pkg.Write(itemData.m_shared.m_name);
@@ -51,7 +63,6 @@ namespace NoChestBlock {
             pkg.Write(itemData.m_crafterID);
             pkg.Write(itemData.m_crafterName);
         }
-
 
         public static ItemDrop.ItemData GetItemDataFromObjectDB(string name) {
             GameObject itemPrefab = ObjectDB.instance.GetItemPrefab(name);

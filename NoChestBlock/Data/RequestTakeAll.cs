@@ -12,6 +12,10 @@ namespace NoChestBlock {
             ReadFromPackage(package);
         }
 
+        public RequestTakeAll() {
+            items = new List<ItemDrop.ItemData>();
+        }
+
         public ZPackage WriteToPackage() {
             ZPackage package = new ZPackage();
 

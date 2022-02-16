@@ -14,6 +14,9 @@ namespace NoChestBlock {
             ReadFromPackage(package);
         }
 
+        public RequestMove() {
+        }
+
         public ZPackage WriteToPackage() {
             ZPackage package = new ZPackage();
             package.Write(fromPos);

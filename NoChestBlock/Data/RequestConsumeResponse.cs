@@ -16,17 +16,14 @@
 
         public ZPackage WriteToPackage() {
             ZPackage package = new ZPackage();
-            package.Write(item != null);
-            if (item != null) {
-                InventoryHelper.WriteItemToPackage(item, package);
-            }
+
+            InventoryHelper.WriteItemToPackage(item, package);
 
             return package;
         }
 
         public void ReadFromPackage(ZPackage package) {
-            bool hasItem = package.ReadBool();
-            item = hasItem ? InventoryHelper.LoadItemFromPackage(package) : null;
+            item = InventoryHelper.LoadItemFromPackage(package);
         }
 
         public void PrintDebug() {

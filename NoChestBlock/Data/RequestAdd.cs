@@ -20,6 +20,9 @@ namespace NoChestBlock {
             ReadFromPackage(package);
         }
 
+        public RequestAdd() {
+        }
+
         public ZPackage WriteToPackage() {
             ZPackage package = new ZPackage();
 

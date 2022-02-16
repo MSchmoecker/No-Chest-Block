@@ -5,50 +5,56 @@ using UnityEngine;
 namespace NoChestBlock {
     public static class ContainerRPCHandler {
         public static void RPC_RequestItemAdd(Container container, long sender, ZPackage package) {
-            ZPackage Message() => container.GetInventory().RequestItemAdd(sender, package);
-            ZPackage NotOwner() => new RequestAddResponse().WriteToPackage();
-            HandleRPC(container, sender, nameof(RPC_RequestItemAdd), "RequestItemAddResponse", Message, NotOwner);
+            HandleRPC(container, sender, "RequestItemAddResponse", RequestItemAdd, () => new RequestAdd(package));
         }
 
         public static void RPC_RequestItemRemove(Container container, long sender, ZPackage package) {
-            ZPackage Message() => container.GetInventory().RequestItemRemove(sender, package);
-            ZPackage NotOwner() => new RequestRemoveResponse().WriteToPackage();
-            HandleRPC(container, sender, nameof(RPC_RequestItemRemove), "RequestItemRemoveResponse", Message, NotOwner);
+            HandleRPC(container, sender, "RequestItemRemoveResponse", RequestItemRemove, () => new RequestRemove(package));
         }
 
         public static void RPC_RequestItemConsume(Container container, long sender, ZPackage package) {
-            ZPackage Message() => container.GetInventory().RequestItemConsume(sender, package);
-            ZPackage NotOwner() => new RequestConsumeResponse().WriteToPackage();
-            HandleRPC(container, sender, nameof(RPC_RequestItemConsume), "RequestItemConsumeResponse", Message, NotOwner);
+            HandleRPC(container, sender, "RequestItemConsumeResponse", RequestItemConsume, () => new RequestConsume(package));
         }
 
         public static void RPC_RequestItemMove(Container container, long sender, ZPackage package) {
-            bool Message() => container.GetInventory().RequestItemMove(sender, package);
-            bool NotOwner() => false;
-            HandleRPC(container, sender, nameof(RPC_RequestItemMove), "RequestItemMoveResponse", Message, NotOwner);
+            Log.LogDebug("RequestItemMove");
+            HandleRPC(container, sender, "RequestItemMoveResponse", RequestItemMove, () => new RequestMove(package));
         }
 
         public static void RPC_RequestTakeAllItems(Container container, long sender, ZPackage package) {
-            ZPackage Message() => container.GetInventory().RequestTakeAllItems(sender, package);
-            ZPackage NotOwner() => new RequestTakeAll(new List<ItemDrop.ItemData>()).WriteToPackage();
-            HandleRPC(container, sender, nameof(RPC_RequestTakeAllItems), "RequestTakeAllItemsResponse", Message, NotOwner);
+            HandleRPC(container, sender, "RequestTakeAllItemsResponse", RequestTakeAllItems, () => new RequestTakeAll(package));
         }
 
         public static void RPC_RequestDrop(Container container, long sender, ZPackage package) {
-            ZPackage Message() => container.GetInventory().RequestDrop(sender, package);
-            ZPackage NotOwner() => new RequestDropResponse((ItemDrop.ItemData)null).WriteToPackage();
-            HandleRPC(container, sender, nameof(RPC_RequestDrop), "RequestDropResponse", Message, NotOwner);
+            HandleRPC(container, sender, "RequestDropResponse", RequestDrop, () => new RequestDrop(package));
         }
 
-        private static void HandleRPC<T>(Container container, long target, string callName, string rpcInvoke, Func<T> message, Func<T> notOwner) {
-            Log.LogDebug(callName);
-            container.m_nview.InvokeRPC(target, rpcInvoke, container.IsOwner() ? message() : notOwner());
+        private static void HandleRPC<T, T2>(Container container, long target, string rpcInvoke, Func<Inventory, T2, T> message, Func<T2> input) where T : new() where T2 : IPackage {
+            if (!container.IsOwner()) {
+                Log.LogDebug("I am not the owner");
+                container.m_nview.InvokeRPC(target, rpcInvoke, Unpack(new T()));
+                return;
+            }
+
+            T2 inputPackage = input();
+            inputPackage.PrintDebug();
+
+            container.m_nview.InvokeRPC(target, rpcInvoke, Unpack(message(container.m_inventory, inputPackage)));
         }
 
-        public static ZPackage RequestItemAdd(this Inventory inventory, long sender, ZPackage package) {
-            RequestAdd request = new RequestAdd(package);
-            request.PrintDebug();
+        private static object Unpack(object input, bool debugPrint = true) {
+            if (input is IPackage package) {
+                if (debugPrint) {
+                    package.PrintDebug();
+                }
 
+                return package.WriteToPackage();
+            }
+
+            return input;
+        }
+
+        public static RequestAddResponse RequestItemAdd(this Inventory inventory, RequestAdd request) {
             Vector2i fromInventory = request.fromInventory;
             Vector2i toContainer = request.toContainer;
             int dragAmount = request.dragAmount;
@@ -62,11 +68,11 @@ namespace NoChestBlock {
                 ItemDrop.ItemData now = tmp.GetItemAt(0, 0);
 
                 if (now == null) {
-                    return new RequestAddResponse(true, fromInventory, dragAmount, request.inventoryName, null).WriteToPackage();
+                    return new RequestAddResponse(true, fromInventory, dragAmount, request.inventoryName, null);
                 } else {
                     ItemDrop.ItemData back = dragItem.Clone();
                     back.m_stack -= dragItem.m_stack - now.m_stack;
-                    return new RequestAddResponse(now.m_stack != dragItem.m_stack, fromInventory, dragItem.m_stack - now.m_stack, request.inventoryName, back).WriteToPackage();
+                    return new RequestAddResponse(now.m_stack != dragItem.m_stack, fromInventory, dragItem.m_stack - now.m_stack, request.inventoryName, back);
                 }
             }
 
@@ -106,13 +112,10 @@ namespace NoChestBlock {
                 switched.m_stack = dragAmount - amount;
             }
 
-            return new RequestAddResponse(added, fromInventory, amount, request.inventoryName, switched).WriteToPackage();
+            return new RequestAddResponse(added, fromInventory, amount, request.inventoryName, switched);
         }
 
-        public static ZPackage RequestItemRemove(this Inventory inventory, long sender, ZPackage package) {
-            RequestRemove request = new RequestRemove(package);
-            request.PrintDebug();
-
+        public static RequestRemoveResponse RequestItemRemove(this Inventory inventory, RequestRemove request) {
             Vector2i fromContainer = request.fromContainer;
             Vector2i toInventory = request.toInventory;
             int dragAmount = request.dragAmount;
@@ -122,7 +125,7 @@ namespace NoChestBlock {
 
             if (from == null) {
                 Log.LogDebug("from is null");
-                return new RequestRemoveResponse(false, 0, false, toInventory, request.inventoryName, null).WriteToPackage();
+                return new RequestRemoveResponse(false, 0, false, toInventory, request.inventoryName, null);
             }
 
             int removedAmount = 0;
@@ -145,25 +148,21 @@ namespace NoChestBlock {
 
             ItemDrop.ItemData responseItem = from.Clone();
             responseItem.m_stack = removedAmount;
-            return new RequestRemoveResponse(removed, removedAmount, switched, toInventory, request.inventoryName, responseItem).WriteToPackage();
+            return new RequestRemoveResponse(removed, removedAmount, switched, toInventory, request.inventoryName, responseItem);
         }
 
-        private static ZPackage RequestItemConsume(this Inventory inventory, long sender, ZPackage package) {
-            RequestConsume request = new RequestConsume(package);
-
+        private static RequestConsumeResponse RequestItemConsume(this Inventory inventory, RequestConsume request) {
             ItemDrop.ItemData toConsume = inventory.GetItemAt(request.itemPosX, request.itemPosY);
 
             if (toConsume == null || toConsume.m_stack <= 0) {
-                return new RequestConsumeResponse(item: null).WriteToPackage();
+                return new RequestConsumeResponse(item: null);
             }
 
             inventory.RemoveOneItem(toConsume);
-            return new RequestConsumeResponse(toConsume).WriteToPackage();
+            return new RequestConsumeResponse(toConsume);
         }
 
-        private static bool RequestItemMove(this Inventory inventory, long sender, ZPackage package) {
-            RequestMove request = new RequestMove(package);
-
+        private static bool RequestItemMove(this Inventory inventory, RequestMove request) {
             Vector2i fromPos = request.fromPos;
             Vector2i toPos = request.toPos;
             int dragAmount = request.dragAmount;
@@ -177,9 +176,7 @@ namespace NoChestBlock {
             return InventoryHelper.MoveItem(inventory, from, dragAmount, toPos);
         }
 
-        private static ZPackage RequestTakeAllItems(this Inventory inventory, long sender, ZPackage package) {
-            RequestTakeAll request = new RequestTakeAll(package);
-
+        private static RequestTakeAll RequestTakeAllItems(this Inventory inventory, RequestTakeAll request) {
             List<ItemDrop.ItemData> moved = new List<ItemDrop.ItemData>();
 
             foreach (ItemDrop.ItemData item in request.items) {
@@ -191,13 +188,10 @@ namespace NoChestBlock {
                 }
             }
 
-            return new RequestTakeAll(moved).WriteToPackage();
+            return new RequestTakeAll(moved);
         }
 
-        public static ZPackage RequestDrop(this Inventory inventory, long sender, ZPackage package) {
-            RequestDrop request = new RequestDrop(package);
-            request.PrintDebug();
-
+        public static RequestDropResponse RequestDrop(this Inventory inventory, RequestDrop request) {
             ItemDrop.ItemData from = inventory.GetItemAt(request.targetContainerSlot.x, request.targetContainerSlot.y);
 
             int removedAmount = Mathf.Min(from.m_stack, request.amount);
@@ -206,7 +200,7 @@ namespace NoChestBlock {
             ItemDrop.ItemData responseItem = from.Clone();
             responseItem.m_stack = removedAmount;
 
-            return new RequestDropResponse(responseItem).WriteToPackage();
+            return new RequestDropResponse(responseItem);
         }
     }
 }

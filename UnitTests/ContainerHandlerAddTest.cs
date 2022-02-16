@@ -12,13 +12,7 @@ namespace UnitTests {
         }
 
         private RequestAddResponse GetResponse(RequestAdd request) {
-            ZPackage data = request.WriteToPackage();
-            data.SetPos(0);
-
-            ZPackage response = container.RequestItemAdd(0L, data);
-            response.SetPos(0);
-
-            return new RequestAddResponse(response);
+            return container.RequestItemAdd(request);
         }
 
         private static RequestAdd MakeRequest(bool allowSwitch, int itemAmount = 5) {
