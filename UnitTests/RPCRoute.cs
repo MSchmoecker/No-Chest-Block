@@ -31,7 +31,7 @@ namespace UnitTests {
         [SetUp]
         public void SetUp() {
             container = Helper.CreateContainer();
-            ContainerPatch.ContainerAwakePatch(container);
+            container.RegisterRPCs();
         }
 
         [OneTimeSetUp]
@@ -65,9 +65,6 @@ namespace UnitTests {
 
         [Test]
         public void ContainerHasRegisterRPCs() {
-            Container container = Helper.CreateContainer();
-            ContainerPatch.ContainerAwakePatch(container);
-
             Assert.IsTrue(container.m_nview.m_functions.ContainsKey(RequestMoveRPC.GetStableHashCode()));
             Assert.IsTrue(container.m_nview.m_functions.ContainsKey(RequestMoveResponseRPC.GetStableHashCode()));
 

@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace NoChestBlock.Patches {
     [HarmonyPatch]
-    public class ContainerPatch {
+    public static class ContainerPatch {
         [HarmonyPatch(typeof(Container), nameof(Container.IsInUse)), HarmonyPostfix]
         public static void IsInUsePatch(ref bool __result, ref bool ___m_inUse) {
             __result = false;
@@ -14,6 +14,14 @@ namespace NoChestBlock.Patches {
 
         [HarmonyPatch(typeof(Container), nameof(Container.Awake)), HarmonyPostfix]
         public static void ContainerAwakePatch(Container __instance) {
+            if (!__instance.m_nview) {
+                __instance.m_nview = __instance.m_rootObjectOverride ? __instance.m_rootObjectOverride.GetComponent<ZNetView>() : __instance.GetComponent<ZNetView>();
+            }
+
+            __instance.RegisterRPCs();
+        }
+
+        public static void RegisterRPCs(this Container __instance) {
             ZNetView nview = __instance.m_nview;
 
             nview.Register<ZPackage>("RequestItemMove", (l, package) => ContainerRPCHandler.RPC_RequestItemMove(__instance, l, package));
