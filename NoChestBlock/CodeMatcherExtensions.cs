@@ -39,9 +39,9 @@ namespace NoChestBlock {
 
                 try {
                     var line = codeMatcher.InstructionAt(currentOffset);
-                    Log.LogDebug($"[{currentOffset}] " + line.ToString());
+                    Log.LogCodeInstruction($"[{currentOffset}] " + line.ToString());
                 } catch (Exception e) {
-                    Log.LogDebug(e.Message);
+                    Log.LogCodeInstruction(e.Message);
                 }
             }
 

@@ -28,6 +28,10 @@ namespace NoChestBlock {
                          .CreateLogger();
         }
 
+        public static void LogCodeInstruction(object data) {
+            logSource.LogDebug(data);
+        }
+
         public static void LogDebug(string data) {
             fileLogger.Debug(data);
         }
