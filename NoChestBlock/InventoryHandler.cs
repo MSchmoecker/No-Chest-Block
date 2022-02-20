@@ -166,5 +166,9 @@ namespace NoChestBlock {
         public static bool IsSlotBlocked(Vector2i slot) {
             return !blockAllSlots && blockedSlots.Contains(slot);
         }
+
+        public static bool IsAnySlotBlocked() {
+            return blockAllSlots || blockedSlots.Count > 0;
+        }
     }
 }
