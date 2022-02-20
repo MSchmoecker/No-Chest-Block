@@ -1,9 +1,9 @@
 ﻿namespace NoChestBlock {
     public class RequestConsumeResponse : IPackage {
-        public ItemDrop.ItemData item;
+        public readonly ItemDrop.ItemData item;
 
         public RequestConsumeResponse(ZPackage package) {
-            ReadFromPackage(package);
+            item = InventoryHelper.LoadItemFromPackage(package);
         }
 
         public RequestConsumeResponse(ItemDrop.ItemData item) {
@@ -20,10 +20,6 @@
             InventoryHelper.WriteItemToPackage(item, package);
 
             return package;
-        }
-
-        public void ReadFromPackage(ZPackage package) {
-            item = InventoryHelper.LoadItemFromPackage(package);
         }
 
         public void PrintDebug() {

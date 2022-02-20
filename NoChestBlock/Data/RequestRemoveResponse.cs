@@ -1,11 +1,11 @@
 namespace NoChestBlock {
     public class RequestRemoveResponse : IPackage {
-        public bool success;
-        public int amount;
-        public bool hasSwitched;
-        public Vector2i inventoryPos;
-        public string inventoryName;
-        public ItemDrop.ItemData responseItem;
+        public readonly bool success;
+        public readonly int amount;
+        public readonly bool hasSwitched;
+        public readonly Vector2i inventoryPos;
+        public readonly string inventoryName;
+        public readonly ItemDrop.ItemData responseItem;
 
         public RequestRemoveResponse(bool success, int amount, bool hasSwitched, Vector2i inventoryPos, string inventoryName, ItemDrop.ItemData responseItem) {
             this.success = success;
@@ -17,7 +17,12 @@ namespace NoChestBlock {
         }
 
         public RequestRemoveResponse(ZPackage package) {
-            ReadFromPackage(package);
+            success = package.ReadBool();
+            amount = package.ReadInt();
+            hasSwitched = package.ReadBool();
+            inventoryPos = package.ReadVector2i();
+            inventoryName = package.ReadString();
+            responseItem = InventoryHelper.LoadItemFromPackage(package);
         }
 
         public RequestRemoveResponse() {
@@ -40,15 +45,6 @@ namespace NoChestBlock {
             InventoryHelper.WriteItemToPackage(responseItem, package);
 
             return package;
-        }
-
-        public void ReadFromPackage(ZPackage package) {
-            success = package.ReadBool();
-            amount = package.ReadInt();
-            hasSwitched = package.ReadBool();
-            inventoryPos = package.ReadVector2i();
-            inventoryName = package.ReadString();
-            responseItem = InventoryHelper.LoadItemFromPackage(package);
         }
 
         public void PrintDebug() {

@@ -1,7 +1,7 @@
 ﻿namespace NoChestBlock {
     public class RequestConsume : IPackage {
-        public int itemPosX;
-        public int itemPosY;
+        public readonly int itemPosX;
+        public readonly int itemPosY;
 
         public RequestConsume(ItemDrop.ItemData item) {
             itemPosX = item.m_gridPos.x;
@@ -9,10 +9,8 @@
         }
 
         public RequestConsume(ZPackage package) {
-            ReadFromPackage(package);
-        }
-
-        public RequestConsume() {
+            itemPosX = package.ReadInt();
+            itemPosY = package.ReadInt();
         }
 
         public ZPackage WriteToPackage() {
@@ -20,11 +18,6 @@
             package.Write(itemPosX);
             package.Write(itemPosY);
             return package;
-        }
-
-        public void ReadFromPackage(ZPackage package) {
-            itemPosX = package.ReadInt();
-            itemPosY = package.ReadInt();
         }
 
         public void PrintDebug() {

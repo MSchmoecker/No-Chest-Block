@@ -15,9 +15,9 @@ namespace UnitTests {
             return container.RequestItemAdd(request);
         }
 
-        private static RequestAdd MakeRequest(bool allowSwitch, int itemAmount = 5) {
+        private static RequestAdd MakeRequest(bool allowSwitch, int itemAmount = 5, int dragAmount = 5) {
             ItemDrop.ItemData item = Helper.CreateItem("my item", itemAmount, 20);
-            return new RequestAdd(new Vector2i(2, 2), new Vector2i(3, 3), 5, item, "inv", allowSwitch);
+            return new RequestAdd(new Vector2i(2, 2), new Vector2i(3, 3), dragAmount, item, "inv", allowSwitch);
         }
 
         private static RequestAdd MakeRequest(bool allowSwitch, Vector2i target, int itemAmount = 5) {
@@ -73,8 +73,7 @@ namespace UnitTests {
 
         [Test]
         public void RPC_RequestItemAddToEmptySlotFewerAmountAsInventory() {
-            RequestAdd request = MakeRequest(true);
-            request.dragAmount = 3;
+            RequestAdd request = MakeRequest(true, 5, 3);
             RequestAddResponse response = GetResponse(request);
 
             Assert.True(response.success);
@@ -109,8 +108,7 @@ namespace UnitTests {
         public void RPC_RequestItemAddToDifferentItemSlotDragTooFew() {
             container.AddItem(Helper.CreateItem("my item A", 5, 20), 5, 3, 3);
 
-            RequestAdd request = MakeRequest(true);
-            request.dragAmount = 3;
+            RequestAdd request = MakeRequest(true, 5, 3);
             RequestAddResponse response = GetResponse(request);
 
             Assert.False(response.success);

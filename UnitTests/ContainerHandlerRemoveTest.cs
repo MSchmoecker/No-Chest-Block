@@ -17,12 +17,12 @@ namespace UnitTests {
             return container.RequestItemRemove(request);
         }
 
-        private static RequestRemove MakeMessage(int dragAmount) {
+        private static RequestRemove MakeMessage(int dragAmount, ItemDrop.ItemData switchItem = null) {
             return new RequestRemove(new Vector2i(2, 2),
                                      new Vector2i(4, 4),
                                      dragAmount,
                                      "inv",
-                                     null);
+                                     switchItem);
         }
 
         [Test]
@@ -84,8 +84,7 @@ namespace UnitTests {
         public void RPC_RequestItemRemoveDifferentItemToInventory() {
             container.AddItem(Helper.CreateItem("my item A", 5, 10), 5, 2, 2);
 
-            RequestRemove request = MakeMessage(5);
-            request.switchItem = Helper.CreateItem("my item B", 3, 15);
+            RequestRemove request = MakeMessage(5, Helper.CreateItem("my item B", 3, 15));
             RequestRemoveResponse response = GetResponse(request);
 
             Assert.True(response.success);
@@ -101,8 +100,7 @@ namespace UnitTests {
         public void RPC_RequestItemRemoveDifferentItemToInventoryWithTrySplit() {
             container.AddItem(Helper.CreateItem("my item A", 5, 10), 5, 2, 2);
 
-            RequestRemove request = MakeMessage(3);
-            request.switchItem = Helper.CreateItem("my item B", 3, 15);
+            RequestRemove request = MakeMessage(3, Helper.CreateItem("my item B", 3, 15));
             RequestRemoveResponse response = GetResponse(request);
 
             Assert.False(response.success);
@@ -118,8 +116,7 @@ namespace UnitTests {
         public void RPC_RequestItemRemoveSameItemToInventoryCanStack() {
             container.AddItem(Helper.CreateItem("my item A", 5, 20), 5, 2, 2);
 
-            RequestRemove request = MakeMessage(5);
-            request.switchItem = Helper.CreateItem("my item A", 5, 20);
+            RequestRemove request = MakeMessage(5, Helper.CreateItem("my item A", 5, 20));
             RequestRemoveResponse response = GetResponse(request);
 
             Assert.True(response.success);
@@ -133,8 +130,7 @@ namespace UnitTests {
         public void RPC_RequestItemRemoveSameItemNotAllToInventoryCanStack() {
             container.AddItem(Helper.CreateItem("my item A", 5, 20), 5, 2, 2);
 
-            RequestRemove request = MakeMessage(3);
-            request.switchItem = Helper.CreateItem("my item A", 5, 20);
+            RequestRemove request = MakeMessage(3, Helper.CreateItem("my item A", 5, 20));
             RequestRemoveResponse response = GetResponse(request);
 
             Assert.True(response.success);
@@ -149,8 +145,7 @@ namespace UnitTests {
         public void RPC_RequestItemRemoveSameItemToInventoryCanStackNotAll() {
             container.AddItem(Helper.CreateItem("my item A", 5, 20), 5, 2, 2);
 
-            RequestRemove request = MakeMessage(5);
-            request.switchItem = Helper.CreateItem("my item A", 19, 20);
+            RequestRemove request = MakeMessage(5, Helper.CreateItem("my item A", 19, 20));
             RequestRemoveResponse response = GetResponse(request);
 
             Assert.True(response.success);

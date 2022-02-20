@@ -1,11 +1,11 @@
 namespace NoChestBlock {
     public class RequestAdd : IPackage {
-        public Vector2i fromInventory;
-        public Vector2i toContainer;
-        public int dragAmount;
-        public ItemDrop.ItemData dragItem;
-        public string inventoryName;
-        public bool allowSwitch;
+        public readonly Vector2i fromInventory;
+        public readonly Vector2i toContainer;
+        public readonly int dragAmount;
+        public readonly ItemDrop.ItemData dragItem;
+        public readonly string inventoryName;
+        public readonly bool allowSwitch;
 
         public RequestAdd(Vector2i fromInventory, Vector2i toContainer, int dragAmount, ItemDrop.ItemData dragItem, string inventoryName, bool allowSwitch) {
             this.fromInventory = fromInventory;
@@ -17,10 +17,12 @@ namespace NoChestBlock {
         }
 
         public RequestAdd(ZPackage package) {
-            ReadFromPackage(package);
-        }
-
-        public RequestAdd() {
+            fromInventory = package.ReadVector2i();
+            toContainer = package.ReadVector2i();
+            dragAmount = package.ReadInt();
+            inventoryName = package.ReadString();
+            dragItem = InventoryHelper.LoadItemFromPackage(package);
+            allowSwitch = package.ReadBool();
         }
 
         public ZPackage WriteToPackage() {
@@ -34,15 +36,6 @@ namespace NoChestBlock {
             package.Write(allowSwitch);
 
             return package;
-        }
-
-        public void ReadFromPackage(ZPackage package) {
-            fromInventory = package.ReadVector2i();
-            toContainer = package.ReadVector2i();
-            dragAmount = package.ReadInt();
-            inventoryName = package.ReadString();
-            dragItem = InventoryHelper.LoadItemFromPackage(package);
-            allowSwitch = package.ReadBool();
         }
 
         public void PrintDebug() {

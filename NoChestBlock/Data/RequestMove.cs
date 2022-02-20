@@ -1,8 +1,8 @@
 namespace NoChestBlock {
     public class RequestMove : IPackage {
-        public Vector2i fromPos;
-        public Vector2i toPos;
-        public int dragAmount;
+        public readonly Vector2i fromPos;
+        public readonly Vector2i toPos;
+        public readonly int dragAmount;
 
         public RequestMove(Vector2i fromPos, Vector2i toPos, int dragAmount) {
             this.fromPos = fromPos;
@@ -11,10 +11,9 @@ namespace NoChestBlock {
         }
 
         public RequestMove(ZPackage package) {
-            ReadFromPackage(package);
-        }
-
-        public RequestMove() {
+            fromPos = package.ReadVector2i();
+            toPos = package.ReadVector2i();
+            dragAmount = package.ReadInt();
         }
 
         public ZPackage WriteToPackage() {
@@ -24,12 +23,6 @@ namespace NoChestBlock {
             package.Write(dragAmount);
 
             return package;
-        }
-
-        public void ReadFromPackage(ZPackage package) {
-            fromPos = package.ReadVector2i();
-            toPos = package.ReadVector2i();
-            dragAmount = package.ReadInt();
         }
 
         public void PrintDebug() {

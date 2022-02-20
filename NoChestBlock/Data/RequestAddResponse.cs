@@ -1,10 +1,10 @@
 namespace NoChestBlock {
     public class RequestAddResponse : IPackage {
-        public bool success;
-        public Vector2i inventoryPos;
-        public int amount;
-        public string inventoryName;
-        public ItemDrop.ItemData switchItem;
+        public readonly bool success;
+        public readonly Vector2i inventoryPos;
+        public readonly int amount;
+        public readonly string inventoryName;
+        public readonly ItemDrop.ItemData switchItem;
 
         public RequestAddResponse(bool success, Vector2i inventoryPos, int amount, string inventoryName, ItemDrop.ItemData switchItem) {
             this.success = success;
@@ -15,7 +15,11 @@ namespace NoChestBlock {
         }
 
         public RequestAddResponse(ZPackage package) {
-            ReadFromPackage(package);
+            inventoryPos = package.ReadVector2i();
+            success = package.ReadBool();
+            amount = package.ReadInt();
+            inventoryName = package.ReadString();
+            switchItem = InventoryHelper.LoadItemFromPackage(package);
         }
 
         public RequestAddResponse() {
@@ -35,14 +39,6 @@ namespace NoChestBlock {
             InventoryHelper.WriteItemToPackage(switchItem, package);
 
             return package;
-        }
-
-        public void ReadFromPackage(ZPackage package) {
-            inventoryPos = package.ReadVector2i();
-            success = package.ReadBool();
-            amount = package.ReadInt();
-            inventoryName = package.ReadString();
-            switchItem = InventoryHelper.LoadItemFromPackage(package);
         }
 
         public void PrintDebug() {

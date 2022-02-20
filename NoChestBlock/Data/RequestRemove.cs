@@ -1,10 +1,10 @@
 namespace NoChestBlock {
     public class RequestRemove : IPackage {
-        public Vector2i fromContainer;
-        public Vector2i toInventory;
-        public int dragAmount;
-        public string inventoryName;
-        public ItemDrop.ItemData switchItem;
+        public readonly Vector2i fromContainer;
+        public readonly Vector2i toInventory;
+        public readonly int dragAmount;
+        public readonly string inventoryName;
+        public readonly ItemDrop.ItemData switchItem;
 
         public RequestRemove(Vector2i fromContainer, Vector2i toInventory, int dragAmount, string inventoryName, ItemDrop.ItemData switchItem) {
             this.fromContainer = fromContainer;
@@ -15,10 +15,11 @@ namespace NoChestBlock {
         }
 
         public RequestRemove(ZPackage package) {
-            ReadFromPackage(package);
-        }
-
-        public RequestRemove() {
+            fromContainer = package.ReadVector2i();
+            toInventory = package.ReadVector2i();
+            dragAmount = package.ReadInt();
+            inventoryName = package.ReadString();
+            switchItem = InventoryHelper.LoadItemFromPackage(package);
         }
 
         public ZPackage WriteToPackage() {
@@ -31,14 +32,6 @@ namespace NoChestBlock {
             InventoryHelper.WriteItemToPackage(switchItem, package);
 
             return package;
-        }
-
-        public void ReadFromPackage(ZPackage package) {
-            fromContainer = package.ReadVector2i();
-            toInventory = package.ReadVector2i();
-            dragAmount = package.ReadInt();
-            inventoryName = package.ReadString();
-            switchItem = InventoryHelper.LoadItemFromPackage(package);
         }
 
         public void PrintDebug() {

@@ -1,7 +1,7 @@
 ﻿namespace NoChestBlock {
     public class RequestDrop : IPackage {
-        public Vector2i targetContainerSlot;
-        public int amount;
+        public readonly Vector2i targetContainerSlot;
+        public readonly int amount;
 
         public RequestDrop(Vector2i targetContainerSlot, int amount) {
             this.targetContainerSlot = targetContainerSlot;
@@ -9,10 +9,8 @@
         }
 
         public RequestDrop(ZPackage package) {
-            ReadFromPackage(package);
-        }
-
-        public RequestDrop() {
+            targetContainerSlot = package.ReadVector2i();
+            amount = package.ReadInt();
         }
 
         public ZPackage WriteToPackage() {
@@ -22,11 +20,6 @@
             package.Write(amount);
 
             return package;
-        }
-
-        public void ReadFromPackage(ZPackage package) {
-            targetContainerSlot = package.ReadVector2i();
-            amount = package.ReadInt();
         }
 
         public void PrintDebug() {

@@ -1,13 +1,13 @@
 ﻿namespace NoChestBlock {
     public class RequestDropResponse : IPackage {
-        public ItemDrop.ItemData responseItem;
+        public readonly ItemDrop.ItemData responseItem;
 
         public RequestDropResponse(ItemDrop.ItemData responseItem) {
             this.responseItem = responseItem;
         }
 
         public RequestDropResponse(ZPackage package) {
-            ReadFromPackage(package);
+            responseItem = InventoryHelper.LoadItemFromPackage(package);
         }
 
         public RequestDropResponse() {
@@ -20,10 +20,6 @@
             InventoryHelper.WriteItemToPackage(responseItem, package);
 
             return package;
-        }
-
-        public void ReadFromPackage(ZPackage package) {
-            responseItem = InventoryHelper.LoadItemFromPackage(package);
         }
 
         public void PrintDebug() {
