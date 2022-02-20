@@ -129,7 +129,7 @@ namespace UnitTests {
         public void RPC_RequestItemAddToDifferentItemNotAllowSwitch() {
             container.AddItem(Helper.CreateItem("my item A", 5, 20), 5, 3, 3);
 
-            RequestAdd request = MakeRequest(true, 6);
+            RequestAdd request = MakeRequest(false, 6);
 
             RequestAddResponse response = GetResponse(request);
 

@@ -55,57 +55,27 @@ namespace NoChestBlock {
         }
 
         public static RequestAddResponse RequestItemAdd(this Inventory inventory, RequestAdd request) {
+            if (request.toContainer.x < 0 || request.toContainer.y < 0) {
+                return AddToAnySlot(inventory, request);
+            }
+
+            return AddToSlot(inventory, request);
+        }
+
+        private static RequestAddResponse AddToSlot(Inventory inventory, RequestAdd request) {
             Vector2i fromInventory = request.fromInventory;
-            Vector2i toContainer = request.toContainer;
             int dragAmount = request.dragAmount;
             ItemDrop.ItemData dragItem = request.dragItem;
-            bool allowSwitch = request.allowSwitch;
 
-            if (toContainer.x < 0 || toContainer.y < 0) {
-                Inventory tmp = new Inventory("tmp", null, 1, 1);
-                tmp.AddItem(dragItem.Clone());
-                inventory.MoveAll(tmp);
-                ItemDrop.ItemData now = tmp.GetItemAt(0, 0);
-
-                if (now == null) {
-                    return new RequestAddResponse(true, fromInventory, dragAmount, request.inventoryName, null);
-                } else {
-                    ItemDrop.ItemData back = dragItem.Clone();
-                    back.m_stack -= dragItem.m_stack - now.m_stack;
-                    return new RequestAddResponse(now.m_stack != dragItem.m_stack, fromInventory, dragItem.m_stack - now.m_stack, request.inventoryName, back);
-                }
-            }
-
-            bool added = false;
-            bool allowAdding = true;
             int amount = Mathf.Min(dragAmount, dragItem.m_stack);
+            bool canStack = CanStack(inventory, request, ref amount, out ItemDrop.ItemData switched);
 
-            ItemDrop.ItemData prevItem = inventory.GetItemAt(toContainer.x, toContainer.y);
-            ItemDrop.ItemData switched = null;
-
-            if (prevItem != null) {
-                if (InventoryHelper.IsSameItem(prevItem, dragItem)) {
-                    amount = Mathf.Min(prevItem.m_shared.m_maxStackSize - prevItem.m_stack, dragAmount);
-                } else if (dragItem.m_stack != dragAmount) {
-                    allowAdding = false;
-                    amount = 0;
-                } else {
-                    if (allowSwitch) {
-                        inventory.RemoveItem(prevItem, prevItem.m_stack);
-                        switched = prevItem;
-                    } else {
-                        allowAdding = false;
-                        amount = 0;
-                    }
-                }
-            } else if (toContainer.x < 0 || toContainer.y < 0) {
-                allowAdding = false;
-                amount = 0;
+            if (!canStack) {
+                dragItem.m_stack = dragAmount;
+                return new RequestAddResponse(false, fromInventory, 0, request.inventoryName, dragItem);
             }
 
-            if (allowAdding) {
-                added = inventory.AddItemToInventory(dragItem, amount, toContainer);
-            }
+            bool added = inventory.AddItemToInventory(dragItem, amount, request.toContainer);
 
             if (!added || amount != dragAmount) {
                 switched = dragItem;
@@ -113,6 +83,50 @@ namespace NoChestBlock {
             }
 
             return new RequestAddResponse(added, fromInventory, amount, request.inventoryName, switched);
+        }
+
+        private static bool CanStack(Inventory inventory, RequestAdd request, ref int amount, out ItemDrop.ItemData removedItem) {
+            ItemDrop.ItemData prevItem = inventory.GetItemAt(request.toContainer.x, request.toContainer.y);
+            removedItem = null;
+
+            if (prevItem == null) {
+                return true;
+            }
+
+            if (InventoryHelper.IsSameItem(prevItem, request.dragItem)) {
+                amount = Mathf.Min(prevItem.m_shared.m_maxStackSize - prevItem.m_stack, request.dragAmount);
+                return true;
+            }
+
+            if (request.dragItem.m_stack != request.dragAmount) {
+                return false;
+            }
+
+            if (request.allowSwitch) {
+                inventory.RemoveItem(prevItem, prevItem.m_stack);
+                removedItem = prevItem;
+                return true;
+            }
+
+            return false;
+        }
+
+        private static RequestAddResponse AddToAnySlot(Inventory inventory, RequestAdd request) {
+            Inventory tmp = new Inventory("tmp", null, 1, 1);
+            tmp.AddItem(request.dragItem.Clone());
+            inventory.MoveAll(tmp);
+
+            ItemDrop.ItemData now = tmp.GetItemAt(0, 0);
+
+            if (now == null) {
+                return new RequestAddResponse(true, request.fromInventory, request.dragAmount, request.inventoryName, null);
+            }
+
+            ItemDrop.ItemData back = request.dragItem.Clone();
+            int amount = request.dragItem.m_stack - now.m_stack;
+            back.m_stack -= amount;
+
+            return new RequestAddResponse(now.m_stack != request.dragItem.m_stack, request.fromInventory, amount, request.inventoryName, back);
         }
 
         public static RequestRemoveResponse RequestItemRemove(this Inventory inventory, RequestRemove request) {
