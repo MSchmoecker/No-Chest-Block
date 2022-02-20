@@ -1,14 +1,12 @@
-﻿using System.Reflection;
-using BepInEx;
+﻿using BepInEx;
 using HarmonyLib;
-using UnityEngine;
 
 namespace NoChestBlock {
     [BepInPlugin(ModGuid, ModName, ModVersion)]
     public class Plugin : BaseUnityPlugin {
         public const string ModName = "MultiUserChest";
         public const string ModGuid = "com.maxsch.valheim.MultiUserChest";
-        public const string ModVersion = "0.1.0";
+        public const string ModVersion = "0.1.1";
 
         public static Plugin Instance { get; private set; }
 
