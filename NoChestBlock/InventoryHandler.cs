@@ -1,7 +1,6 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using HarmonyLib;
-using NoChestBlock.Patches;
 using UnityEngine;
 
 namespace NoChestBlock {
@@ -11,9 +10,23 @@ namespace NoChestBlock {
         public static bool blockAllSlots;
 
         public static void RPC_RequestItemAddResponse(long sender, ZPackage package) {
-            Timer.Stop("RPC_RequestItemAddResponse");
-            RequestAddResponse response = new RequestAddResponse(package);
-            RPC_RequestItemAddResponse(GetPlayerInventory(response.inventoryName), response);
+            HandleRPC(new RequestAddResponse(package), p => GetPlayerInventory(p.inventoryName), RPC_RequestItemAddResponse);
+        }
+
+        public static void RPC_RequestTakeAllItemsResponse(long sender, ZPackage package) {
+            HandleRPC(new RequestTakeAll(package), p => Player.m_localPlayer.GetInventory(), RPC_RequestTakeAllItemsResponse);
+        }
+
+        public static void RPC_RequestItemRemoveResponse(long sender, ZPackage package) {
+            HandleRPC(new RequestRemoveResponse(package), p => GetPlayerInventory(p.inventoryName), RPC_RequestItemRemoveResponse);
+        }
+
+        public static void RPC_RequestDropResponse(long sender, ZPackage package) {
+            HandleRPC( new RequestDropResponse(package), p => null, RPC_RequestDropResponse);
+        }
+
+        public static void RPC_RequestItemConsumeResponse(long sender, ZPackage package) {
+            HandleRPC(new RequestConsumeResponse(package), p => null, RPC_RequestItemConsumeResponse);
         }
 
         public static void RPC_RequestItemMoveResponse(long sender, bool success) {
@@ -23,26 +36,13 @@ namespace NoChestBlock {
             Log.LogDebug($"\tsuccess: {success}");
         }
 
-        public static void RPC_RequestTakeAllItemsResponse(long sender, ZPackage package) {
-            Timer.Stop("RPC_RequestTakeAllItemsResponse");
-            RPC_RequestTakeAllItemsResponse(Player.m_localPlayer.GetInventory(), sender, package);
-        }
-
-        public static void RPC_RequestItemRemoveResponse(long sender, ZPackage package) {
-            Timer.Stop("RPC_RequestItemRemoveResponse");
-            RequestRemoveResponse response = new RequestRemoveResponse(package);
-            RPC_RequestItemRemoveResponse(GetPlayerInventory(response.inventoryName), response);
-        }
-
-        public static void RPC_RequestDropResponse(long sender, ZPackage package) {
-            Timer.Stop("RPC_RequestDropResponse");
-            RequestDropResponse response = new RequestDropResponse(package);
-            RPC_RequestDropResponse(response);
+        private static void HandleRPC<T>(T package, Func<T, Inventory> inventory, Action<Inventory, T> handle) where T : IPackage {
+            Timer.Stop(handle.Method.Name);
+            package.PrintDebug();
+            handle.Invoke(inventory.Invoke(package), package);
         }
 
         public static void RPC_RequestItemRemoveResponse(Inventory inventory, RequestRemoveResponse response) {
-            response.PrintDebug();
-
             Vector2i inventoryPos = response.inventoryPos;
             ReleaseSlot(inventoryPos);
 
@@ -66,8 +66,7 @@ namespace NoChestBlock {
             }
         }
 
-        private static void RPC_RequestDropResponse(RequestDropResponse response) {
-            response.PrintDebug();
+        private static void RPC_RequestDropResponse(Inventory inventory, RequestDropResponse response) {
             DropItem(response.responseItem, response.responseItem.m_stack);
 
             if (InventoryGui.instance != null) {
@@ -94,8 +93,6 @@ namespace NoChestBlock {
         }
 
         public static void RPC_RequestItemAddResponse(Inventory inventory, RequestAddResponse response) {
-            response.PrintDebug();
-
             Vector2i inventoryPos = response.inventoryPos;
             ItemDrop.ItemData switchItem = response.switchItem;
 
@@ -110,12 +107,7 @@ namespace NoChestBlock {
             }
         }
 
-        public static void RPC_RequestItemConsumeResponse(long sender, ZPackage package) {
-            Timer.Stop("RPC_RequestItemConsumeResponse");
-
-            RequestConsumeResponse response = new RequestConsumeResponse(package);
-            response.PrintDebug();
-
+        public static void RPC_RequestItemConsumeResponse(Inventory inventory, RequestConsumeResponse response) {
             Player player = Player.m_localPlayer;
             blockConsume = false;
 
@@ -136,10 +128,8 @@ namespace NoChestBlock {
             }
         }
 
-        private static void RPC_RequestTakeAllItemsResponse(Inventory inventory, long sender, ZPackage package) {
+        private static void RPC_RequestTakeAllItemsResponse(Inventory inventory, RequestTakeAll response) {
             blockAllSlots = false;
-
-            RequestTakeAll response = new RequestTakeAll(package);
 
             foreach (ItemDrop.ItemData item in response.items) {
                 inventory.AddItemToInventory(item, item.m_stack, item.m_gridPos);
