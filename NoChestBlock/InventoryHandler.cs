@@ -13,8 +13,8 @@ namespace NoChestBlock {
             HandleRPC(new RequestAddResponse(package), p => GetPlayerInventory(p.inventoryName), RPC_RequestItemAddResponse);
         }
 
-        public static void RPC_RequestTakeAllItemsResponse(long sender, ZPackage package) {
-            HandleRPC(new RequestTakeAll(package), p => Player.m_localPlayer.GetInventory(), RPC_RequestTakeAllItemsResponse);
+        public static void RPC_RequestTakeAllItemsResponse(Container container, long sender, ZPackage package) {
+            HandleRPC(new RequestTakeAll(package), p => Player.m_localPlayer.GetInventory(), container, RPC_RequestTakeAllItemsResponse);
         }
 
         public static void RPC_RequestItemRemoveResponse(long sender, ZPackage package) {
@@ -22,11 +22,11 @@ namespace NoChestBlock {
         }
 
         public static void RPC_RequestDropResponse(long sender, ZPackage package) {
-            HandleRPC( new RequestDropResponse(package), p => null, RPC_RequestDropResponse);
+            HandleRPC(new RequestDropResponse(package), RPC_RequestDropResponse);
         }
 
         public static void RPC_RequestItemConsumeResponse(long sender, ZPackage package) {
-            HandleRPC(new RequestConsumeResponse(package), p => null, RPC_RequestItemConsumeResponse);
+            HandleRPC(new RequestConsumeResponse(package), RPC_RequestItemConsumeResponse);
         }
 
         public static void RPC_RequestItemMoveResponse(long sender, bool success) {
@@ -36,10 +36,22 @@ namespace NoChestBlock {
             Log.LogDebug($"\tsuccess: {success}");
         }
 
+        private static void HandleRPC<T>(T package, Func<T, Inventory> inventory, Container container, Action<Inventory, Container, T> handle) where T : IPackage {
+            CallRPC(handle.Method.Name, package, () => handle.Invoke(inventory.Invoke(package), container, package));
+        }
+
         private static void HandleRPC<T>(T package, Func<T, Inventory> inventory, Action<Inventory, T> handle) where T : IPackage {
-            Timer.Stop(handle.Method.Name);
+            CallRPC(handle.Method.Name, package, () => handle.Invoke(inventory.Invoke(package), package));
+        }
+
+        private static void HandleRPC<T>(T package, Action<T> handle) where T : IPackage {
+            CallRPC(handle.Method.Name, package, () => handle.Invoke(package));
+        }
+
+        private static void CallRPC(string timerName, IPackage package, Action action) {
+            Timer.Stop(timerName);
             package.PrintDebug();
-            handle.Invoke(inventory.Invoke(package), package);
+            action?.Invoke();
         }
 
         public static void RPC_RequestItemRemoveResponse(Inventory inventory, RequestRemoveResponse response) {
@@ -66,7 +78,7 @@ namespace NoChestBlock {
             }
         }
 
-        private static void RPC_RequestDropResponse(Inventory inventory, RequestDropResponse response) {
+        private static void RPC_RequestDropResponse(RequestDropResponse response) {
             DropItem(response.responseItem, response.responseItem.m_stack);
 
             if (InventoryGui.instance != null) {
@@ -107,7 +119,7 @@ namespace NoChestBlock {
             }
         }
 
-        public static void RPC_RequestItemConsumeResponse(Inventory inventory, RequestConsumeResponse response) {
+        public static void RPC_RequestItemConsumeResponse(RequestConsumeResponse response) {
             Player player = Player.m_localPlayer;
             blockConsume = false;
 
@@ -128,12 +140,14 @@ namespace NoChestBlock {
             }
         }
 
-        private static void RPC_RequestTakeAllItemsResponse(Inventory inventory, RequestTakeAll response) {
+        private static void RPC_RequestTakeAllItemsResponse(Inventory inventory, Container container, RequestTakeAll response) {
             blockAllSlots = false;
 
             foreach (ItemDrop.ItemData item in response.items) {
                 inventory.AddItemToInventory(item, item.m_stack, item.m_gridPos);
             }
+
+            container.m_onTakeAllSuccess?.Invoke();
         }
 
         private static Inventory GetPlayerInventory(string name) {

@@ -35,7 +35,7 @@ namespace NoChestBlock.Patches {
             nview.Register<ZPackage>("RequestItemAddResponse", InventoryHandler.RPC_RequestItemAddResponse);
             nview.Register<ZPackage>("RequestItemRemoveResponse", InventoryHandler.RPC_RequestItemRemoveResponse);
             nview.Register<ZPackage>("RequestItemConsumeResponse", InventoryHandler.RPC_RequestItemConsumeResponse);
-            nview.Register<ZPackage>("RequestTakeAllItemsResponse", InventoryHandler.RPC_RequestTakeAllItemsResponse);
+            nview.Register<ZPackage>("RequestTakeAllItemsResponse", (l, package) =>  InventoryHandler.RPC_RequestTakeAllItemsResponse(__instance, l, package));
             nview.Register<ZPackage>("RequestDropResponse", InventoryHandler.RPC_RequestDropResponse);
         }
 
