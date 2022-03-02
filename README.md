@@ -68,6 +68,9 @@ If you use r2modman/Tunderstore Mod Manager you can set the path too, but this i
 ```
 
 ## Changelog
+0.1.2
+- Fixed item loss with EAQS quick slots on death, when inventory was full. Only fixes the interaction with both mods, not changing EAQS itself
+
 0.1.1
 - Fixed pickup items could be deleted when player inventory is full and item was switched or rejected by chest
 - Fixed error with while placing ItemDrawers

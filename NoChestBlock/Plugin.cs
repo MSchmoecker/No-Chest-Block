@@ -6,7 +6,7 @@ namespace NoChestBlock {
     public class Plugin : BaseUnityPlugin {
         public const string ModName = "MultiUserChest";
         public const string ModGuid = "com.maxsch.valheim.MultiUserChest";
-        public const string ModVersion = "0.1.1";
+        public const string ModVersion = "0.1.2";
 
         public static Plugin Instance { get; private set; }
 
