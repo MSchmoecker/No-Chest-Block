@@ -141,22 +141,15 @@ namespace NoChestBlock {
 
             toCopy.MoveAll(fromCopy);
 
-            for (int y = 0; y < fromCopy.m_height; y++) {
-                for (int x = 0; x < fromCopy.m_width; x++) {
-                    ItemDrop.ItemData originalItem = from.GetItemAt(x, y);
-                    ItemDrop.ItemData nowItem = fromCopy.GetItemAt(x, y);
+            foreach (ItemDrop.ItemData originalItem in from.m_inventory) {
+                ItemDrop.ItemData nowItem = fromCopy.GetItemAt(originalItem.m_gridPos.x, originalItem.m_gridPos.y);
 
-                    if (originalItem == null) {
-                        continue;
-                    }
-
-                    if (nowItem == null) {
-                        moved.Add(originalItem);
-                    } else if (originalItem.m_stack > nowItem.m_stack) {
-                        ItemDrop.ItemData clone = originalItem.Clone();
-                        clone.m_stack = originalItem.m_stack - nowItem.m_stack;
-                        moved.Add(clone);
-                    }
+                if (nowItem == null) {
+                    moved.Add(originalItem);
+                } else if (originalItem.m_stack > nowItem.m_stack) {
+                    ItemDrop.ItemData clone = originalItem.Clone();
+                    clone.m_stack = originalItem.m_stack - nowItem.m_stack;
+                    moved.Add(clone);
                 }
             }
 

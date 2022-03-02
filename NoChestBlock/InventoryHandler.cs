@@ -143,9 +143,19 @@ namespace NoChestBlock {
         private static void RPC_RequestTakeAllItemsResponse(Inventory inventory, Container container, RequestTakeAll response) {
             blockAllSlots = false;
 
-            foreach (ItemDrop.ItemData item in response.items) {
-                inventory.AddItemToInventory(item, item.m_stack, item.m_gridPos);
+            if (response.items.Count == 0) {
+                return;
             }
+
+            int width = response.items.Max(i => i.m_gridPos.x) + 1;
+            int height = response.items.Max(i => i.m_gridPos.y) + 1;
+            Inventory tmp = new Inventory("tmp", null, width, height);
+
+            foreach (ItemDrop.ItemData item in response.items) {
+                tmp.AddItemToInventory(item, item.m_stack, item.m_gridPos);
+            }
+
+            inventory.MoveAll(tmp);
 
             container.m_onTakeAllSuccess?.Invoke();
         }
