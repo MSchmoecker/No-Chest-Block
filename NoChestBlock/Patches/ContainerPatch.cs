@@ -1,6 +1,5 @@
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+using System.Linq;
 using HarmonyLib;
 using UnityEngine;
 
@@ -35,7 +34,7 @@ namespace NoChestBlock.Patches {
             nview.Register<ZPackage>("RequestItemAddResponse", InventoryHandler.RPC_RequestItemAddResponse);
             nview.Register<ZPackage>("RequestItemRemoveResponse", InventoryHandler.RPC_RequestItemRemoveResponse);
             nview.Register<ZPackage>("RequestItemConsumeResponse", InventoryHandler.RPC_RequestItemConsumeResponse);
-            nview.Register<ZPackage>("RequestTakeAllItemsResponse", (l, package) =>  InventoryHandler.RPC_RequestTakeAllItemsResponse(__instance, l, package));
+            nview.Register<ZPackage>("RequestTakeAllItemsResponse", (l, package) => InventoryHandler.RPC_RequestTakeAllItemsResponse(__instance, l, package));
             nview.Register<ZPackage>("RequestDropResponse", InventoryHandler.RPC_RequestDropResponse);
         }
 
@@ -89,6 +88,30 @@ namespace NoChestBlock.Patches {
             ContainerHandler.TakeAll(__instance);
 
             return false;
+        }
+
+        [HarmonyPatch(typeof(Container), nameof(Container.UpdateUseVisual)), HarmonyPrefix]
+        public static bool ContainerUpdateUseVisualPatch(Container __instance) {
+            if (!__instance.m_nview.IsValid() || !Player.m_localPlayer || !InventoryGui.instance) {
+                return false;
+            }
+
+            bool inUse = __instance == InventoryGui.instance.m_currentContainer || IsContainerInUse(__instance);
+
+            if (__instance.m_open) {
+                __instance.m_open.SetActive(inUse);
+            }
+
+            if (__instance.m_closed) {
+                __instance.m_closed.SetActive(!inUse);
+            }
+
+            return false;
+        }
+
+        private static bool IsContainerInUse(Container container) {
+            ZDOID myId = container.m_nview.GetZDO().m_uid;
+            return Player.m_players.Any(p => p != Player.m_localPlayer && p.m_nview.IsValid() && p.m_nview.GetZDO().GetZDOID("accessed-container") == myId);
         }
     }
 }
