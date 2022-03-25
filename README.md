@@ -41,8 +41,8 @@ These mods cause desync with Multi User Chest and should not be used together
 
 ## Compatible Mods
 These mods have been made compatible to work together with Multi User Chest
-- QuickDeposit https://valheim.thunderstore.io/package/MaGic/Quick_Deposit/
-- QuickStack https://valheim.thunderstore.io/package/damnsneaker/QuickStack/
+- QuickDeposit https://valheim.thunderstore.io/package/MaGic/Quick_Deposit/ (tested with version 1.0.1)
+- QuickStack https://valheim.thunderstore.io/package/damnsneaker/QuickStack/ (tested with version 0.6.6)
 
 
 ## Links
@@ -73,6 +73,10 @@ If you use r2modman/Tunderstore Mod Manager you can set the path too, but this i
 ```
 
 ## Changelog
+0.1.3
+- Sync visual chest opening with other players
+- Added compatibility with [QuickDeposit](https://valheim.thunderstore.io/package/MaGic/Quick_Deposit/) and [QuickStack](https://valheim.thunderstore.io/package/damnsneaker/QuickStack/)
+
 0.1.2
 - Fixed item loss with EAQS quick slots on death, when inventory was full. Only fixes the interaction with both mods, not changing EAQS itself
 
