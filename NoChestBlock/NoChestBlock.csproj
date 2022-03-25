@@ -122,6 +122,7 @@
         <Compile Include="Helper\Log.cs" />
         <Compile Include="Helper\Timer.cs" />
         <Compile Include="InventoryHandler.cs" />
+        <Compile Include="Patches\Compatibility\QuickDepositPatch.cs" />
         <Compile Include="Patches\ContainerPatch.cs" />
         <Compile Include="Patches\InventoryGuiOnSelectedItemMovePatch.cs" />
         <Compile Include="Patches\InventoryGuiOnSelectedItemFastMovePatch.cs" />

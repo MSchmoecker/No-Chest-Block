@@ -1,5 +1,7 @@
 ﻿using BepInEx;
+using BepInEx.Bootstrap;
 using HarmonyLib;
+using NoChestBlock.Patches.Compatibility;
 
 namespace NoChestBlock {
     [BepInPlugin(ModGuid, ModName, ModVersion)]
@@ -20,6 +22,12 @@ namespace NoChestBlock {
             harmony.PatchAll();
 
             InvokeRepeating(nameof(UpdateAccessedContainer), 0, 0.1f);
+        }
+
+        private void Start() {
+            if (Chainloader.PluginInfos.ContainsKey("com.MaGic.QuickDeposit")) {
+                harmony.PatchAll(typeof(QuickDepositPatch));
+            }
         }
 
         private void UpdateAccessedContainer() {

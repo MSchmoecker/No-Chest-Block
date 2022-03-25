@@ -5,6 +5,8 @@ using UnityEngine;
 
 namespace NoChestBlock {
     public static class InventoryHelper {
+        public delegate void MoveAction(Inventory from, Inventory to);
+
         public static ItemDrop.ItemData LoadItemFromPackage(ZPackage pkg) {
             bool hasItem = pkg.ReadBool();
 
@@ -134,12 +136,25 @@ namespace NoChestBlock {
             return new Vector2i(-1, -1);
         }
 
-        public static List<ItemDrop.ItemData> GetAllMoveableItems(Inventory from, Inventory to) {
-            List<ItemDrop.ItemData> moved = new List<ItemDrop.ItemData>();
+        public static List<ItemDrop.ItemData> GetAllMoveableItems(Inventory from, Inventory to, MoveAction moveAction) {
             Inventory fromCopy = CopyInventory(from);
             Inventory toCopy = CopyInventory(to);
 
-            toCopy.MoveAll(fromCopy);
+            moveAction(fromCopy, toCopy);
+
+            return CountMoved(from, fromCopy);
+        }
+
+        public static List<ItemDrop.ItemData> GetAllMoveableItems(Inventory from, Inventory to) {
+            return GetAllMoveableItems(from, to, MoveAll);
+        }
+
+        public static void MoveAll(Inventory from, Inventory to) {
+            to.MoveAll(from);
+        }
+
+        private static List<ItemDrop.ItemData> CountMoved(Inventory from, Inventory fromCopy) {
+            List<ItemDrop.ItemData> moved = new List<ItemDrop.ItemData>();
 
             foreach (ItemDrop.ItemData originalItem in from.m_inventory) {
                 ItemDrop.ItemData nowItem = fromCopy.GetItemAt(originalItem.m_gridPos.x, originalItem.m_gridPos.y);
