@@ -58,8 +58,7 @@ namespace UnitTests {
             container = new Inventory("container", null, 1, 1);
             container.AddItem(Helper.CreateItem("itemB", 5, 20), 5, 0, 0);
 
-            Vector2i targetPos = container.FindEmptySlot(true);
-            RequestAdd request = ContainerHandler.AddItemToChest(new Vector2i(2, 2), targetPos, 5, false, player, null);
+            RequestAdd request = ContainerHandler.AddItemToChest(new Vector2i(2, 2), new Vector2i(-1, -1), 5, false, player, null);
             RequestAddResponse response = GetAddResponse(request);
             InventoryHandler.RPC_RequestItemAddResponse(player, response);
 
@@ -67,6 +66,68 @@ namespace UnitTests {
             Assert.AreEqual(5, player.GetItemAt(2, 2).m_stack);
             Assert.AreEqual("itemB", container.GetItemAt(0, 0).m_shared.m_name);
             Assert.AreEqual(5, container.GetItemAt(0, 0).m_stack);
+        }
+
+        [Test]
+        public void AddToChest_SplitStack_EnoughSpaceAtFirstSlot_FastMove() {
+            // 25 itemA
+            player.AddItem(Helper.CreateItem("itemA", 10, 20), 10, 3, 3);
+            container.AddItem(Helper.CreateItem("itemA", 15, 20), 15, 2, 2);
+
+            RequestAdd request = ContainerHandler.AddItemToChest(new Vector2i(3, 3), new Vector2i(-1, -1), 5, false, player, null);
+            RequestAddResponse response = GetAddResponse(request);
+            InventoryHandler.RPC_RequestItemAddResponse(player, response);
+
+            Assert.AreEqual("itemA", player.GetItemAt(3, 3).m_shared.m_name);
+            Assert.AreEqual(2, container.m_inventory.Count);
+            Assert.AreEqual("itemA", container.m_inventory[0].m_shared.m_name);
+            Assert.AreEqual("itemA", container.m_inventory[1].m_shared.m_name);
+
+            // 25 itemA
+            Assert.AreEqual(5, player.GetItemAt(3, 3).m_stack);
+            Assert.AreEqual(15, container.m_inventory[0].m_stack);
+            Assert.AreEqual(5, container.m_inventory[1].m_stack);
+        }
+
+        [Test]
+        public void AddToChest_SplitStack_NotEnoughSpaceAtFirstSlot_All_FastMove() {
+            // 25 itemA
+            player.AddItem(Helper.CreateItem("itemA", 10, 20), 10, 3, 3);
+            container.AddItem(Helper.CreateItem("itemA", 15, 20), 15, 0, 0);
+
+            RequestAdd request = ContainerHandler.AddItemToChest(new Vector2i(3, 3), new Vector2i(-1, -1), 10, false, player, null);
+            RequestAddResponse response = GetAddResponse(request);
+            InventoryHandler.RPC_RequestItemAddResponse(player, response);
+
+            Assert.AreEqual(0, player.m_inventory.Count);
+            Assert.AreEqual(2, container.m_inventory.Count);
+            Assert.AreEqual("itemA", container.m_inventory[0].m_shared.m_name);
+            Assert.AreEqual("itemA", container.m_inventory[1].m_shared.m_name);
+
+            // 25 itemA
+            Assert.AreEqual(20, container.m_inventory[0].m_stack);
+            Assert.AreEqual(5, container.m_inventory[1].m_stack);
+        }
+
+        [Test]
+        public void AddToChest_SplitStack_NotEnoughSpaceAtFirstSlot_FastMove() {
+            // 25 itemA
+            player.AddItem(Helper.CreateItem("itemA", 10, 20), 10, 3, 3);
+            container.AddItem(Helper.CreateItem("itemA", 15, 20), 15, 0, 0);
+
+            RequestAdd request = ContainerHandler.AddItemToChest(new Vector2i(3, 3), new Vector2i(-1, -1), 9, false, player, null);
+            RequestAddResponse response = GetAddResponse(request);
+            InventoryHandler.RPC_RequestItemAddResponse(player, response);
+
+            Assert.AreEqual("itemA", player.GetItemAt(3, 3).m_shared.m_name);
+            Assert.AreEqual(2, container.m_inventory.Count);
+            Assert.AreEqual("itemA", container.m_inventory[0].m_shared.m_name);
+            Assert.AreEqual("itemA", container.m_inventory[1].m_shared.m_name);
+
+            // 25 itemA
+            Assert.AreEqual(1, player.GetItemAt(3, 3).m_stack);
+            Assert.AreEqual(20, container.m_inventory[0].m_stack);
+            Assert.AreEqual(4, container.m_inventory[1].m_stack);
         }
 
         [Test]

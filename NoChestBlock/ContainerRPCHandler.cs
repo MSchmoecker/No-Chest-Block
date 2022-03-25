@@ -113,7 +113,7 @@ namespace NoChestBlock {
 
         private static RequestAddResponse AddToAnySlot(Inventory inventory, RequestAdd request) {
             Inventory tmp = new Inventory("tmp", null, 1, 1);
-            tmp.AddItem(request.dragItem.Clone());
+            tmp.AddItem(request.dragItem.Clone(), request.dragAmount, 0, 0);
             inventory.MoveAll(tmp);
 
             ItemDrop.ItemData now = tmp.GetItemAt(0, 0);
