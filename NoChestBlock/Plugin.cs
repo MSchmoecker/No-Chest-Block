@@ -28,6 +28,10 @@ namespace NoChestBlock {
             if (Chainloader.PluginInfos.ContainsKey("com.MaGic.QuickDeposit")) {
                 harmony.PatchAll(typeof(QuickDepositPatch));
             }
+
+            if (Chainloader.PluginInfos.ContainsKey("org.bepinex.plugins.valheim.quick_stack")) {
+                harmony.PatchAll(typeof(QuickStackPatch));
+            }
         }
 
         private void UpdateAccessedContainer() {
