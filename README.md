@@ -2,15 +2,15 @@
 
 
 ## About
-Allows multiple players to interact with the same chest at the same time
+Allows multiple players to interact with the same chest at the same time.
 
 
 ## Installation
-This mod requires BepInEx.\
-Extract the content of `MultiUserChest` into the `BepInEx/plugins` folder.
+This mod requires [BepInEx](https://valheim.thunderstore.io/package/denikson/BepInExPack_Valheim/).
+Extract all files to `BepInEx/plugins/MultiUserChest`
 
-All player need to install this mod, it is not needed at a server. Otherwise items may be deleted.\
-It is highly recommended to force the installation.
+All player need to install this mod. It can be installed at a server, but doesn't do anything.\
+It is highly recommended to force the installation as items may be deleted or duplicated otherwise.
 
 I have tested this mod to my best ability but cannot ensure there all edge cases covered, especially with other mods.
 Please report all errors and desyncs that occur.
@@ -28,16 +28,21 @@ Please report all errors and desyncs that occur.
 - Does it work with mods that change inventory sizes
   - Yes
 - Does it work with mods that add quick stacking / chest sorting
-  - No
+  - Depends on the mod, see [Incompatible Mods](#confirmed-incompatible-mods) and [Compatible Mods](#compatible-mods). If it not listed there, assume it doesn't work
+
 
 ## Confirmed Incompatible Mods
 These mods cause desync with Multi User Chest and should not be used together
-- QuickDeposit https://valheim.thunderstore.io/package/MaGic/Quick_Deposit/
 - QuickStore https://valheim.thunderstore.io/package/fenrir0054/QuickStore/
-- QuickStack https://valheim.thunderstore.io/package/damnsneaker/QuickStack/
 - SmartContainers https://valheim.thunderstore.io/package/ZOR/SmartContainers/
 - DepositAnywhere https://valheim.thunderstore.io/package/Lookenpeepers/DepositAnywhere/
 - SimpleSort https://valheim.thunderstore.io/package/Nexus/SimpleSort/
+
+
+## Compatible Mods
+These mods have been made compatible to work together with Multi User Chest
+- QuickDeposit https://valheim.thunderstore.io/package/MaGic/Quick_Deposit/
+- QuickStack https://valheim.thunderstore.io/package/damnsneaker/QuickStack/
 
 
 ## Links
