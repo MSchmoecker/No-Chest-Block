@@ -84,6 +84,7 @@
         <Compile Include="Patches.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
         <Compile Include="RPCRoute.cs" />
+        <Compile Include="ItemTestBase.cs" />
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\NoChestBlock\NoChestBlock.csproj">

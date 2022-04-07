@@ -58,14 +58,14 @@ namespace NoChestBlock {
             Vector2i inventoryPos = response.inventoryPos;
             ReleaseSlot(inventoryPos);
 
-            if (response.success) {
+            if (response.Success) {
                 if (response.hasSwitched) {
                     ItemDrop.ItemData atSlot = inventory.GetItemAt(inventoryPos.x, inventoryPos.y);
                     inventory.RemoveItem(atSlot);
                 }
 
                 if (inventoryPos.x >= 0 && inventoryPos.y >= 0) {
-                    inventory.AddItemToInventory(response.responseItem, response.amount, inventoryPos);
+                    inventory.AddItemToInventory(response.responseItem, response.Amount, inventoryPos);
                 } else {
                     Inventory tmp = new Inventory("tmp", null, 1, 1);
                     tmp.AddItem(response.responseItem);

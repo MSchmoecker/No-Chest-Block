@@ -1,7 +1,7 @@
 namespace NoChestBlock {
-    public class RequestRemoveResponse : IPackage {
-        public readonly bool success;
-        public readonly int amount;
+    public class RequestRemoveResponse : IPackage, IResponse {
+        public bool Success { get; }
+        public int Amount { get; }
         public readonly Vector2i inventoryPos;
         public readonly int inventoryHash;
         public readonly ItemDrop.ItemData responseItem;
@@ -9,8 +9,8 @@ namespace NoChestBlock {
         public readonly bool hasSwitched;
 
         public RequestRemoveResponse(bool success, int amount, bool hasSwitched, Vector2i inventoryPos, int inventoryHash, ItemDrop.ItemData responseItem, ZDOID sender) {
-            this.success = success;
-            this.amount = amount;
+            Success = success;
+            Amount = amount;
             this.hasSwitched = hasSwitched;
             this.inventoryPos = inventoryPos;
             this.inventoryHash = inventoryHash;
@@ -19,8 +19,8 @@ namespace NoChestBlock {
         }
 
         public RequestRemoveResponse(ZPackage package) {
-            success = package.ReadBool();
-            amount = package.ReadInt();
+            Success = package.ReadBool();
+            Amount = package.ReadInt();
             hasSwitched = package.ReadBool();
             inventoryPos = package.ReadVector2i();
             inventoryHash = package.ReadInt();
@@ -29,8 +29,8 @@ namespace NoChestBlock {
         }
 
         public RequestRemoveResponse() {
-            success = false;
-            amount = 0;
+            Success = false;
+            Amount = 0;
             hasSwitched = false;
             inventoryPos = new Vector2i(-1, -1);
             inventoryHash = 0;
@@ -41,8 +41,8 @@ namespace NoChestBlock {
         public ZPackage WriteToPackage() {
             ZPackage package = new ZPackage();
 
-            package.Write(success);
-            package.Write(amount);
+            package.Write(Success);
+            package.Write(Amount);
             package.Write(hasSwitched);
             package.Write(inventoryPos);
             package.Write(inventoryHash);
@@ -54,8 +54,8 @@ namespace NoChestBlock {
 
         public void PrintDebug() {
             Log.LogDebug($"RequestRemoveResponse:");
-            Log.LogDebug($"  success: {success}");
-            Log.LogDebug($"  amount: {amount}");
+            Log.LogDebug($"  success: {Success}");
+            Log.LogDebug($"  amount: {Amount}");
             Log.LogDebug($"  hasSwitched: {hasSwitched}");
             Log.LogDebug($"  inventoryPos: {inventoryPos}");
             Log.LogDebug($"  inventoryName: {inventoryHash}");

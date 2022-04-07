@@ -3,7 +3,7 @@ using NUnit.Framework;
 
 namespace UnitTests {
     [TestFixture]
-    public class ContainerHandlerAddTest {
+    public class ContainerHandlerAddTest : ItemTestBase {
         private Inventory container;
 
         [SetUp]
@@ -30,28 +30,19 @@ namespace UnitTests {
             RequestAdd request = MakeRequest(true);
             RequestAddResponse response = GetResponse(request);
 
-            Assert.True(response.success);
-            Assert.AreEqual(5, response.amount);
-            Assert.Null(response.switchItem);
-
-            Assert.AreEqual(1, container.m_inventory.Count);
-            Assert.AreEqual(5, container.m_inventory[0].m_stack);
-            Assert.AreEqual("my item", container.m_inventory[0].m_shared.m_name);
+            TestResponse(response, true, 5);
+            TestForItem(response.switchItem, null);
+            TestForItems(container, new TestItem("my item", 5));
         }
 
         [Test]
         public void RPC_RequestItemAddToEmptySlotNotAllowSwitch() {
             RequestAdd request = MakeRequest(false);
-
             RequestAddResponse response = GetResponse(request);
 
-            Assert.True(response.success);
-            Assert.AreEqual(5, response.amount);
-            Assert.Null(response.switchItem);
-
-            Assert.AreEqual(1, container.m_inventory.Count);
-            Assert.AreEqual(5, container.m_inventory[0].m_stack);
-            Assert.AreEqual("my item", container.m_inventory[0].m_shared.m_name);
+            TestResponse(response, true, 5);
+            TestForItem(response.switchItem, null);
+            TestForItems(container, new TestItem("my item", 5));
         }
 
         [Test]
@@ -59,16 +50,9 @@ namespace UnitTests {
             RequestAdd request = MakeRequest(true, 3);
             RequestAddResponse response = GetResponse(request);
 
-            Assert.True(response.success);
-            Assert.AreEqual(3, response.amount);
-            Assert.NotNull(response.switchItem);
-
-            Assert.AreEqual(2, response.switchItem.m_stack);
-            Assert.AreEqual("my item", response.switchItem.m_shared.m_name);
-
-            Assert.AreEqual(1, container.m_inventory.Count);
-            Assert.AreEqual(3, container.m_inventory[0].m_stack);
-            Assert.AreEqual("my item", container.m_inventory[0].m_shared.m_name);
+            TestResponse(response, true, 3);
+            TestForItem(response.switchItem, new TestItem("my item", 2));
+            TestForItems(container, new TestItem("my item", 3));
         }
 
         [Test]
@@ -76,13 +60,9 @@ namespace UnitTests {
             RequestAdd request = MakeRequest(true, 5, 3);
             RequestAddResponse response = GetResponse(request);
 
-            Assert.True(response.success);
-            Assert.AreEqual(3, response.amount);
-            Assert.Null(response.switchItem);
-
-            Assert.AreEqual(1, container.m_inventory.Count);
-            Assert.AreEqual(3, container.m_inventory[0].m_stack);
-            Assert.AreEqual("my item", container.m_inventory[0].m_shared.m_name);
+            TestResponse(response, true, 3);
+            TestForItem(response.switchItem, null);
+            TestForItems(container, new TestItem("my item", 3));
         }
 
         [Test]
@@ -92,16 +72,9 @@ namespace UnitTests {
             RequestAdd request = MakeRequest(true);
             RequestAddResponse response = GetResponse(request);
 
-            Assert.True(response.success);
-            Assert.AreEqual(5, response.amount);
-            Assert.NotNull(response.switchItem);
-
-            Assert.AreEqual(5, response.switchItem.m_stack);
-            Assert.AreEqual("my item A", response.switchItem.m_shared.m_name);
-
-            Assert.AreEqual(1, container.m_inventory.Count);
-            Assert.AreEqual(5, container.m_inventory[0].m_stack);
-            Assert.AreEqual("my item", container.m_inventory[0].m_shared.m_name);
+            TestResponse(response, true, 5);
+            TestForItem(response.switchItem, new TestItem("my item A", 5));
+            TestForItems(container, new TestItem("my item", 5));
         }
 
         [Test]
@@ -111,16 +84,9 @@ namespace UnitTests {
             RequestAdd request = MakeRequest(true, 5, 3);
             RequestAddResponse response = GetResponse(request);
 
-            Assert.False(response.success);
-            Assert.AreEqual(0, response.amount);
-            Assert.NotNull(response.switchItem);
-
-            Assert.AreEqual("my item", response.switchItem.m_shared.m_name);
-            Assert.AreEqual(3, response.switchItem.m_stack);
-
-            Assert.AreEqual(1, container.m_inventory.Count);
-            Assert.AreEqual(5, container.m_inventory[0].m_stack);
-            Assert.AreEqual("my item A", container.m_inventory[0].m_shared.m_name);
+            TestResponse(response, false, 0);
+            TestForItem(response.switchItem, new TestItem("my item", 3));
+            TestForItems(container, new TestItem("my item A", 5));
         }
 
         [Test]
@@ -128,19 +94,11 @@ namespace UnitTests {
             container.CreateItem("my item A", 5, 3, 3);
 
             RequestAdd request = MakeRequest(false, 6);
-
             RequestAddResponse response = GetResponse(request);
 
-            Assert.False(response.success);
-            Assert.AreEqual(0, response.amount);
-            Assert.NotNull(response.switchItem);
-
-            Assert.AreEqual("my item", response.switchItem.m_shared.m_name);
-            Assert.AreEqual(5, response.switchItem.m_stack);
-
-            Assert.AreEqual(1, container.m_inventory.Count);
-            Assert.AreEqual(5, container.m_inventory[0].m_stack);
-            Assert.AreEqual("my item A", container.m_inventory[0].m_shared.m_name);
+            TestResponse(response, false, 0);
+            TestForItem(response.switchItem, new TestItem("my item", 5));
+            TestForItems(container, new TestItem("my item A", 5));
         }
 
         [Test]
@@ -148,16 +106,11 @@ namespace UnitTests {
             container.CreateItem("my item", 5, 3, 3);
 
             RequestAdd request = MakeRequest(true);
-
             RequestAddResponse response = GetResponse(request);
 
-            Assert.True(response.success);
-            Assert.AreEqual(5, response.amount);
-            Assert.Null(response.switchItem);
-
-            Assert.AreEqual(1, container.m_inventory.Count);
-            Assert.AreEqual(10, container.m_inventory[0].m_stack);
-            Assert.AreEqual("my item", container.m_inventory[0].m_shared.m_name);
+            TestResponse(response, true, 5);
+            TestForItem(response.switchItem, null);
+            TestForItems(container, new TestItem("my item", 10));
         }
 
         [Test]
@@ -167,16 +120,9 @@ namespace UnitTests {
             RequestAdd request = MakeRequest(true);
             RequestAddResponse response = GetResponse(request);
 
-            Assert.True(response.success);
-            Assert.AreEqual(1, response.amount);
-            Assert.NotNull(response.switchItem);
-
-            Assert.AreEqual("my item", response.switchItem.m_shared.m_name);
-            Assert.AreEqual(4, response.switchItem.m_stack);
-
-            Assert.AreEqual(1, container.m_inventory.Count);
-            Assert.AreEqual(20, container.m_inventory[0].m_stack);
-            Assert.AreEqual("my item", container.m_inventory[0].m_shared.m_name);
+            TestResponse(response, true, 1);
+            TestForItem(response.switchItem, new TestItem("my item", 4));
+            TestForItems(container, new TestItem("my item", 20));
         }
 
         [Test]
@@ -186,16 +132,9 @@ namespace UnitTests {
             RequestAdd request = MakeRequest(true);
             RequestAddResponse response = GetResponse(request);
 
-            Assert.False(response.success);
-            Assert.AreEqual(0, response.amount);
-            Assert.NotNull(response.switchItem);
-
-            Assert.AreEqual("my item", response.switchItem.m_shared.m_name);
-            Assert.AreEqual(5, response.switchItem.m_stack);
-
-            Assert.AreEqual(1, container.m_inventory.Count);
-            Assert.AreEqual(20, container.m_inventory[0].m_stack);
-            Assert.AreEqual("my item", container.m_inventory[0].m_shared.m_name);
+            TestResponse(response, false, 0);
+            TestForItem(response.switchItem, new TestItem("my item", 5));
+            TestForItems(container, new TestItem("my item", 20));
         }
 
         [Test]
@@ -206,17 +145,9 @@ namespace UnitTests {
 
             RequestAddResponse response = GetResponse(request);
 
-            Assert.True(response.success);
-            Assert.AreEqual(5, response.amount);
-            Assert.NotNull(response.switchItem);
-
-            Assert.AreEqual(1, container.m_inventory.Count);
-            Assert.AreEqual(5, container.m_inventory[0].m_stack);
-            Assert.AreEqual("my item", container.m_inventory[0].m_shared.m_name);
-
-            Assert.AreEqual(1, container.m_inventory.Count);
-            Assert.AreEqual(20, response.switchItem.m_stack);
-            Assert.AreEqual("my item A", response.switchItem.m_shared.m_name);
+            TestResponse(response, true, 5);
+            TestForItem(response.switchItem, new TestItem("my item A", 20));
+            TestForItems(container, new TestItem("my item", 5));
         }
 
         [Test]
@@ -224,13 +155,9 @@ namespace UnitTests {
             RequestAdd request = MakeRequest(true, new Vector2i(-1, -1));
             RequestAddResponse response = GetResponse(request);
 
-            Assert.True(response.success);
-            Assert.AreEqual(5, response.amount);
-            Assert.Null(response.switchItem);
-
-            Assert.AreEqual(1, container.m_inventory.Count);
-            Assert.AreEqual(5, container.m_inventory[0].m_stack);
-            Assert.AreEqual("my item", container.m_inventory[0].m_shared.m_name);
+            TestResponse(response, true, 5);
+            TestForItem(response.switchItem, null);
+            TestForItems(container, new TestItem("my item", 5));
         }
 
         [Test]
@@ -241,15 +168,9 @@ namespace UnitTests {
             RequestAdd request = MakeRequest(false, new Vector2i(-1, -1), 15);
             RequestAddResponse response = GetResponse(request);
 
-            Assert.True(response.success);
-            Assert.AreEqual(5, response.amount);
-            Assert.NotNull(response.switchItem);
-
-            Assert.AreEqual(10, response.switchItem.m_stack);
-
-            Assert.AreEqual(1, container.m_inventory.Count);
-            Assert.AreEqual(20, container.m_inventory[0].m_stack);
-            Assert.AreEqual("my item", container.m_inventory[0].m_shared.m_name);
+            TestResponse(response, true, 5);
+            TestForItem(response.switchItem, new TestItem("my item", 10));
+            TestForItems(container, new TestItem("my item", 20));
         }
     }
 }

@@ -108,6 +108,7 @@
         <Compile Include="ContainerHandler.cs" />
         <Compile Include="ContainerRPCHandler.cs" />
         <Compile Include="Data\IPackage.cs" />
+        <Compile Include="Data\IResponse.cs" />
         <Compile Include="Data\RequestAdd.cs" />
         <Compile Include="Data\RequestAddResponse.cs" />
         <Compile Include="Data\RequestConsume.cs" />
