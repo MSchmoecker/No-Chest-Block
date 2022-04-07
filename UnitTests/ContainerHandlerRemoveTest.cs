@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace UnitTests {
     [TestFixture]
-    public class ContainerHandlerRemoveTest {
+    public class ContainerHandlerRemoveTest : ItemTestBase {
         private Inventory container;
 
         [SetUp]
@@ -33,11 +33,9 @@ namespace UnitTests {
             RequestRemove request = MakeMessage(5);
             RequestRemoveResponse response = GetResponse(request);
 
-            Assert.True(response.Success);
-            Assert.AreEqual(5, response.Amount);
+            TestResponse(response, true, 5);
             Assert.False(response.hasSwitched);
-
-            Assert.AreEqual(0, container.m_inventory.Count);
+            TestForItems(container);
         }
 
         [Test]
@@ -47,12 +45,9 @@ namespace UnitTests {
             RequestRemove request = MakeMessage(3);
             RequestRemoveResponse response = GetResponse(request);
 
-            Assert.True(response.Success);
-            Assert.AreEqual(3, response.Amount);
+            TestResponse(response, true, 3);
             Assert.False(response.hasSwitched);
-
-            Assert.AreEqual(1, container.m_inventory.Count);
-            Assert.AreEqual(2, container.m_inventory[0].m_stack);
+            TestForItems(container, new TestItem("my item", 2));
         }
 
         [Test]
@@ -62,11 +57,9 @@ namespace UnitTests {
             RequestRemove request = MakeMessage(7);
             RequestRemoveResponse response = GetResponse(request);
 
-            Assert.True(response.Success);
-            Assert.AreEqual(5, response.Amount);
+            TestResponse(response, true, 5);
             Assert.False(response.hasSwitched);
-
-            Assert.AreEqual(0, container.m_inventory.Count);
+            TestForItems(container);
         }
 
         [Test]
@@ -74,11 +67,9 @@ namespace UnitTests {
             RequestRemove request = MakeMessage(5);
             RequestRemoveResponse response = GetResponse(request);
 
-            Assert.False(response.Success);
-            Assert.AreEqual(0, response.Amount);
+            TestResponse(response, false, 0);
             Assert.False(response.hasSwitched);
-
-            Assert.AreEqual(0, container.m_inventory.Count);
+            TestForItems(container);
         }
 
         [Test]
@@ -88,13 +79,9 @@ namespace UnitTests {
             RequestRemove request = MakeMessage(5, Helper.CreateItem("my item B", 3));
             RequestRemoveResponse response = GetResponse(request);
 
-            Assert.True(response.Success);
-            Assert.AreEqual(5, response.Amount);
+            TestResponse(response, true, 5);
             Assert.True(response.hasSwitched);
-
-            Assert.AreEqual(1, container.m_inventory.Count);
-            Assert.AreEqual("my item B", container.m_inventory[0].m_shared.m_name);
-            Assert.AreEqual(3, container.m_inventory[0].m_stack);
+            TestForItems(container, new TestItem("my item B", 3));
         }
 
         [Test]
@@ -104,13 +91,9 @@ namespace UnitTests {
             RequestRemove request = MakeMessage(3, Helper.CreateItem("my item B", 3));
             RequestRemoveResponse response = GetResponse(request);
 
-            Assert.False(response.Success);
-            Assert.AreEqual(0, response.Amount);
+            TestResponse(response, false, 0);
             Assert.False(response.hasSwitched);
-
-            Assert.AreEqual(1, container.m_inventory.Count);
-            Assert.AreEqual("my item A", container.m_inventory[0].m_shared.m_name);
-            Assert.AreEqual(5, container.m_inventory[0].m_stack);
+            TestForItems(container, new TestItem("my item A", 5));
         }
 
         [Test]
@@ -120,11 +103,9 @@ namespace UnitTests {
             RequestRemove request = MakeMessage(5, Helper.CreateItem("my item A", 5));
             RequestRemoveResponse response = GetResponse(request);
 
-            Assert.True(response.Success);
-            Assert.AreEqual(5, response.Amount);
+            TestResponse(response, true, 5);
             Assert.False(response.hasSwitched);
-
-            Assert.AreEqual(0, container.m_inventory.Count);
+            TestForItems(container);
         }
 
         [Test]
@@ -134,12 +115,9 @@ namespace UnitTests {
             RequestRemove request = MakeMessage(3, Helper.CreateItem("my item A", 5));
             RequestRemoveResponse response = GetResponse(request);
 
-            Assert.True(response.Success);
-            Assert.AreEqual(3, response.Amount);
+            TestResponse(response, true, 3);
             Assert.False(response.hasSwitched);
-
-            Assert.AreEqual(1, container.m_inventory.Count);
-            Assert.AreEqual(2, container.m_inventory[0].m_stack);
+            TestForItems(container, new TestItem("my item A", 2));
         }
 
         [Test]
@@ -149,12 +127,9 @@ namespace UnitTests {
             RequestRemove request = MakeMessage(5, Helper.CreateItem("my item A", 19));
             RequestRemoveResponse response = GetResponse(request);
 
-            Assert.True(response.Success);
-            Assert.AreEqual(1, response.Amount);
+            TestResponse(response, true, 1);
             Assert.False(response.hasSwitched);
-
-            Assert.AreEqual(1, container.m_inventory.Count);
-            Assert.AreEqual(4, container.m_inventory[0].m_stack);
+            TestForItems(container, new TestItem("my item A", 4));
         }
 
         [Test]
@@ -164,13 +139,10 @@ namespace UnitTests {
             RequestRemove request = MakeMessage(5);
             RequestRemoveResponse response = GetResponse(request);
 
-            Assert.True(response.Success);
-            Assert.AreEqual(5, response.Amount);
+            TestResponse(response, true, 5);
             Assert.False(response.hasSwitched);
-
-            Assert.AreEqual(0, container.m_inventory.Count);
-            Assert.AreEqual("my item A", response.responseItem.m_shared.m_name);
-            Assert.AreEqual(5, response.responseItem.m_stack);
+            TestForItem(response.responseItem, new TestItem("my item A", 5));
+            TestForItems(container);
         }
 
         [Test]
@@ -180,13 +152,10 @@ namespace UnitTests {
             RequestRemove request = MakeMessage(3);
             RequestRemoveResponse response = GetResponse(request);
 
-            Assert.True(response.Success);
-            Assert.AreEqual(3, response.Amount);
-            Assert.AreEqual(3, response.responseItem.m_stack);
+            TestResponse(response, true, 3);
             Assert.False(response.hasSwitched);
-
-            Assert.AreEqual(1, container.m_inventory.Count);
-            Assert.AreEqual(2, container.m_inventory[0].m_stack);
+            TestForItem(response.responseItem, new TestItem("my item A", 3));
+            TestForItems(container, new TestItem("my item A", 2));
         }
 
         [Test]
@@ -196,13 +165,10 @@ namespace UnitTests {
             RequestRemove request = MakeMessage(2);
             RequestRemoveResponse response = GetResponse(request);
 
-            Assert.True(response.Success);
-            Assert.AreEqual(2, response.Amount);
-            Assert.AreEqual(2, response.responseItem.m_stack);
+            TestResponse(response, true, 2);
             Assert.False(response.hasSwitched);
-
-            Assert.AreEqual(1, container.m_inventory.Count);
-            Assert.AreEqual(3, container.m_inventory[0].m_stack);
+            TestForItem(response.responseItem, new TestItem("my item A", 2));
+            TestForItems(container, new TestItem("my item A", 3));
         }
     }
 }
