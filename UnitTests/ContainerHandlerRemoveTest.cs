@@ -21,8 +21,9 @@ namespace UnitTests {
             return new RequestRemove(new Vector2i(2, 2),
                                      new Vector2i(4, 4),
                                      dragAmount,
-                                     "inv",
-                                     switchItem);
+                                     "inv".GetStableHashCode(),
+                                     switchItem,
+                                     ZDOID.None);
         }
 
         [Test]

@@ -16,12 +16,12 @@ namespace NoChestBlock {
             }
         }
 
-        public static RequestAdd AddItemToChest(Vector2i from, Vector2i to, int dragAmount, bool allowSwitch, Inventory playerInventory, Container container) {
-            ItemDrop.ItemData item = playerInventory.GetItemAt(from.x, from.y).Clone();
-            RequestAdd request = new RequestAdd(from, to, dragAmount, item, playerInventory.m_name, allowSwitch);
+        public static RequestAdd AddItemToChest(Container container, Inventory inventory, ZDOID sender, Vector2i @from, Vector2i to, int dragAmount, bool allowSwitch) {
+            ItemDrop.ItemData item = inventory.GetItemAt(from.x, from.y).Clone();
+            RequestAdd request = new RequestAdd(from, to, dragAmount, item, inventory.m_name, allowSwitch, sender);
 
-            playerInventory.RemoveItem(playerInventory.GetItemAt(from.x, from.y), dragAmount);
-            InventoryHandler.BlockSlot(request.fromInventory);
+            inventory.RemoveItem(inventory.GetItemAt(from.x, from.y), dragAmount);
+            InventoryHandler.BlockSlot(request.fromPos);
 
             if (container != null && container.m_nview) {
                 Timer.Start(request);
@@ -32,7 +32,7 @@ namespace NoChestBlock {
         }
 
         public static void RemoveItemFromChest(RequestRemove request, Container container) {
-            InventoryHandler.BlockSlot(request.toInventory);
+            InventoryHandler.BlockSlot(request.toPos);
 
             if (container != null && container.m_nview) {
                 Timer.Start(request);

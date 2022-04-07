@@ -10,7 +10,7 @@ namespace NoChestBlock {
         public static bool blockAllSlots;
 
         public static void RPC_RequestItemAddResponse(long sender, ZPackage package) {
-            HandleRPC(new RequestAddResponse(package), p => GetPlayerInventory(p.inventoryName), RPC_RequestItemAddResponse);
+            HandleRPC(new RequestAddResponse(package), p => GetInventory(p.sender, p.inventoryHash), RPC_RequestItemAddResponse);
         }
 
         public static void RPC_RequestTakeAllItemsResponse(Container container, long sender, ZPackage package) {
@@ -18,7 +18,7 @@ namespace NoChestBlock {
         }
 
         public static void RPC_RequestItemRemoveResponse(long sender, ZPackage package) {
-            HandleRPC(new RequestRemoveResponse(package), p => GetPlayerInventory(p.inventoryName), RPC_RequestItemRemoveResponse);
+            HandleRPC(new RequestRemoveResponse(package), p => GetInventory(p.sender, p.inventoryHash), RPC_RequestItemRemoveResponse);
         }
 
         public static void RPC_RequestDropResponse(long sender, ZPackage package) {
@@ -160,13 +160,21 @@ namespace NoChestBlock {
             container.m_onTakeAllSuccess?.Invoke();
         }
 
-        private static Inventory GetPlayerInventory(string name) {
-            if (Player.m_localPlayer.m_inventory.IsType("ExtendedInventory") && Player.m_localPlayer.m_inventory.HasField("_inventories")) {
-                List<Inventory> inventories = Player.m_localPlayer.m_inventory.GetField<List<Inventory>>("_inventories");
-                return inventories.FirstOrDefault(i => i.m_name == name) ?? Player.m_localPlayer.m_inventory;
+        private static Inventory GetInventory(ZDOID targetId, int hash) {
+            GameObject target = ZNetScene.instance.FindInstance(targetId);
+
+            if (target.TryGetComponent(out Player player)) {
+                if (player.GetInventory().IsType("ExtendedInventory") && player.GetInventory().HasField("_inventories")) {
+                    List<Inventory> inventories = Player.m_localPlayer.m_inventory.GetField<List<Inventory>>("_inventories");
+                    return inventories.FirstOrDefault(i => i.m_name.GetStableHashCode() == hash) ?? player.GetInventory();
+                }
             }
 
-            return Player.m_localPlayer.m_inventory;
+            if (target.TryGetComponent(out Container container)) {
+                return container.GetInventory();
+            }
+
+            return null;
         }
 
         public static void BlockSlot(Vector2i slot) {

@@ -1,51 +1,56 @@
 namespace NoChestBlock {
     public class RequestAdd : IPackage {
-        public readonly Vector2i fromInventory;
-        public readonly Vector2i toContainer;
+        public readonly Vector2i fromPos;
+        public readonly Vector2i toPos;
         public readonly int dragAmount;
         public readonly ItemDrop.ItemData dragItem;
-        public readonly string inventoryName;
+        public readonly int fromInventoryHash;
+        public readonly ZDOID sender;
         public readonly bool allowSwitch;
 
-        public RequestAdd(Vector2i fromInventory, Vector2i toContainer, int dragAmount, ItemDrop.ItemData dragItem, string inventoryName, bool allowSwitch) {
-            this.fromInventory = fromInventory;
-            this.toContainer = toContainer;
+        public RequestAdd(Vector2i fromPos, Vector2i toPos, int dragAmount, ItemDrop.ItemData dragItem, string inventoryName, bool allowSwitch, ZDOID sender) {
+            this.fromPos = fromPos;
+            this.toPos = toPos;
             this.dragAmount = dragAmount;
             this.dragItem = dragItem;
-            this.inventoryName = inventoryName;
+            fromInventoryHash = inventoryName.GetStableHashCode();
             this.allowSwitch = allowSwitch;
+            this.sender = sender;
         }
 
         public RequestAdd(ZPackage package) {
-            fromInventory = package.ReadVector2i();
-            toContainer = package.ReadVector2i();
+            fromPos = package.ReadVector2i();
+            toPos = package.ReadVector2i();
             dragAmount = package.ReadInt();
-            inventoryName = package.ReadString();
+            fromInventoryHash = package.ReadInt();
             dragItem = InventoryHelper.LoadItemFromPackage(package);
             allowSwitch = package.ReadBool();
+            sender = package.ReadZDOID();
         }
 
         public ZPackage WriteToPackage() {
             ZPackage package = new ZPackage();
 
-            package.Write(fromInventory);
-            package.Write(toContainer);
+            package.Write(fromPos);
+            package.Write(toPos);
             package.Write(dragAmount);
-            package.Write(inventoryName);
+            package.Write(fromInventoryHash);
             InventoryHelper.WriteItemToPackage(dragItem, package);
             package.Write(allowSwitch);
+            package.Write(sender);
 
             return package;
         }
 
         public void PrintDebug() {
             Log.LogDebug($"RequestItemAdd:");
-            Log.LogDebug($"  fromInventory: {fromInventory}");
-            Log.LogDebug($"  toContainer: {toContainer}");
+            Log.LogDebug($"  fromInventory: {fromPos}");
+            Log.LogDebug($"  toContainer: {toPos}");
             Log.LogDebug($"  dragAmount: {dragAmount}");
-            Log.LogDebug($"  inventoryName: {inventoryName}");
+            Log.LogDebug($"  inventoryHashFrom: {fromInventoryHash}");
             Log.LogDebug($"  allowSwitch: {allowSwitch}");
             Log.LogDebug($"  dragItem: {dragItem != null}");
+            Log.LogDebug($"  sender: {sender}");
             InventoryHelper.PrintItem(dragItem);
         }
     }

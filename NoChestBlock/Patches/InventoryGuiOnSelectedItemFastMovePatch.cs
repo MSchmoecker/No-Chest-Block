@@ -44,10 +44,11 @@ namespace NoChestBlock.Patches {
                     return false;
                 }
 
-                RequestRemove request = new RequestRemove(fromPos, new Vector2i(-1, -1), item.m_stack, player.GetInventory().m_name, null);
+                int inventoryHash = player.GetInventory().m_name.GetStableHashCode();
+                RequestRemove request = new RequestRemove(fromPos, new Vector2i(-1, -1), item.m_stack, inventoryHash, null, player.GetZDOID());
                 ContainerHandler.RemoveItemFromChest(request, gui.m_currentContainer);
             } else {
-                ContainerHandler.AddItemToChest(fromPos, new Vector2i(-1, -1), item.m_stack, false, grid.m_inventory, gui.m_currentContainer);
+                ContainerHandler.AddItemToChest(gui.m_currentContainer, grid.m_inventory, player.GetZDOID(), fromPos, new Vector2i(-1, -1), item.m_stack, false);
             }
 
             gui.m_moveItemEffects.Create(gui.transform.position, Quaternion.identity);

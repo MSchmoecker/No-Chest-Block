@@ -1,33 +1,37 @@
 namespace NoChestBlock {
     public class RequestAddResponse : IPackage {
         public readonly bool success;
-        public readonly Vector2i inventoryPos;
         public readonly int amount;
-        public readonly string inventoryName;
+        public readonly Vector2i inventoryPos;
+        public readonly int inventoryHash;
         public readonly ItemDrop.ItemData switchItem;
+        public readonly ZDOID sender;
 
-        public RequestAddResponse(bool success, Vector2i inventoryPos, int amount, string inventoryName, ItemDrop.ItemData switchItem) {
+        public RequestAddResponse(bool success, Vector2i inventoryPos, int amount, int inventoryHash, ItemDrop.ItemData switchItem, ZDOID sender) {
             this.success = success;
             this.inventoryPos = inventoryPos;
             this.amount = amount;
-            this.inventoryName = inventoryName;
+            this.inventoryHash = inventoryHash;
             this.switchItem = switchItem;
+            this.sender = sender;
         }
 
         public RequestAddResponse(ZPackage package) {
             inventoryPos = package.ReadVector2i();
             success = package.ReadBool();
             amount = package.ReadInt();
-            inventoryName = package.ReadString();
+            inventoryHash = package.ReadInt();
             switchItem = InventoryHelper.LoadItemFromPackage(package);
+            sender = package.ReadZDOID();
         }
 
         public RequestAddResponse() {
             success = false;
             inventoryPos = new Vector2i(-1, -1);
             amount = 0;
-            inventoryName = "";
+            inventoryHash = 0;
             switchItem = null;
+            sender = ZDOID.None;
         }
 
         public ZPackage WriteToPackage() {
@@ -35,8 +39,9 @@ namespace NoChestBlock {
             package.Write(inventoryPos);
             package.Write(success);
             package.Write(amount);
-            package.Write(inventoryName);
+            package.Write(inventoryHash);
             InventoryHelper.WriteItemToPackage(switchItem, package);
+            package.Write(sender);
 
             return package;
         }
@@ -46,8 +51,9 @@ namespace NoChestBlock {
             Log.LogDebug($"  inventoryPos: {inventoryPos}");
             Log.LogDebug($"  success: {success}");
             Log.LogDebug($"  amount: {amount}");
-            Log.LogDebug($"  inventoryName: {inventoryName}");
+            Log.LogDebug($"  inventoryHash: {inventoryHash}");
             Log.LogDebug($"  switchItem: {switchItem != null}");
+            Log.LogDebug($"  sender: {sender}");
             InventoryHelper.PrintItem(switchItem);
         }
     }

@@ -1,46 +1,51 @@
 namespace NoChestBlock {
     public class RequestRemove : IPackage {
-        public readonly Vector2i fromContainer;
-        public readonly Vector2i toInventory;
+        public readonly Vector2i fromPos;
+        public readonly Vector2i toPos;
         public readonly int dragAmount;
-        public readonly string inventoryName;
         public readonly ItemDrop.ItemData switchItem;
+        public readonly int fromInventoryHash;
+        public readonly ZDOID sender;
 
-        public RequestRemove(Vector2i fromContainer, Vector2i toInventory, int dragAmount, string inventoryName, ItemDrop.ItemData switchItem) {
-            this.fromContainer = fromContainer;
-            this.toInventory = toInventory;
+        public RequestRemove(Vector2i fromPos, Vector2i toPos, int dragAmount, int fromInventoryHash, ItemDrop.ItemData switchItem, ZDOID sender) {
+            this.fromPos = fromPos;
+            this.toPos = toPos;
             this.dragAmount = dragAmount;
-            this.inventoryName = inventoryName;
+            this.fromInventoryHash = fromInventoryHash;
             this.switchItem = switchItem;
+            this.sender = sender;
         }
 
         public RequestRemove(ZPackage package) {
-            fromContainer = package.ReadVector2i();
-            toInventory = package.ReadVector2i();
+            fromPos = package.ReadVector2i();
+            toPos = package.ReadVector2i();
             dragAmount = package.ReadInt();
-            inventoryName = package.ReadString();
+            fromInventoryHash = package.ReadInt();
             switchItem = InventoryHelper.LoadItemFromPackage(package);
+            sender = package.ReadZDOID();
         }
 
         public ZPackage WriteToPackage() {
             ZPackage package = new ZPackage();
 
-            package.Write(fromContainer);
-            package.Write(toInventory);
+            package.Write(fromPos);
+            package.Write(toPos);
             package.Write(dragAmount);
-            package.Write(inventoryName);
+            package.Write(fromInventoryHash);
             InventoryHelper.WriteItemToPackage(switchItem, package);
+            package.Write(sender);
 
             return package;
         }
 
         public void PrintDebug() {
             Log.LogDebug($"RequestItemRemove:");
-            Log.LogDebug($"  fromContainer: {fromContainer}");
-            Log.LogDebug($"  toInventory: {toInventory}");
+            Log.LogDebug($"  fromContainer: {fromPos}");
+            Log.LogDebug($"  toInventory: {toPos}");
             Log.LogDebug($"  dragAmount: {dragAmount}");
-            Log.LogDebug($"  inventoryName: {inventoryName}");
+            Log.LogDebug($"  inventoryHashFrom: {fromInventoryHash}");
             Log.LogDebug($"  switchItem: {switchItem != null}");
+            Log.LogDebug($"  sender: {sender}");
             InventoryHelper.PrintItem(switchItem);
         }
     }

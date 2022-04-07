@@ -55,7 +55,7 @@ namespace NoChestBlock {
         }
 
         public static RequestAddResponse RequestItemAdd(this Inventory inventory, RequestAdd request) {
-            if (request.toContainer.x < 0 || request.toContainer.y < 0) {
+            if (request.toPos.x < 0 || request.toPos.y < 0) {
                 return AddToAnySlot(inventory, request);
             }
 
@@ -63,7 +63,7 @@ namespace NoChestBlock {
         }
 
         private static RequestAddResponse AddToSlot(Inventory inventory, RequestAdd request) {
-            Vector2i fromInventory = request.fromInventory;
+            Vector2i fromInventory = request.fromPos;
             int dragAmount = request.dragAmount;
             ItemDrop.ItemData dragItem = request.dragItem;
 
@@ -72,21 +72,21 @@ namespace NoChestBlock {
 
             if (!canStack) {
                 dragItem.m_stack = dragAmount;
-                return new RequestAddResponse(false, fromInventory, 0, request.inventoryName, dragItem);
+                return new RequestAddResponse(false, fromInventory, 0, request.fromInventoryHash, dragItem, request.sender);
             }
 
-            bool added = inventory.AddItemToInventory(dragItem, amount, request.toContainer);
+            bool added = inventory.AddItemToInventory(dragItem, amount, request.toPos);
 
             if (!added || amount != dragAmount) {
                 switched = dragItem;
                 switched.m_stack = dragAmount - amount;
             }
 
-            return new RequestAddResponse(added, fromInventory, amount, request.inventoryName, switched);
+            return new RequestAddResponse(added, fromInventory, amount, request.fromInventoryHash, switched, request.sender);
         }
 
         private static bool CanStack(Inventory inventory, RequestAdd request, ref int amount, out ItemDrop.ItemData removedItem) {
-            ItemDrop.ItemData prevItem = inventory.GetItemAt(request.toContainer.x, request.toContainer.y);
+            ItemDrop.ItemData prevItem = inventory.GetItemAt(request.toPos.x, request.toPos.y);
             removedItem = null;
 
             if (prevItem == null) {
@@ -119,27 +119,28 @@ namespace NoChestBlock {
             ItemDrop.ItemData now = tmp.GetItemAt(0, 0);
 
             if (now == null) {
-                return new RequestAddResponse(true, request.fromInventory, request.dragAmount, request.inventoryName, null);
+                return new RequestAddResponse(true, request.fromPos, request.dragAmount, request.fromInventoryHash, null, request.sender);
             }
 
             ItemDrop.ItemData back = request.dragItem.Clone();
             int amount = request.dragItem.m_stack - now.m_stack;
             back.m_stack -= amount;
 
-            return new RequestAddResponse(now.m_stack != request.dragItem.m_stack, request.fromInventory, amount, request.inventoryName, back);
+            bool success = now.m_stack != request.dragItem.m_stack;
+            return new RequestAddResponse(success, request.fromPos, amount, request.fromInventoryHash, back, request.sender);
         }
 
         public static RequestRemoveResponse RequestItemRemove(this Inventory inventory, RequestRemove request) {
-            Vector2i fromContainer = request.fromContainer;
-            Vector2i toInventory = request.toInventory;
+            Vector2i fromContainer = request.fromPos;
+            Vector2i toInventory = request.toPos;
             int dragAmount = request.dragAmount;
             ItemDrop.ItemData switchItem = request.switchItem;
 
-            ItemDrop.ItemData from = inventory.GetItemAt(request.fromContainer.x, request.fromContainer.y);
+            ItemDrop.ItemData from = inventory.GetItemAt(request.fromPos.x, request.fromPos.y);
 
             if (from == null) {
                 Log.LogDebug("from is null");
-                return new RequestRemoveResponse(false, 0, false, toInventory, request.inventoryName, null);
+                return new RequestRemoveResponse(false, 0, false, toInventory, request.fromInventoryHash, null, request.sender);
             }
 
             int removedAmount = 0;
@@ -162,7 +163,7 @@ namespace NoChestBlock {
 
             ItemDrop.ItemData responseItem = from.Clone();
             responseItem.m_stack = removedAmount;
-            return new RequestRemoveResponse(removed, removedAmount, switched, toInventory, request.inventoryName, responseItem);
+            return new RequestRemoveResponse(removed, removedAmount, switched, toInventory, request.fromInventoryHash, responseItem, request.sender);
         }
 
         private static RequestConsumeResponse RequestItemConsume(this Inventory inventory, RequestConsume request) {

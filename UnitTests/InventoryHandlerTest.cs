@@ -18,7 +18,7 @@ namespace UnitTests {
 
             Assert.False(InventoryHandler.IsSlotBlocked(new Vector2i(2, 3)));
 
-            ContainerHandler.AddItemToChest(new Vector2i(2, 3), new Vector2i(1, 1), 5, true, inventory, container);
+            ContainerHandler.AddItemToChest(container, inventory, ZDOID.None, new Vector2i(2, 3), new Vector2i(1, 1), 5, true);
 
             Assert.True(InventoryHandler.IsSlotBlocked(new Vector2i(2, 3)));
             Assert.AreEqual(0, inventory.m_inventory.Count);
@@ -32,7 +32,7 @@ namespace UnitTests {
 
             Assert.False(InventoryHandler.IsSlotBlocked(new Vector2i(2, 3)));
 
-            ContainerHandler.AddItemToChest(new Vector2i(2, 3), new Vector2i(1, 1), 3, true, inventory, container);
+            ContainerHandler.AddItemToChest(container, inventory, ZDOID.None,new Vector2i(2, 3), new Vector2i(1, 1), 3, true);
 
             Assert.True(InventoryHandler.IsSlotBlocked(new Vector2i(2, 3)));
             Assert.AreEqual(1, inventory.m_inventory.Count);
@@ -43,7 +43,7 @@ namespace UnitTests {
         public void RPC_RequestItemAddResponseNoItemAtResponsePos() {
             Inventory inventory = new Inventory("inventory", null, 4, 5);
 
-            RequestAddResponse response = new RequestAddResponse(true, new Vector2i(2, 3), 3, "inv", null);
+            RequestAddResponse response = new RequestAddResponse(true, new Vector2i(2, 3), 3, "inv".GetStableHashCode(), null, ZDOID.None);
             Assert.DoesNotThrow(() => InventoryHandler.RPC_RequestItemAddResponse(inventory, response));
         }
 

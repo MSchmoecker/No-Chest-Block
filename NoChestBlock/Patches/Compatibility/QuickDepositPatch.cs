@@ -22,7 +22,7 @@ namespace NoChestBlock.Patches.Compatibility {
             List<ItemDrop.ItemData> movable = InventoryHelper.GetAllMoveableItems(playerInventory, containerInventory, MoveAllStackableItems);
 
             foreach (ItemDrop.ItemData item in movable) {
-                ContainerHandler.AddItemToChest(item.m_gridPos, new Vector2i(-1, -1), item.m_stack, true, playerInventory, container);
+                ContainerHandler.AddItemToChest(container, playerInventory, Player.m_localPlayer.GetZDOID(), item.m_gridPos, new Vector2i(-1, -1), item.m_stack, true);
             }
 
             return false;
