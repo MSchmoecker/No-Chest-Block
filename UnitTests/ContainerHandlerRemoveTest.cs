@@ -85,7 +85,7 @@ namespace UnitTests {
         public void RPC_RequestItemRemoveDifferentItemToInventory() {
             container.CreateItem("my item A", 5, 2, 2);
 
-            RequestRemove request = MakeMessage(5, Helper.CreateItem("my item B", 3, 15));
+            RequestRemove request = MakeMessage(5, Helper.CreateItem("my item B", 3));
             RequestRemoveResponse response = GetResponse(request);
 
             Assert.True(response.success);
@@ -101,7 +101,7 @@ namespace UnitTests {
         public void RPC_RequestItemRemoveDifferentItemToInventoryWithTrySplit() {
             container.CreateItem("my item A", 5, 2, 2);
 
-            RequestRemove request = MakeMessage(3, Helper.CreateItem("my item B", 3, 15));
+            RequestRemove request = MakeMessage(3, Helper.CreateItem("my item B", 3));
             RequestRemoveResponse response = GetResponse(request);
 
             Assert.False(response.success);
@@ -117,7 +117,7 @@ namespace UnitTests {
         public void RPC_RequestItemRemoveSameItemToInventoryCanStack() {
             container.CreateItem("my item A", 5, 2, 2);
 
-            RequestRemove request = MakeMessage(5, Helper.CreateItem("my item A", 5, 20));
+            RequestRemove request = MakeMessage(5, Helper.CreateItem("my item A", 5));
             RequestRemoveResponse response = GetResponse(request);
 
             Assert.True(response.success);
@@ -131,7 +131,7 @@ namespace UnitTests {
         public void RPC_RequestItemRemoveSameItemNotAllToInventoryCanStack() {
             container.CreateItem("my item A", 5, 2, 2);
 
-            RequestRemove request = MakeMessage(3, Helper.CreateItem("my item A", 5, 20));
+            RequestRemove request = MakeMessage(3, Helper.CreateItem("my item A", 5));
             RequestRemoveResponse response = GetResponse(request);
 
             Assert.True(response.success);
@@ -146,7 +146,7 @@ namespace UnitTests {
         public void RPC_RequestItemRemoveSameItemToInventoryCanStackNotAll() {
             container.CreateItem("my item A", 5, 2, 2);
 
-            RequestRemove request = MakeMessage(5, Helper.CreateItem("my item A", 19, 20));
+            RequestRemove request = MakeMessage(5, Helper.CreateItem("my item A", 19));
             RequestRemoveResponse response = GetResponse(request);
 
             Assert.True(response.success);
