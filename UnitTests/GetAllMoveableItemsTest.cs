@@ -15,8 +15,8 @@ namespace UnitTests {
 
         [Test]
         public void OriginalInventoryNotChanged_DifferentItems() {
-            from.AddItem(Helper.CreateItem("my item 1", 10, 15), 10, 0, 0);
-            to.AddItem(Helper.CreateItem("my item 2", 10, 15), 10, 0, 0);
+            from.CreateItem("my item 1", 10, 0, 0);
+            to.CreateItem("my item 2", 10, 0, 0);
 
             InventoryHelper.GetAllMoveableItems(from, to);
 
@@ -30,8 +30,8 @@ namespace UnitTests {
 
         [Test]
         public void OriginalInventoryNotChanged_CanStack() {
-            from.AddItem(Helper.CreateItem("my item 2", 10, 15), 10, 0, 0);
-            to.AddItem(Helper.CreateItem("my item 2", 10, 15), 10, 0, 0);
+            from.CreateItem("my item 2", 10, 0, 0);
+            to.CreateItem("my item 2", 10, 0, 0);
 
             InventoryHelper.GetAllMoveableItems(from, to);
 
@@ -45,7 +45,7 @@ namespace UnitTests {
 
         [Test]
         public void GetAllMoveableItems_EnoughSpace() {
-            from.AddItem(Helper.CreateItem("my item 1", 10, 15), 10, 0, 0);
+            from.CreateItem("my item 1", 10, 0, 0);
 
             List<ItemDrop.ItemData> moved = InventoryHelper.GetAllMoveableItems(from, to);
 
@@ -55,9 +55,9 @@ namespace UnitTests {
 
         [Test]
         public void GetAllMoveableItems_NotEnoughSpace() {
-            from.AddItem(Helper.CreateItem("my item 1", 10, 15), 10, 0, 0);
-            to.AddItem(Helper.CreateItem("my item 2", 10, 15), 10, 0, 0);
-            to.AddItem(Helper.CreateItem("my item 2", 10, 15), 10, 1, 0);
+            from.CreateItem("my item 1", 10, 0, 0);
+            to.CreateItem("my item 2", 10, 0, 0);
+            to.CreateItem("my item 2", 10, 1, 0);
 
             List<ItemDrop.ItemData> moved = InventoryHelper.GetAllMoveableItems(from, to);
 
@@ -66,9 +66,9 @@ namespace UnitTests {
 
         [Test]
         public void GetAllMoveableItems_CanStack() {
-            from.AddItem(Helper.CreateItem("my item 2", 10, 15), 10, 0, 0);
-            to.AddItem(Helper.CreateItem("my item 2", 11, 15), 11, 0, 0);
-            to.AddItem(Helper.CreateItem("my item 2", 11, 15), 11, 1, 0);
+            from.CreateItem("my item 2", 15, 0, 0);
+            to.CreateItem("my item 2", 16, 0, 0);
+            to.CreateItem("my item 2", 16, 1, 0);
 
             List<ItemDrop.ItemData> moved = InventoryHelper.GetAllMoveableItems(from, to);
 

@@ -14,7 +14,7 @@ namespace UnitTests {
         public void AddItemToChestExactAmount() {
             Container container = Helper.CreateContainer();
             Inventory inventory = new Inventory("inventory", null, 4, 5);
-            inventory.AddItem(Helper.CreateItem("my item A", 5, 10), 5, 2, 3);
+            inventory.CreateItem("my item A", 5, 2, 3);
 
             Assert.False(InventoryHandler.IsSlotBlocked(new Vector2i(2, 3)));
 
@@ -28,7 +28,7 @@ namespace UnitTests {
         public void AddItemToChestLowerAmount() {
             Container container = Helper.CreateContainer();
             Inventory inventory = new Inventory("inventory", null, 4, 5);
-            inventory.AddItem(Helper.CreateItem("my item A", 5, 10), 5, 2, 3);
+            inventory.CreateItem("my item A", 5, 2, 3);
 
             Assert.False(InventoryHandler.IsSlotBlocked(new Vector2i(2, 3)));
 

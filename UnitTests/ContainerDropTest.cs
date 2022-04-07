@@ -17,7 +17,7 @@ namespace UnitTests {
 
         [Test]
         public void RPC_RequestDropItem_FullStack() {
-            container.AddItem(Helper.CreateItem("my item", 5, 20), 5, 2, 2);
+            container.CreateItem("my item", 5, 2, 2);
 
             RequestDrop request = new RequestDrop(new Vector2i(2, 2), 5);
             RequestDropResponse response = GetDropResponse(request);
@@ -30,8 +30,8 @@ namespace UnitTests {
         }
 
         [Test]
-        public void RPC_RequestDropItem_SpkitStack() {
-            container.AddItem(Helper.CreateItem("my item", 5, 20), 5, 2, 2);
+        public void RPC_RequestDropItem_SplitStack() {
+            container.CreateItem("my item", 5, 2, 2);
 
             RequestDrop request = new RequestDrop(new Vector2i(2, 2), 3);
             RequestDropResponse response = GetDropResponse(request);

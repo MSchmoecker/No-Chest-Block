@@ -1,7 +1,7 @@
 using UnityEngine;
 
 namespace UnitTests {
-    public class Helper {
+    public static class Helper {
         public static ItemDrop.ItemData CreateItem(string name, int amount, int maxAmount) {
             return new ItemDrop.ItemData {
                 m_shared = new ItemDrop.ItemData.SharedData {
@@ -10,6 +10,10 @@ namespace UnitTests {
                 },
                 m_stack = amount
             };
+        }
+
+        public static void CreateItem(this Inventory inventory, string itemName, int amount, int x, int y) {
+            inventory.AddItem(CreateItem(itemName, amount, 20), amount, x, y);
         }
 
         public static Container CreateContainer() {

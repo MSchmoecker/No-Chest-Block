@@ -24,8 +24,8 @@ namespace UnitTests {
 
         [Test]
         public void AddToChest_SlotOccupied_DifferentItem_SplitMove() {
-            player.AddItem(Helper.CreateItem("itemA", 5, 20), 5, 2, 2);
-            container.AddItem(Helper.CreateItem("itemB", 5, 20), 5, 2, 2);
+            player.CreateItem("itemA", 5, 2, 2);
+            container.CreateItem("itemB", 5, 2, 2);
 
             RequestAdd request = ContainerHandler.AddItemToChest(null, player, ZDOID.None, new Vector2i(2, 2), new Vector2i(2, 2), 3, true);
             RequestAddResponse response = GetAddResponse(request);
@@ -39,8 +39,8 @@ namespace UnitTests {
 
         [Test]
         public void AddToChest_SlotOccupied_DifferentItem_FullMove() {
-            player.AddItem(Helper.CreateItem("itemA", 5, 20), 5, 2, 2);
-            container.AddItem(Helper.CreateItem("itemB", 5, 20), 5, 2, 2);
+            player.CreateItem("itemA", 5, 2, 2);
+            container.CreateItem("itemB", 5, 2, 2);
 
             RequestAdd request = ContainerHandler.AddItemToChest(null, player, ZDOID.None,new Vector2i(2, 2), new Vector2i(2, 2), 5, true);
             RequestAddResponse response = GetAddResponse(request);
@@ -54,9 +54,9 @@ namespace UnitTests {
 
         [Test]
         public void AddToChest_Full_FastMove() {
-            player.AddItem(Helper.CreateItem("itemA", 5, 20), 5, 2, 2);
             container = new Inventory("container", null, 1, 1);
-            container.AddItem(Helper.CreateItem("itemB", 5, 20), 5, 0, 0);
+            player.CreateItem("itemA", 5, 2, 2);
+            container.CreateItem("itemB", 5, 0, 0);
 
             RequestAdd request = ContainerHandler.AddItemToChest(null, player, ZDOID.None,new Vector2i(2, 2), new Vector2i(-1, -1), 5, false);
             RequestAddResponse response = GetAddResponse(request);
@@ -71,8 +71,8 @@ namespace UnitTests {
         [Test]
         public void AddToChest_SplitStack_EnoughSpaceAtFirstSlot_FastMove() {
             // 25 itemA
-            player.AddItem(Helper.CreateItem("itemA", 10, 20), 10, 3, 3);
-            container.AddItem(Helper.CreateItem("itemA", 15, 20), 15, 2, 2);
+            player.CreateItem("itemA", 10, 3, 3);
+            container.CreateItem("itemA", 15, 2, 2);
 
             RequestAdd request = ContainerHandler.AddItemToChest(null, player, ZDOID.None,new Vector2i(3, 3), new Vector2i(-1, -1), 5, false);
             RequestAddResponse response = GetAddResponse(request);
@@ -92,8 +92,8 @@ namespace UnitTests {
         [Test]
         public void AddToChest_SplitStack_NotEnoughSpaceAtFirstSlot_All_FastMove() {
             // 25 itemA
-            player.AddItem(Helper.CreateItem("itemA", 10, 20), 10, 3, 3);
-            container.AddItem(Helper.CreateItem("itemA", 15, 20), 15, 0, 0);
+            player.CreateItem("itemA", 10, 3, 3);
+            container.CreateItem("itemA", 15, 0, 0);
 
             RequestAdd request = ContainerHandler.AddItemToChest(null, player, ZDOID.None,new Vector2i(3, 3), new Vector2i(-1, -1), 10, false);
             RequestAddResponse response = GetAddResponse(request);
@@ -112,8 +112,8 @@ namespace UnitTests {
         [Test]
         public void AddToChest_SplitStack_NotEnoughSpaceAtFirstSlot_FastMove() {
             // 25 itemA
-            player.AddItem(Helper.CreateItem("itemA", 10, 20), 10, 3, 3);
-            container.AddItem(Helper.CreateItem("itemA", 15, 20), 15, 0, 0);
+            player.CreateItem("itemA", 10, 3, 3);
+            container.CreateItem("itemA", 15, 0, 0);
 
             RequestAdd request = ContainerHandler.AddItemToChest(null, player, ZDOID.None,new Vector2i(3, 3), new Vector2i(-1, -1), 9, false);
             RequestAddResponse response = GetAddResponse(request);
@@ -132,8 +132,8 @@ namespace UnitTests {
 
         [Test]
         public void AddToChest_SlotOccupied_SameItem_CannotStackAll() {
-            player.AddItem(Helper.CreateItem("itemA", 10, 20), 10, 2, 2);
-            container.AddItem(Helper.CreateItem("itemA", 15, 20), 15, 2, 2);
+            player.CreateItem("itemA", 10, 2, 2);
+            container.CreateItem("itemA", 15, 2, 2);
 
             RequestAdd request = ContainerHandler.AddItemToChest(null, player, ZDOID.None,new Vector2i(2, 2), new Vector2i(2, 2), 10, true);
             RequestAddResponse response = GetAddResponse(request);
@@ -150,8 +150,8 @@ namespace UnitTests {
 
         [Test]
         public void RemoveFromChest_SlotOccupied_DifferentItem_SplitMove() {
-            player.AddItem(Helper.CreateItem("itemA", 5, 20), 5, 2, 2);
-            container.AddItem(Helper.CreateItem("itemB", 5, 20), 5, 2, 2);
+            player.CreateItem("itemA", 5, 2, 2);
+            container.CreateItem("itemB", 5, 2, 2);
 
             RequestRemove request = new RequestRemove(new Vector2i(2, 2), new Vector2i(2, 2), 3, "inv".GetStableHashCode(), player.GetItemAt(2, 2), ZDOID.None);
             ContainerHandler.RemoveItemFromChest(request, null);
@@ -166,7 +166,7 @@ namespace UnitTests {
 
         [Test]
         public void AddToChest_SlotEmpty_FullMove() {
-            player.AddItem(Helper.CreateItem("itemA", 5, 20), 5, 2, 2);
+            player.CreateItem("itemA", 5, 2, 2);
 
             RequestAdd request = ContainerHandler.AddItemToChest(null, player, ZDOID.None,new Vector2i(2, 2), new Vector2i(2, 2), 5, true);
             RequestAddResponse response = GetAddResponse(request);
@@ -180,8 +180,8 @@ namespace UnitTests {
         [Test]
         public void AddToChest_LastSlot_OverStack_FastMove() {
             container = new Inventory("inv", null, 1, 1);
-            container.AddItem(Helper.CreateItem("itemA", 15, 20), 15, 0, 0);
-            player.AddItem(Helper.CreateItem("itemA", 10, 20), 10, 2, 2);
+            container.CreateItem("itemA", 15, 0, 0);
+            player.CreateItem("itemA", 10, 2, 2);
 
             RequestAdd request = ContainerHandler.AddItemToChest(null, player, ZDOID.None, new Vector2i(2, 2), new Vector2i(-1, -1), 10, false);
             RequestAddResponse response = GetAddResponse(request);
@@ -195,8 +195,8 @@ namespace UnitTests {
 
         [Test]
         public void RemoveFromChest_SlotOccupied_DifferentItem_FullMove() {
-            player.AddItem(Helper.CreateItem("itemA", 5, 20), 5, 2, 2);
-            container.AddItem(Helper.CreateItem("itemB", 5, 20), 5, 2, 2);
+            player.CreateItem("itemA", 5, 2, 2);
+            container.CreateItem("itemB", 5, 2, 2);
 
             RequestRemove request = new RequestRemove(new Vector2i(2, 2), new Vector2i(2, 2), 5, "inv".GetStableHashCode(), player.GetItemAt(2, 2), ZDOID.None);
             ContainerHandler.RemoveItemFromChest(request, null);
@@ -211,7 +211,7 @@ namespace UnitTests {
 
         [Test]
         public void RemoveFromChest_SlotEmpty_FullMove() {
-            container.AddItem(Helper.CreateItem("itemB", 5, 20), 5, 2, 2);
+            container.CreateItem("itemB", 5, 2, 2);
 
             RequestRemove request = new RequestRemove(new Vector2i(2, 2), new Vector2i(2, 2), 5, "inv".GetStableHashCode(), player.GetItemAt(2, 2), ZDOID.None);
             ContainerHandler.RemoveItemFromChest(request, null);
