@@ -22,7 +22,7 @@ namespace UnitTests {
 
         private static RequestAdd MakeRequest(bool allowSwitch, Vector2i target, int itemAmount = 5) {
             ItemDrop.ItemData item = Helper.CreateItem("my item", itemAmount, 20);
-            return new RequestAdd(new Vector2i(2, 2), target, 5, item, "inv", allowSwitch);
+            return new RequestAdd(new Vector2i(2, 2), target, itemAmount, item, "inv", allowSwitch);
         }
 
         [Test]
@@ -230,6 +230,25 @@ namespace UnitTests {
 
             Assert.AreEqual(1, container.m_inventory.Count);
             Assert.AreEqual(5, container.m_inventory[0].m_stack);
+            Assert.AreEqual("my item", container.m_inventory[0].m_shared.m_name);
+        }
+
+        [Test]
+        public void RPC_AddItemFast_LastSlot_OverStack() {
+            container = new Inventory("inv", null, 1, 1);
+            container.AddItem(Helper.CreateItem("my item", 15, 20));
+
+            RequestAdd request = MakeRequest(false, new Vector2i(-1, -1), 15);
+            RequestAddResponse response = GetResponse(request);
+
+            Assert.True(response.success);
+            Assert.AreEqual(5, response.amount);
+            Assert.NotNull(response.switchItem);
+
+            Assert.AreEqual(10, response.switchItem.m_stack);
+
+            Assert.AreEqual(1, container.m_inventory.Count);
+            Assert.AreEqual(20, container.m_inventory[0].m_stack);
             Assert.AreEqual("my item", container.m_inventory[0].m_shared.m_name);
         }
     }

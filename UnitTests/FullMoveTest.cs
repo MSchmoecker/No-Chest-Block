@@ -178,6 +178,22 @@ namespace UnitTests {
         }
 
         [Test]
+        public void AddToChest_LastSlot_OverStack_FastMove() {
+            container = new Inventory("inv", null, 1, 1);
+            container.AddItem(Helper.CreateItem("itemA", 15, 20), 15, 0, 0);
+            player.AddItem(Helper.CreateItem("itemA", 10, 20), 10, 2, 2);
+
+            RequestAdd request = ContainerHandler.AddItemToChest(new Vector2i(2, 2), new Vector2i(-1, -1), 10, false, player, null);
+            RequestAddResponse response = GetAddResponse(request);
+            InventoryHandler.RPC_RequestItemAddResponse(player, response);
+
+            Assert.NotNull(player.GetItemAt(2, 2));
+            Assert.AreEqual(5, player.GetItemAt(2, 2).m_stack);
+            Assert.AreEqual("itemA", container.GetItemAt(0, 0).m_shared.m_name);
+            Assert.AreEqual(20, container.GetItemAt(0, 0).m_stack);
+        }
+
+        [Test]
         public void RemoveFromChest_SlotOccupied_DifferentItem_FullMove() {
             player.AddItem(Helper.CreateItem("itemA", 5, 20), 5, 2, 2);
             container.AddItem(Helper.CreateItem("itemB", 5, 20), 5, 2, 2);
