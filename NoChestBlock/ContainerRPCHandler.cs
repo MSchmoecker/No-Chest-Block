@@ -82,6 +82,10 @@ namespace NoChestBlock {
                 switched.m_stack = dragAmount - amount;
             }
 
+            if (switched != null) {
+                switched.m_gridPos = request.fromPos;
+            }
+
             return new RequestAddResponse(added, fromInventory, amount, request.fromInventoryHash, switched, request.sender);
         }
 
@@ -114,7 +118,7 @@ namespace NoChestBlock {
         private static RequestAddResponse AddToAnySlot(Inventory inventory, RequestAdd request) {
             Inventory tmp = new Inventory("tmp", null, 1, 1);
             tmp.AddItem(request.dragItem.Clone(), request.dragAmount, 0, 0);
-            inventory.MoveAll(tmp);
+            inventory.MoveItemToThis(tmp, tmp.GetItemAt(0, 0));
 
             ItemDrop.ItemData now = tmp.GetItemAt(0, 0);
 

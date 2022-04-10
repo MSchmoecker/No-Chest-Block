@@ -17,11 +17,13 @@ namespace UnitTests {
 
         private static RequestAdd MakeRequest(bool allowSwitch, int itemAmount = 5, int dragAmount = 5) {
             ItemDrop.ItemData item = Helper.CreateItem("my item", itemAmount);
+            item.m_gridPos = new Vector2i(2, 2);
             return new RequestAdd(new Vector2i(2, 2), new Vector2i(3, 3), dragAmount, item, "inv", allowSwitch, ZDOID.None);
         }
 
         private static RequestAdd MakeRequest(bool allowSwitch, Vector2i target, int itemAmount = 5) {
             ItemDrop.ItemData item = Helper.CreateItem("my item", itemAmount);
+            item.m_gridPos = new Vector2i(2, 2);
             return new RequestAdd(new Vector2i(2, 2), target, itemAmount, item, "inv", allowSwitch, ZDOID.None);
         }
 
@@ -32,7 +34,7 @@ namespace UnitTests {
 
             TestResponse(response, true, 5);
             TestForItem(response.switchItem, null);
-            TestForItems(container, new TestItem("my item", 5));
+            TestForItems(container, new TestItem("my item", 5, new Vector2i(3, 3)));
         }
 
         [Test]
@@ -42,7 +44,7 @@ namespace UnitTests {
 
             TestResponse(response, true, 5);
             TestForItem(response.switchItem, null);
-            TestForItems(container, new TestItem("my item", 5));
+            TestForItems(container, new TestItem("my item", 5, new Vector2i(3, 3)));
         }
 
         [Test]
@@ -51,8 +53,8 @@ namespace UnitTests {
             RequestAddResponse response = GetResponse(request);
 
             TestResponse(response, true, 3);
-            TestForItem(response.switchItem, new TestItem("my item", 2));
-            TestForItems(container, new TestItem("my item", 3));
+            TestForItem(response.switchItem, new TestItem("my item", 2, new Vector2i(2, 2)));
+            TestForItems(container, new TestItem("my item", 3, new Vector2i(3, 3)));
         }
 
         [Test]
@@ -62,7 +64,7 @@ namespace UnitTests {
 
             TestResponse(response, true, 3);
             TestForItem(response.switchItem, null);
-            TestForItems(container, new TestItem("my item", 3));
+            TestForItems(container, new TestItem("my item", 3, new Vector2i(3, 3)));
         }
 
         [Test]
@@ -73,8 +75,8 @@ namespace UnitTests {
             RequestAddResponse response = GetResponse(request);
 
             TestResponse(response, true, 5);
-            TestForItem(response.switchItem, new TestItem("my item A", 5));
-            TestForItems(container, new TestItem("my item", 5));
+            TestForItem(response.switchItem, new TestItem("my item A", 5, new Vector2i(2, 2)));
+            TestForItems(container, new TestItem("my item", 5, new Vector2i(3, 3)));
         }
 
         [Test]
@@ -85,8 +87,8 @@ namespace UnitTests {
             RequestAddResponse response = GetResponse(request);
 
             TestResponse(response, false, 0);
-            TestForItem(response.switchItem, new TestItem("my item", 3));
-            TestForItems(container, new TestItem("my item A", 5));
+            TestForItem(response.switchItem, new TestItem("my item", 3, new Vector2i(2, 2)));
+            TestForItems(container, new TestItem("my item A", 5, new Vector2i(3, 3)));
         }
 
         [Test]
@@ -97,8 +99,8 @@ namespace UnitTests {
             RequestAddResponse response = GetResponse(request);
 
             TestResponse(response, false, 0);
-            TestForItem(response.switchItem, new TestItem("my item", 5));
-            TestForItems(container, new TestItem("my item A", 5));
+            TestForItem(response.switchItem, new TestItem("my item", 5, new Vector2i(2, 2)));
+            TestForItems(container, new TestItem("my item A", 5, new Vector2i(3, 3)));
         }
 
         [Test]
@@ -110,7 +112,7 @@ namespace UnitTests {
 
             TestResponse(response, true, 5);
             TestForItem(response.switchItem, null);
-            TestForItems(container, new TestItem("my item", 10));
+            TestForItems(container, new TestItem("my item", 10, new Vector2i(3, 3)));
         }
 
         [Test]
@@ -121,8 +123,8 @@ namespace UnitTests {
             RequestAddResponse response = GetResponse(request);
 
             TestResponse(response, true, 1);
-            TestForItem(response.switchItem, new TestItem("my item", 4));
-            TestForItems(container, new TestItem("my item", 20));
+            TestForItem(response.switchItem, new TestItem("my item", 4, new Vector2i(2, 2)));
+            TestForItems(container, new TestItem("my item", 20, new Vector2i(3, 3)));
         }
 
         [Test]
@@ -133,8 +135,8 @@ namespace UnitTests {
             RequestAddResponse response = GetResponse(request);
 
             TestResponse(response, false, 0);
-            TestForItem(response.switchItem, new TestItem("my item", 5));
-            TestForItems(container, new TestItem("my item", 20));
+            TestForItem(response.switchItem, new TestItem("my item", 5, new Vector2i(2, 2)));
+            TestForItems(container, new TestItem("my item", 20, new Vector2i(3, 3)));
         }
 
         [Test]
@@ -142,12 +144,11 @@ namespace UnitTests {
             container.CreateItem("my item A", 20, 3, 3);
 
             RequestAdd request = MakeRequest(true);
-
             RequestAddResponse response = GetResponse(request);
 
             TestResponse(response, true, 5);
-            TestForItem(response.switchItem, new TestItem("my item A", 20));
-            TestForItems(container, new TestItem("my item", 5));
+            TestForItem(response.switchItem, new TestItem("my item A", 20, new Vector2i(2, 2)));
+            TestForItems(container, new TestItem("my item", 5, new Vector2i(3, 3)));
         }
 
         [Test]
@@ -157,7 +158,7 @@ namespace UnitTests {
 
             TestResponse(response, true, 5);
             TestForItem(response.switchItem, null);
-            TestForItems(container, new TestItem("my item", 5));
+            TestForItems(container, new TestItem("my item", 5, new Vector2i(0, 0)));
         }
 
         [Test]
@@ -169,8 +170,8 @@ namespace UnitTests {
             RequestAddResponse response = GetResponse(request);
 
             TestResponse(response, true, 5);
-            TestForItem(response.switchItem, new TestItem("my item", 10));
-            TestForItems(container, new TestItem("my item", 20));
+            TestForItem(response.switchItem, new TestItem("my item", 10, new Vector2i(2, 2)));
+            TestForItems(container, new TestItem("my item", 20, new Vector2i(0, 0)));
         }
     }
 }

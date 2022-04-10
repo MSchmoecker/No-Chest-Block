@@ -47,7 +47,7 @@ namespace UnitTests {
 
             TestResponse(response, true, 3);
             Assert.False(response.hasSwitched);
-            TestForItems(container, new TestItem("my item", 2));
+            TestForItems(container, new TestItem("my item", 2, new Vector2i(2, 2)));
         }
 
         [Test]
@@ -81,7 +81,7 @@ namespace UnitTests {
 
             TestResponse(response, true, 5);
             Assert.True(response.hasSwitched);
-            TestForItems(container, new TestItem("my item B", 3));
+            TestForItems(container, new TestItem("my item B", 3, new Vector2i(2, 2)));
         }
 
         [Test]
@@ -93,7 +93,7 @@ namespace UnitTests {
 
             TestResponse(response, false, 0);
             Assert.False(response.hasSwitched);
-            TestForItems(container, new TestItem("my item A", 5));
+            TestForItems(container, new TestItem("my item A", 5, new Vector2i(2, 2)));
         }
 
         [Test]
@@ -117,7 +117,7 @@ namespace UnitTests {
 
             TestResponse(response, true, 3);
             Assert.False(response.hasSwitched);
-            TestForItems(container, new TestItem("my item A", 2));
+            TestForItems(container, new TestItem("my item A", 2, new Vector2i(2, 2)));
         }
 
         [Test]
@@ -129,7 +129,7 @@ namespace UnitTests {
 
             TestResponse(response, true, 1);
             Assert.False(response.hasSwitched);
-            TestForItems(container, new TestItem("my item A", 4));
+            TestForItems(container, new TestItem("my item A", 4, new Vector2i(2, 2)));
         }
 
         [Test]
@@ -141,7 +141,7 @@ namespace UnitTests {
 
             TestResponse(response, true, 5);
             Assert.False(response.hasSwitched);
-            TestForItem(response.responseItem, new TestItem("my item A", 5));
+            TestForItem(response.responseItem, new TestItem("my item A", 5, new Vector2i(2, 2)));
             TestForItems(container);
         }
 
@@ -154,8 +154,8 @@ namespace UnitTests {
 
             TestResponse(response, true, 3);
             Assert.False(response.hasSwitched);
-            TestForItem(response.responseItem, new TestItem("my item A", 3));
-            TestForItems(container, new TestItem("my item A", 2));
+            TestForItem(response.responseItem, new TestItem("my item A", 3, new Vector2i(2, 2)));
+            TestForItems(container, new TestItem("my item A", 2, new Vector2i(2, 2)));
         }
 
         [Test]
@@ -167,8 +167,8 @@ namespace UnitTests {
 
             TestResponse(response, true, 2);
             Assert.False(response.hasSwitched);
-            TestForItem(response.responseItem, new TestItem("my item A", 2));
-            TestForItems(container, new TestItem("my item A", 3));
+            TestForItem(response.responseItem, new TestItem("my item A", 2, new Vector2i(2, 2)));
+            TestForItems(container, new TestItem("my item A", 3, new Vector2i(2, 2)));
         }
     }
 }

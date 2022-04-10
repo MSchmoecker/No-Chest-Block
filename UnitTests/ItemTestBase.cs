@@ -6,15 +6,17 @@ namespace UnitTests {
         public struct TestItem {
             public string name;
             public int stack;
+            public Vector2i pos;
 
-            public TestItem(string name, int stack) {
+            public TestItem(string name, int stack, Vector2i pos) {
                 this.name = name;
                 this.stack = stack;
+                this.pos = pos;
             }
         }
 
         public static void TestForItems(Inventory target, params TestItem[] items) {
-            Assert.AreEqual(items.Length, target.m_inventory.Count);
+            Assert.AreEqual(items.Length, target.m_inventory.Count, "Different count of items in inventory");
 
             for (int i = 0; i < items.Length; i++) {
                 TestForItem(target.m_inventory[i], items[i]);
@@ -28,6 +30,7 @@ namespace UnitTests {
                 Assert.NotNull(target);
                 Assert.AreEqual(item.Value.name, target.m_shared.m_name);
                 Assert.AreEqual(item.Value.stack, target.m_stack);
+                Assert.AreEqual(item.Value.pos, target.m_gridPos);
             }
         }
 
