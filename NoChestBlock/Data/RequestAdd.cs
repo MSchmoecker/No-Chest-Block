@@ -1,6 +1,5 @@
 namespace NoChestBlock {
     public class RequestAdd : IPackage {
-        public readonly Vector2i fromPos;
         public readonly Vector2i toPos;
         public readonly int dragAmount;
         public readonly ItemDrop.ItemData dragItem;
@@ -8,8 +7,7 @@ namespace NoChestBlock {
         public readonly ZDOID sender;
         public readonly bool allowSwitch;
 
-        public RequestAdd(Vector2i fromPos, Vector2i toPos, int dragAmount, ItemDrop.ItemData dragItem, string inventoryName, bool allowSwitch, ZDOID sender) {
-            this.fromPos = fromPos;
+        public RequestAdd(Vector2i toPos, int dragAmount, ItemDrop.ItemData dragItem, string inventoryName, bool allowSwitch, ZDOID sender) {
             this.toPos = toPos;
             this.dragAmount = dragAmount;
             this.dragItem = dragItem;
@@ -19,7 +17,6 @@ namespace NoChestBlock {
         }
 
         public RequestAdd(ZPackage package) {
-            fromPos = package.ReadVector2i();
             toPos = package.ReadVector2i();
             dragAmount = package.ReadInt();
             fromInventoryHash = package.ReadInt();
@@ -31,7 +28,6 @@ namespace NoChestBlock {
         public ZPackage WriteToPackage() {
             ZPackage package = new ZPackage();
 
-            package.Write(fromPos);
             package.Write(toPos);
             package.Write(dragAmount);
             package.Write(fromInventoryHash);
@@ -44,7 +40,6 @@ namespace NoChestBlock {
 
         public void PrintDebug() {
             Log.LogDebug($"RequestItemAdd:");
-            Log.LogDebug($"  fromInventory: {fromPos}");
             Log.LogDebug($"  toContainer: {toPos}");
             Log.LogDebug($"  dragAmount: {dragAmount}");
             Log.LogDebug($"  inventoryHashFrom: {fromInventoryHash}");

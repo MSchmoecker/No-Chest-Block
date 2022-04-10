@@ -63,7 +63,6 @@ namespace NoChestBlock {
         }
 
         private static RequestAddResponse AddToSlot(Inventory inventory, RequestAdd request) {
-            Vector2i fromInventory = request.fromPos;
             int dragAmount = request.dragAmount;
             ItemDrop.ItemData dragItem = request.dragItem;
 
@@ -72,7 +71,7 @@ namespace NoChestBlock {
 
             if (!canStack) {
                 dragItem.m_stack = dragAmount;
-                return new RequestAddResponse(false, fromInventory, 0, request.fromInventoryHash, dragItem, request.sender);
+                return new RequestAddResponse(false, dragItem.m_gridPos, 0, request.fromInventoryHash, dragItem, request.sender);
             }
 
             bool added = inventory.AddItemToInventory(dragItem, amount, request.toPos);
@@ -83,10 +82,10 @@ namespace NoChestBlock {
             }
 
             if (switched != null) {
-                switched.m_gridPos = request.fromPos;
+                switched.m_gridPos = request.dragItem.m_gridPos;
             }
 
-            return new RequestAddResponse(added, fromInventory, amount, request.fromInventoryHash, switched, request.sender);
+            return new RequestAddResponse(added, request.dragItem.m_gridPos, amount, request.fromInventoryHash, switched, request.sender);
         }
 
         private static bool CanStack(Inventory inventory, RequestAdd request, ref int amount, out ItemDrop.ItemData removedItem) {
@@ -123,7 +122,7 @@ namespace NoChestBlock {
             ItemDrop.ItemData now = tmp.GetItemAt(0, 0);
 
             if (now == null) {
-                return new RequestAddResponse(true, request.fromPos, request.dragAmount, request.fromInventoryHash, null, request.sender);
+                return new RequestAddResponse(true, request.dragItem.m_gridPos, request.dragAmount, request.fromInventoryHash, null, request.sender);
             }
 
             ItemDrop.ItemData back = request.dragItem.Clone();
@@ -131,7 +130,7 @@ namespace NoChestBlock {
             back.m_stack -= amount;
 
             bool success = now.m_stack != request.dragItem.m_stack;
-            return new RequestAddResponse(success, request.fromPos, amount, request.fromInventoryHash, back, request.sender);
+            return new RequestAddResponse(success, request.dragItem.m_gridPos, amount, request.fromInventoryHash, back, request.sender);
         }
 
         public static RequestRemoveResponse RequestItemRemove(this Inventory inventory, RequestRemove request) {

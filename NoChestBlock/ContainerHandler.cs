@@ -18,10 +18,10 @@ namespace NoChestBlock {
 
         public static RequestAdd AddItemToChest(Container container, Inventory inventory, ZDOID sender, Vector2i @from, Vector2i to, int dragAmount, bool allowSwitch) {
             ItemDrop.ItemData item = inventory.GetItemAt(from.x, from.y).Clone();
-            RequestAdd request = new RequestAdd(from, to, dragAmount, item, inventory.m_name, allowSwitch, sender);
+            RequestAdd request = new RequestAdd(to, dragAmount, item, inventory.m_name, allowSwitch, sender);
 
             inventory.RemoveItem(inventory.GetItemAt(from.x, from.y), dragAmount);
-            InventoryHandler.BlockSlot(request.fromPos);
+            InventoryHandler.BlockSlot(from);
 
             if (container != null && container.m_nview) {
                 Timer.Start(request);

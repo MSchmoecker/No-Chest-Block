@@ -18,13 +18,13 @@ namespace UnitTests {
         private static RequestAdd MakeRequest(bool allowSwitch, int itemAmount = 5, int dragAmount = 5) {
             ItemDrop.ItemData item = Helper.CreateItem("my item", itemAmount);
             item.m_gridPos = new Vector2i(2, 2);
-            return new RequestAdd(new Vector2i(2, 2), new Vector2i(3, 3), dragAmount, item, "inv", allowSwitch, ZDOID.None);
+            return new RequestAdd(new Vector2i(3, 3), dragAmount, item, "inv", allowSwitch, ZDOID.None);
         }
 
         private static RequestAdd MakeRequest(bool allowSwitch, Vector2i target, int itemAmount = 5) {
             ItemDrop.ItemData item = Helper.CreateItem("my item", itemAmount);
             item.m_gridPos = new Vector2i(2, 2);
-            return new RequestAdd(new Vector2i(2, 2), target, itemAmount, item, "inv", allowSwitch, ZDOID.None);
+            return new RequestAdd(target, itemAmount, item, "inv", allowSwitch, ZDOID.None);
         }
 
         [Test]
