@@ -32,6 +32,10 @@ namespace NoChestBlock {
             if (Chainloader.PluginInfos.ContainsKey("org.bepinex.plugins.valheim.quick_stack")) {
                 harmony.PatchAll(typeof(QuickStackPatch));
             }
+
+            if (Chainloader.PluginInfos.ContainsKey("ch.elusia.plugins.valheim.autosort")) {
+                harmony.PatchAll(typeof(ValheimSimpleAutoSortPatch));
+            }
         }
 
         private void UpdateAccessedContainer() {
