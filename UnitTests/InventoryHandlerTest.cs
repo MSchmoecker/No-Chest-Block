@@ -4,7 +4,7 @@ using NUnit.Framework;
 
 namespace UnitTests {
     [TestFixture]
-    public class InventoryHandlerTest {
+    public class InventoryHandlerTest : ItemTestBase {
         [SetUp]
         public void SetUp() {
             InventoryHandler.blockedSlots.Clear();
@@ -21,7 +21,7 @@ namespace UnitTests {
             ContainerHandler.AddItemToChest(container, inventory, ZDOID.None, new Vector2i(2, 3), new Vector2i(1, 1), 5, true);
 
             Assert.True(InventoryHandler.IsSlotBlocked(new Vector2i(2, 3)));
-            Assert.AreEqual(0, inventory.m_inventory.Count);
+            TestForItems(inventory);
         }
 
         [Test]
@@ -32,11 +32,10 @@ namespace UnitTests {
 
             Assert.False(InventoryHandler.IsSlotBlocked(new Vector2i(2, 3)));
 
-            ContainerHandler.AddItemToChest(container, inventory, ZDOID.None,new Vector2i(2, 3), new Vector2i(1, 1), 3, true);
+            ContainerHandler.AddItemToChest(container, inventory, ZDOID.None, new Vector2i(2, 3), new Vector2i(1, 1), 3, true);
 
             Assert.True(InventoryHandler.IsSlotBlocked(new Vector2i(2, 3)));
-            Assert.AreEqual(1, inventory.m_inventory.Count);
-            Assert.AreEqual(2, inventory.m_inventory[0].m_stack);
+            TestForItems(inventory, new TestItem("my item A", 2, new Vector2i(2, 3)));
         }
 
         [Test]
