@@ -100,9 +100,14 @@ namespace NoChestBlock {
                 return true;
             }
 
-            if (itemAt == null || IsSameItem(itemAt, item)) {
-                // items can be stacked
+            if (itemAt == null) {
                 return inventory.MoveItemToThis(inventory, item, amount, toPos.x, toPos.y);
+            }
+
+            if (IsSameItem(itemAt, item)) {
+                // items can be stacked
+                int stackAmount = Mathf.Min(amount, itemAt.m_shared.m_maxStackSize - itemAt.m_stack);
+                return inventory.MoveItemToThis(inventory, item, stackAmount, toPos.x, toPos.y);
             }
 
             if (item.m_stack != amount) {

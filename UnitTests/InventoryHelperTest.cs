@@ -53,11 +53,27 @@ namespace UnitTests {
             ItemDrop.ItemData item = inventory.GetItemAt(3, 3);
 
             bool success = InventoryHelper.MoveItem(inventory, item, item.m_stack, new Vector2i(2, 2));
-            Assert.False(success); // TODO is false for not completely moved good?
+            Assert.True(success);
 
             TestForItems(inventory, new[] {
                 new TestItem("my item", 20, new Vector2i(2, 2)),
                 new TestItem("my item", 5, new Vector2i(3, 3)),
+            });
+        }
+
+        [Test]
+        public void MoveItemOnSameNoSpaceToStack() {
+            inventory.CreateItem("my item", 20, 2, 2);
+            inventory.CreateItem("my item", 10, 3, 3);
+
+            ItemDrop.ItemData item = inventory.GetItemAt(3, 3);
+
+            bool success = InventoryHelper.MoveItem(inventory, item, item.m_stack, new Vector2i(2, 2));
+            Assert.False(success);
+
+            TestForItems(inventory, new[] {
+                new TestItem("my item", 20, new Vector2i(2, 2)),
+                new TestItem("my item", 10, new Vector2i(3, 3)),
             });
         }
 
