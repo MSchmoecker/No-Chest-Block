@@ -169,7 +169,7 @@ namespace NoChestBlock {
             return new RequestRemoveResponse(removed, removedAmount, switched, toInventory, request.fromInventoryHash, responseItem, request.sender);
         }
 
-        private static RequestConsumeResponse RequestItemConsume(this Inventory inventory, RequestConsume request) {
+        public static RequestConsumeResponse RequestItemConsume(this Inventory inventory, RequestConsume request) {
             ItemDrop.ItemData toConsume = inventory.GetItemAt(request.itemPosX, request.itemPosY);
 
             if (toConsume == null || toConsume.m_stack <= 0) {
@@ -177,7 +177,9 @@ namespace NoChestBlock {
             }
 
             inventory.RemoveOneItem(toConsume);
-            return new RequestConsumeResponse(toConsume);
+            ItemDrop.ItemData returnItem = toConsume.Clone();
+            returnItem.m_stack = 1;
+            return new RequestConsumeResponse(returnItem);
         }
 
         private static bool RequestItemMove(this Inventory inventory, RequestMove request) {
