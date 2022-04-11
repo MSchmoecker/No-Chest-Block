@@ -3,7 +3,7 @@ using NUnit.Framework;
 
 namespace UnitTests {
     [TestFixture]
-    public class FullMoveTest {
+    public class FullMoveTest : ItemTestBase {
         private Inventory player;
         private Inventory container;
 
@@ -31,10 +31,8 @@ namespace UnitTests {
             RequestAddResponse response = GetAddResponse(request);
             InventoryHandler.RPC_RequestItemAddResponse(player, response);
 
-            Assert.AreEqual("itemA", player.GetItemAt(2, 2).m_shared.m_name);
-            Assert.AreEqual(5, player.GetItemAt(2, 2).m_stack);
-            Assert.AreEqual("itemB", container.GetItemAt(2, 2).m_shared.m_name);
-            Assert.AreEqual(5, container.GetItemAt(2, 2).m_stack);
+            TestForItems(player, new TestItem("itemA", 5, new Vector2i(2, 2)));
+            TestForItems(container, new TestItem("itemB", 5, new Vector2i(2, 2)));
         }
 
         [Test]
@@ -42,14 +40,12 @@ namespace UnitTests {
             player.CreateItem("itemA", 5, 2, 2);
             container.CreateItem("itemB", 5, 2, 2);
 
-            RequestAdd request = ContainerHandler.AddItemToChest(null, player, ZDOID.None,new Vector2i(2, 2), new Vector2i(2, 2), 5, true);
+            RequestAdd request = ContainerHandler.AddItemToChest(null, player, ZDOID.None, new Vector2i(2, 2), new Vector2i(2, 2), 5, true);
             RequestAddResponse response = GetAddResponse(request);
             InventoryHandler.RPC_RequestItemAddResponse(player, response);
 
-            Assert.AreEqual("itemB", player.GetItemAt(2, 2).m_shared.m_name);
-            Assert.AreEqual(5, player.GetItemAt(2, 2).m_stack);
-            Assert.AreEqual("itemA", container.GetItemAt(2, 2).m_shared.m_name);
-            Assert.AreEqual(5, container.GetItemAt(2, 2).m_stack);
+            TestForItems(player, new TestItem("itemB", 5, new Vector2i(2, 2)));
+            TestForItems(container, new TestItem("itemA", 5, new Vector2i(2, 2)));
         }
 
         [Test]
@@ -58,14 +54,12 @@ namespace UnitTests {
             player.CreateItem("itemA", 5, 2, 2);
             container.CreateItem("itemB", 5, 0, 0);
 
-            RequestAdd request = ContainerHandler.AddItemToChest(null, player, ZDOID.None,new Vector2i(2, 2), new Vector2i(-1, -1), 5, false);
+            RequestAdd request = ContainerHandler.AddItemToChest(null, player, ZDOID.None, new Vector2i(2, 2), new Vector2i(-1, -1), 5, false);
             RequestAddResponse response = GetAddResponse(request);
             InventoryHandler.RPC_RequestItemAddResponse(player, response);
 
-            Assert.AreEqual("itemA", player.GetItemAt(2, 2).m_shared.m_name);
-            Assert.AreEqual(5, player.GetItemAt(2, 2).m_stack);
-            Assert.AreEqual("itemB", container.GetItemAt(0, 0).m_shared.m_name);
-            Assert.AreEqual(5, container.GetItemAt(0, 0).m_stack);
+            TestForItems(player, new TestItem("itemA", 5, new Vector2i(2, 2)));
+            TestForItems(container, new TestItem("itemB", 5, new Vector2i(0, 0)));
         }
 
         [Test]
@@ -74,19 +68,13 @@ namespace UnitTests {
             player.CreateItem("itemA", 10, 3, 3);
             container.CreateItem("itemA", 15, 2, 2);
 
-            RequestAdd request = ContainerHandler.AddItemToChest(null, player, ZDOID.None,new Vector2i(3, 3), new Vector2i(-1, -1), 5, false);
+            RequestAdd request = ContainerHandler.AddItemToChest(null, player, ZDOID.None, new Vector2i(3, 3), new Vector2i(-1, -1), 5, false);
             RequestAddResponse response = GetAddResponse(request);
             InventoryHandler.RPC_RequestItemAddResponse(player, response);
 
-            Assert.AreEqual("itemA", player.GetItemAt(3, 3).m_shared.m_name);
-            Assert.AreEqual(2, container.m_inventory.Count);
-            Assert.AreEqual("itemA", container.m_inventory[0].m_shared.m_name);
-            Assert.AreEqual("itemA", container.m_inventory[1].m_shared.m_name);
-
             // 25 itemA
-            Assert.AreEqual(5, player.GetItemAt(3, 3).m_stack);
-            Assert.AreEqual(15, container.m_inventory[0].m_stack);
-            Assert.AreEqual(5, container.m_inventory[1].m_stack);
+            TestForItems(player, new TestItem("itemA", 5, new Vector2i(3, 3)));
+            TestForItems(container, new TestItem("itemA", 20, new Vector2i(2, 2)));
         }
 
         [Test]
@@ -95,18 +83,16 @@ namespace UnitTests {
             player.CreateItem("itemA", 10, 3, 3);
             container.CreateItem("itemA", 15, 0, 0);
 
-            RequestAdd request = ContainerHandler.AddItemToChest(null, player, ZDOID.None,new Vector2i(3, 3), new Vector2i(-1, -1), 10, false);
+            RequestAdd request = ContainerHandler.AddItemToChest(null, player, ZDOID.None, new Vector2i(3, 3), new Vector2i(-1, -1), 10, false);
             RequestAddResponse response = GetAddResponse(request);
             InventoryHandler.RPC_RequestItemAddResponse(player, response);
 
-            Assert.AreEqual(0, player.m_inventory.Count);
-            Assert.AreEqual(2, container.m_inventory.Count);
-            Assert.AreEqual("itemA", container.m_inventory[0].m_shared.m_name);
-            Assert.AreEqual("itemA", container.m_inventory[1].m_shared.m_name);
-
             // 25 itemA
-            Assert.AreEqual(20, container.m_inventory[0].m_stack);
-            Assert.AreEqual(5, container.m_inventory[1].m_stack);
+            TestForItems(player);
+            TestForItems(container, new[] {
+                new TestItem("itemA", 20, new Vector2i(0, 0)),
+                new TestItem("itemA", 5, new Vector2i(1, 0))
+            });
         }
 
         [Test]
@@ -115,19 +101,16 @@ namespace UnitTests {
             player.CreateItem("itemA", 10, 3, 3);
             container.CreateItem("itemA", 15, 0, 0);
 
-            RequestAdd request = ContainerHandler.AddItemToChest(null, player, ZDOID.None,new Vector2i(3, 3), new Vector2i(-1, -1), 9, false);
+            RequestAdd request = ContainerHandler.AddItemToChest(null, player, ZDOID.None, new Vector2i(3, 3), new Vector2i(-1, -1), 9, false);
             RequestAddResponse response = GetAddResponse(request);
             InventoryHandler.RPC_RequestItemAddResponse(player, response);
 
-            Assert.AreEqual("itemA", player.GetItemAt(3, 3).m_shared.m_name);
-            Assert.AreEqual(2, container.m_inventory.Count);
-            Assert.AreEqual("itemA", container.m_inventory[0].m_shared.m_name);
-            Assert.AreEqual("itemA", container.m_inventory[1].m_shared.m_name);
-
             // 25 itemA
-            Assert.AreEqual(1, player.GetItemAt(3, 3).m_stack);
-            Assert.AreEqual(20, container.m_inventory[0].m_stack);
-            Assert.AreEqual(4, container.m_inventory[1].m_stack);
+            TestForItems(player, new TestItem("itemA", 1, new Vector2i(3, 3)));
+            TestForItems(container, new[] {
+                new TestItem("itemA", 20, new Vector2i(0, 0)),
+                new TestItem("itemA", 4, new Vector2i(1, 0))
+            });
         }
 
         [Test]
@@ -135,17 +118,12 @@ namespace UnitTests {
             player.CreateItem("itemA", 10, 2, 2);
             container.CreateItem("itemA", 15, 2, 2);
 
-            RequestAdd request = ContainerHandler.AddItemToChest(null, player, ZDOID.None,new Vector2i(2, 2), new Vector2i(2, 2), 10, true);
+            RequestAdd request = ContainerHandler.AddItemToChest(null, player, ZDOID.None, new Vector2i(2, 2), new Vector2i(2, 2), 10, true);
             RequestAddResponse response = GetAddResponse(request);
             InventoryHandler.RPC_RequestItemAddResponse(player, response);
 
-            Assert.NotNull(player.GetItemAt(2, 2));
-            Assert.NotNull(container.GetItemAt(2, 2));
-
-            Assert.AreEqual("itemA", player.GetItemAt(2, 2).m_shared.m_name);
-            Assert.AreEqual(5, player.GetItemAt(2, 2).m_stack);
-            Assert.AreEqual("itemA", container.GetItemAt(2, 2).m_shared.m_name);
-            Assert.AreEqual(20, container.GetItemAt(2, 2).m_stack);
+            TestForItems(player, new TestItem("itemA", 5, new Vector2i(2, 2)));
+            TestForItems(container, new TestItem("itemA", 20, new Vector2i(2, 2)));
         }
 
         [Test]
@@ -158,23 +136,20 @@ namespace UnitTests {
             RequestRemoveResponse response = GetRemoveResponse(request);
             InventoryHandler.RPC_RequestItemRemoveResponse(player, response);
 
-            Assert.AreEqual("itemA", player.GetItemAt(2, 2).m_shared.m_name);
-            Assert.AreEqual(5, player.GetItemAt(2, 2).m_stack);
-            Assert.AreEqual("itemB", container.GetItemAt(2, 2).m_shared.m_name);
-            Assert.AreEqual(5, container.GetItemAt(2, 2).m_stack);
+            TestForItems(player, new TestItem("itemA", 5, new Vector2i(2, 2)));
+            TestForItems(container, new TestItem("itemB", 5, new Vector2i(2, 2)));
         }
 
         [Test]
         public void AddToChest_SlotEmpty_FullMove() {
             player.CreateItem("itemA", 5, 2, 2);
 
-            RequestAdd request = ContainerHandler.AddItemToChest(null, player, ZDOID.None,new Vector2i(2, 2), new Vector2i(2, 2), 5, true);
+            RequestAdd request = ContainerHandler.AddItemToChest(null, player, ZDOID.None, new Vector2i(2, 2), new Vector2i(2, 2), 5, true);
             RequestAddResponse response = GetAddResponse(request);
             InventoryHandler.RPC_RequestItemAddResponse(player, response);
 
-            Assert.IsNull(player.GetItemAt(2, 2));
-            Assert.AreEqual("itemA", container.GetItemAt(2, 2).m_shared.m_name);
-            Assert.AreEqual(5, container.GetItemAt(2, 2).m_stack);
+            TestForItems(player);
+            TestForItems(container, new TestItem("itemA", 5, new Vector2i(2, 2)));
         }
 
         [Test]
@@ -187,10 +162,8 @@ namespace UnitTests {
             RequestAddResponse response = GetAddResponse(request);
             InventoryHandler.RPC_RequestItemAddResponse(player, response);
 
-            Assert.NotNull(player.GetItemAt(2, 2));
-            Assert.AreEqual(5, player.GetItemAt(2, 2).m_stack);
-            Assert.AreEqual("itemA", container.GetItemAt(0, 0).m_shared.m_name);
-            Assert.AreEqual(20, container.GetItemAt(0, 0).m_stack);
+            TestForItems(player, new TestItem("itemA", 5, new Vector2i(2, 2)));
+            TestForItems(container, new TestItem("itemA", 20, new Vector2i(0, 0)));
         }
 
         [Test]
@@ -203,10 +176,8 @@ namespace UnitTests {
             RequestRemoveResponse response = GetRemoveResponse(request);
             InventoryHandler.RPC_RequestItemRemoveResponse(player, response);
 
-            Assert.AreEqual("itemB", player.GetItemAt(2, 2).m_shared.m_name);
-            Assert.AreEqual(5, player.GetItemAt(2, 2).m_stack);
-            Assert.AreEqual("itemA", container.GetItemAt(2, 2).m_shared.m_name);
-            Assert.AreEqual(5, container.GetItemAt(2, 2).m_stack);
+            TestForItems(player, new TestItem("itemB", 5, new Vector2i(2, 2)));
+            TestForItems(container, new TestItem("itemA", 5, new Vector2i(2, 2)));
         }
 
         [Test]
@@ -218,9 +189,8 @@ namespace UnitTests {
             RequestRemoveResponse response = GetRemoveResponse(request);
             InventoryHandler.RPC_RequestItemRemoveResponse(player, response);
 
-            Assert.AreEqual("itemB", player.GetItemAt(2, 2).m_shared.m_name);
-            Assert.AreEqual(5, player.GetItemAt(2, 2).m_stack);
-            Assert.IsNull(container.GetItemAt(2, 2));
+            TestForItems(player, new TestItem("itemB", 5, new Vector2i(2, 2)));
+            TestForItems(container);
         }
     }
 }
