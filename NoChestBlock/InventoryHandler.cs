@@ -168,6 +168,8 @@ namespace NoChestBlock {
                     List<Inventory> inventories = Player.m_localPlayer.m_inventory.GetField<List<Inventory>>("_inventories");
                     return inventories.FirstOrDefault(i => i.m_name.GetStableHashCode() == hash) ?? player.GetInventory();
                 }
+
+                return player.GetInventory();
             }
 
             if (target.TryGetComponent(out Container container)) {
