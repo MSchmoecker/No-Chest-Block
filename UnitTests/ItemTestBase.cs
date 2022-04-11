@@ -28,9 +28,9 @@ namespace UnitTests {
                 Assert.Null(target);
             } else {
                 Assert.NotNull(target);
-                Assert.AreEqual(item.Value.name, target.m_shared.m_name);
-                Assert.AreEqual(item.Value.stack, target.m_stack);
-                Assert.AreEqual(item.Value.pos, target.m_gridPos);
+                Assert.AreEqual(item.Value.name, target.m_shared.m_name, "Different items");
+                Assert.AreEqual(item.Value.stack, target.m_stack, "Different stacks");
+                Assert.AreEqual(item.Value.pos, target.m_gridPos, "Different gridPos");
             }
         }
 
