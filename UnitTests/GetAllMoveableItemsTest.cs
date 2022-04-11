@@ -3,7 +3,7 @@ using NoChestBlock;
 using NUnit.Framework;
 
 namespace UnitTests {
-    public class GetAllMoveableItemsTest {
+    public class GetAllMoveableItemsTest : ItemTestBase {
         private Inventory from;
         private Inventory to;
 
@@ -20,12 +20,8 @@ namespace UnitTests {
 
             InventoryHelper.GetAllMoveableItems(from, to);
 
-            Assert.AreEqual(1, from.m_inventory.Count);
-            Assert.AreEqual("my item 1", from.m_inventory[0].m_shared.m_name);
-            Assert.AreEqual(10, from.m_inventory[0].m_stack);
-            Assert.AreEqual(1, to.m_inventory.Count);
-            Assert.AreEqual("my item 2", to.m_inventory[0].m_shared.m_name);
-            Assert.AreEqual(10, to.m_inventory[0].m_stack);
+            TestForItems(from, new TestItem("my item 1", 10, new Vector2i(0, 0)));
+            TestForItems(to, new TestItem("my item 2", 10, new Vector2i(0, 0)));
         }
 
         [Test]
@@ -35,12 +31,8 @@ namespace UnitTests {
 
             InventoryHelper.GetAllMoveableItems(from, to);
 
-            Assert.AreEqual(1, from.m_inventory.Count);
-            Assert.AreEqual("my item 2", from.m_inventory[0].m_shared.m_name);
-            Assert.AreEqual(10, from.m_inventory[0].m_stack);
-            Assert.AreEqual(1, to.m_inventory.Count);
-            Assert.AreEqual("my item 2", to.m_inventory[0].m_shared.m_name);
-            Assert.AreEqual(10, to.m_inventory[0].m_stack);
+            TestForItems(from, new TestItem("my item 2", 10, new Vector2i(0, 0)));
+            TestForItems(to, new TestItem("my item 2", 10, new Vector2i(0, 0)));
         }
 
         [Test]
@@ -50,7 +42,7 @@ namespace UnitTests {
             List<ItemDrop.ItemData> moved = InventoryHelper.GetAllMoveableItems(from, to);
 
             Assert.AreEqual(1, moved.Count);
-            Assert.AreEqual("my item 1", moved[0].m_shared.m_name);
+            TestForItem(moved[0], new TestItem("my item 1", 10, new Vector2i(0, 0)));
         }
 
         [Test]
@@ -73,8 +65,7 @@ namespace UnitTests {
             List<ItemDrop.ItemData> moved = InventoryHelper.GetAllMoveableItems(from, to);
 
             Assert.AreEqual(1, moved.Count);
-            Assert.AreEqual("my item 2", moved[0].m_shared.m_name);
-            Assert.AreEqual(8, moved[0].m_stack);
+            TestForItem(moved[0], new TestItem("my item 2", 8, new Vector2i(0, 0)));
         }
     }
 }
