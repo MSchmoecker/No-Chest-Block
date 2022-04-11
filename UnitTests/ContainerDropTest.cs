@@ -3,7 +3,7 @@ using NUnit.Framework;
 
 namespace UnitTests {
     [TestFixture]
-    public class ContainerDropTest {
+    public class ContainerDropTest : ItemTestBase {
         private Inventory container;
 
         [SetUp]
@@ -22,11 +22,8 @@ namespace UnitTests {
             RequestDrop request = new RequestDrop(new Vector2i(2, 2), 5);
             RequestDropResponse response = GetDropResponse(request);
 
-            Assert.NotNull(response.responseItem);
-            Assert.AreEqual(5, response.responseItem.m_stack);
-            Assert.AreEqual("my item", response.responseItem.m_shared.m_name);
-
-            Assert.AreEqual(0, container.m_inventory.Count);
+            TestForItem(response.responseItem, new TestItem("my item", 5, new Vector2i(2, 2)));
+            TestForItems(container);
         }
 
         [Test]
@@ -36,13 +33,8 @@ namespace UnitTests {
             RequestDrop request = new RequestDrop(new Vector2i(2, 2), 3);
             RequestDropResponse response = GetDropResponse(request);
 
-            Assert.NotNull(response.responseItem);
-            Assert.AreEqual(3, response.responseItem.m_stack);
-            Assert.AreEqual("my item", response.responseItem.m_shared.m_name);
-
-            Assert.AreEqual(1, container.m_inventory.Count);
-            Assert.AreEqual(2, container.m_inventory[0].m_stack);
-            Assert.AreEqual("my item", container.m_inventory[0].m_shared.m_name);
+            TestForItem(response.responseItem, new TestItem("my item", 3, new Vector2i(2, 2)));
+            TestForItems(container, new TestItem("my item", 2, new Vector2i(2, 2)));
         }
     }
 }
