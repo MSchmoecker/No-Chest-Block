@@ -44,8 +44,8 @@ namespace NoChestBlock.Patches {
                     return false;
                 }
 
-                int inventoryHash = player.GetInventory().m_name.GetStableHashCode();
-                RequestRemove request = new RequestRemove(fromPos, new Vector2i(-1, -1), item.m_stack, inventoryHash, null, player.GetZDOID());
+                string inventoryName = player.GetInventory().m_name;
+                RequestRemove request = new RequestRemove(fromPos, new Vector2i(-1, -1), item.m_stack, inventoryName, null, player.GetZDOID());
                 ContainerHandler.RemoveItemFromChest(request, gui.m_currentContainer);
             } else {
                 ContainerHandler.AddItemToChest(gui.m_currentContainer, grid.m_inventory, player.GetZDOID(), fromPos, new Vector2i(-1, -1), item.m_stack, false);

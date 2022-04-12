@@ -131,7 +131,7 @@ namespace UnitTests {
             player.CreateItem("itemA", 5, 2, 2);
             container.CreateItem("itemB", 5, 2, 2);
 
-            RequestRemove request = new RequestRemove(new Vector2i(2, 2), new Vector2i(2, 2), 3, "inv".GetStableHashCode(), player.GetItemAt(2, 2), ZDOID.None);
+            RequestRemove request = new RequestRemove(new Vector2i(2, 2), new Vector2i(2, 2), 3, "inv", player.GetItemAt(2, 2), ZDOID.None);
             ContainerHandler.RemoveItemFromChest(request, null);
             RequestRemoveResponse response = GetRemoveResponse(request);
             InventoryHandler.RPC_RequestItemRemoveResponse(player, response);
@@ -171,7 +171,7 @@ namespace UnitTests {
             player.CreateItem("itemA", 5, 2, 2);
             container.CreateItem("itemB", 5, 2, 2);
 
-            RequestRemove request = new RequestRemove(new Vector2i(2, 2), new Vector2i(2, 2), 5, "inv".GetStableHashCode(), player.GetItemAt(2, 2), ZDOID.None);
+            RequestRemove request = new RequestRemove(new Vector2i(2, 2), new Vector2i(2, 2), 5, "inv", player.GetItemAt(2, 2), ZDOID.None);
             ContainerHandler.RemoveItemFromChest(request, null);
             RequestRemoveResponse response = GetRemoveResponse(request);
             InventoryHandler.RPC_RequestItemRemoveResponse(player, response);
@@ -184,7 +184,7 @@ namespace UnitTests {
         public void RemoveFromChest_SlotEmpty_FullMove() {
             container.CreateItem("itemB", 5, 2, 2);
 
-            RequestRemove request = new RequestRemove(new Vector2i(2, 2), new Vector2i(2, 2), 5, "inv".GetStableHashCode(), player.GetItemAt(2, 2), ZDOID.None);
+            RequestRemove request = new RequestRemove(new Vector2i(2, 2), new Vector2i(2, 2), 5, "inv", player.GetItemAt(2, 2), ZDOID.None);
             ContainerHandler.RemoveItemFromChest(request, null);
             RequestRemoveResponse response = GetRemoveResponse(request);
             InventoryHandler.RPC_RequestItemRemoveResponse(player, response);

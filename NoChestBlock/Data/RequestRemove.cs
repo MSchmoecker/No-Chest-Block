@@ -7,11 +7,11 @@ namespace NoChestBlock {
         public readonly int fromInventoryHash;
         public readonly ZDOID sender;
 
-        public RequestRemove(Vector2i fromPos, Vector2i toPos, int dragAmount, int fromInventoryHash, ItemDrop.ItemData switchItem, ZDOID sender) {
+        public RequestRemove(Vector2i fromPos, Vector2i toPos, int dragAmount, string fromInventory, ItemDrop.ItemData switchItem, ZDOID sender) {
             this.fromPos = fromPos;
             this.toPos = toPos;
             this.dragAmount = dragAmount;
-            this.fromInventoryHash = fromInventoryHash;
+            fromInventoryHash = fromInventory.GetStableHashCode();
             this.switchItem = switchItem;
             this.sender = sender;
         }
