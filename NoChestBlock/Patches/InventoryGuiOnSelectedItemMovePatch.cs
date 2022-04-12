@@ -47,9 +47,8 @@ namespace NoChestBlock.Patches {
                 ContainerHandler.AddItemToChest(gui.m_currentContainer, gui.m_dragInventory, Player.m_localPlayer.GetZDOID(), fromPos, toPos, dragAmount, true);
             } else {
                 ItemDrop.ItemData prevItem = grid.GetInventory().GetItemAt(toPos.x, toPos.y);
-                string inventoryName = grid.m_inventory.m_name;
-                RequestRemove request = new RequestRemove(fromPos, toPos, dragAmount, inventoryName, prevItem, Player.m_localPlayer.GetZDOID());
-                ContainerHandler.RemoveItemFromChest(request, gui.m_currentContainer);
+                ZDOID zdoid = Player.m_localPlayer.GetZDOID();
+                ContainerHandler.RemoveItemFromChest(gui.m_currentContainer, grid.m_inventory, zdoid, fromPos, toPos, dragAmount, prevItem);
             }
 
             Log.LogDebug("MoveItem in other inventory");
