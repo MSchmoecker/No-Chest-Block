@@ -44,11 +44,11 @@ namespace NoChestBlock.Patches {
 
                 gui.m_currentContainer.m_nview.InvokeRPC("RequestItemMove", request.WriteToPackage());
             } else if (grid.m_inventory == gui.m_currentContainer.GetInventory()) {
-                ContainerHandler.AddItemToChest(gui.m_currentContainer, gui.m_dragInventory, Player.m_localPlayer.GetZDOID(), fromPos, toPos, dragAmount, true);
+                gui.m_currentContainer.AddItemToChest(gui.m_dragInventory, Player.m_localPlayer.GetZDOID(), fromPos, toPos, dragAmount, true);
             } else {
                 ItemDrop.ItemData prevItem = grid.GetInventory().GetItemAt(toPos.x, toPos.y);
                 ZDOID zdoid = Player.m_localPlayer.GetZDOID();
-                ContainerHandler.RemoveItemFromChest(gui.m_currentContainer, grid.m_inventory, zdoid, fromPos, toPos, dragAmount, prevItem);
+                gui.m_currentContainer.RemoveItemFromChest(grid.m_inventory, zdoid, fromPos, toPos, dragAmount, prevItem);
             }
 
             Log.LogDebug("MoveItem in other inventory");

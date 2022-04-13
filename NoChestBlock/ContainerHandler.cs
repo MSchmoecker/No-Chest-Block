@@ -1,7 +1,8 @@
 using System.Collections.Generic;
+using JetBrains.Annotations;
 
 namespace NoChestBlock {
-    public class ContainerHandler {
+    public static class ContainerHandler {
         private const bool BypassSelfRouting = false;
 
         public static void TakeAll(Container container) {
@@ -18,11 +19,12 @@ namespace NoChestBlock {
             }
         }
 
-        public static RequestAdd AddItemToChest(Container containerTo, Container containerFrom, Vector2i from, Vector2i to, int dragAmount = 1, bool allowSwitch = false) {
+        [UsedImplicitly]
+        public static RequestAdd AddItemToChest(this Container containerTo, Container containerFrom, Vector2i from, Vector2i to, int dragAmount = 1, bool allowSwitch = false) {
             return AddItemToChest(containerTo, containerFrom.GetInventory(), containerFrom.m_nview.m_zdo.m_uid, from, to, dragAmount, allowSwitch);
         }
 
-        public static RequestAdd AddItemToChest(Container container, Inventory inventory, ZDOID sender, Vector2i from, Vector2i to, int dragAmount, bool allowSwitch) {
+        public static RequestAdd AddItemToChest(this Container container, Inventory inventory, ZDOID sender, Vector2i from, Vector2i to, int dragAmount, bool allowSwitch) {
             ItemDrop.ItemData item = inventory.GetItemAt(from.x, from.y).Clone();
             RequestAdd request = new RequestAdd(to, dragAmount, item, inventory.m_name, allowSwitch, sender);
             inventory.RemoveItem(inventory.GetItemAt(from.x, from.y), dragAmount);
@@ -43,16 +45,21 @@ namespace NoChestBlock {
             return request;
         }
 
-        public static RequestRemove RemoveItemFromChest(Container containerRemove, Container containerAdd, Vector2i from, Vector2i to, int dragAmount = 1, ItemDrop.ItemData switchItem = null) {
-            return RemoveItemFromChest(containerRemove, containerAdd.GetInventory(), containerAdd.m_nview.m_zdo.m_uid, from, to, dragAmount, switchItem);
+        [UsedImplicitly]
+        public static RequestRemove RemoveItemFromChest(this Container container, Container targetContainer, Vector2i from, Vector2i to, int dragAmount = 1, ItemDrop.ItemData switchItem = null) {
+            return RemoveItemFromChest(container, targetContainer.GetInventory(), targetContainer.m_nview.m_zdo.m_uid, from, to, dragAmount, switchItem);
         }
 
-        public static RequestRemove RemoveItemFromChest(Container container, Inventory inventory, ZDOID sender, Vector2i from, Vector2i to, int dragAmount, ItemDrop.ItemData switchItem) {
-            RequestRemove request = new RequestRemove(from, to, dragAmount, inventory.m_name, switchItem, sender);
+        public static RequestRemove RemoveItemFromChest(this Container container, Player targetPlayer, Vector2i from, Vector2i to, int dragAmount = 1, ItemDrop.ItemData switchItem = null) {
+            return RemoveItemFromChest(container, targetPlayer.GetInventory(), targetPlayer.GetZDOID(), from, to, dragAmount, switchItem);
+        }
+
+        public static RequestRemove RemoveItemFromChest(this Container container, Inventory targetInventory, ZDOID sender, Vector2i from, Vector2i to, int dragAmount = 1, ItemDrop.ItemData switchItem = null) {
+            RequestRemove request = new RequestRemove(from, to, dragAmount, targetInventory.m_name, switchItem, sender);
 
             if (BypassSelfRouting && container != null && container.m_nview && container.m_nview.IsValid() && container.m_nview.IsOwner()) {
                 RequestRemoveResponse response = container.GetInventory().RequestItemRemove(request);
-                InventoryHandler.RPC_RequestItemRemoveResponse(inventory, response);
+                InventoryHandler.RPC_RequestItemRemoveResponse(targetInventory, response);
                 return null;
             }
 

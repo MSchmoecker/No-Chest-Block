@@ -44,9 +44,9 @@ namespace NoChestBlock.Patches {
                     return false;
                 }
 
-                ContainerHandler.RemoveItemFromChest(gui.m_currentContainer, player.GetInventory(), player.GetZDOID(), fromPos, new Vector2i(-1, -1), item.m_stack, null);
+                gui.m_currentContainer.RemoveItemFromChest(player, fromPos, new Vector2i(-1, -1), item.m_stack, null);
             } else {
-                ContainerHandler.AddItemToChest(gui.m_currentContainer, grid.m_inventory, player.GetZDOID(), fromPos, new Vector2i(-1, -1), item.m_stack, false);
+                gui.m_currentContainer.AddItemToChest(grid.m_inventory, player.GetZDOID(), fromPos, new Vector2i(-1, -1), item.m_stack, false);
             }
 
             gui.m_moveItemEffects.Create(gui.transform.position, Quaternion.identity);
