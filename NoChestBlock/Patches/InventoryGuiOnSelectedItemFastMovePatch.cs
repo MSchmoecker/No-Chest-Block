@@ -50,6 +50,8 @@ namespace NoChestBlock.Patches {
             }
 
             gui.m_moveItemEffects.Create(gui.transform.position, Quaternion.identity);
+            gui.SetupDragItem(null, null, 1);
+
             Log.LogDebug("FastMoveItem in other inventory");
             return false;
         }

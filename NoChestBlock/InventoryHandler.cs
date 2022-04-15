@@ -73,23 +73,18 @@ namespace NoChestBlock {
                 }
             }
 
-            if (InventoryGui.instance != null) {
-                UpdateGUIAfterMove();
-            }
+            UpdateGUIAfterPlayerMove(response.sender);
         }
 
         private static void RPC_RequestDropResponse(RequestDropResponse response) {
             DropItem(response.responseItem, response.responseItem.m_stack);
-
-            if (InventoryGui.instance != null) {
-                UpdateGUIAfterMove();
-            }
+            UpdateGUIAfterPlayerMove(response.sender);
         }
 
-        private static void UpdateGUIAfterMove() {
-            InventoryGui.instance.SetupDragItem(null, null, 0);
-            InventoryGui.instance.m_moveItemEffects.Create(InventoryGui.instance.transform.position, Quaternion.identity);
-            InventoryGui.instance.UpdateCraftingPanel();
+        private static void UpdateGUIAfterPlayerMove(ZDOID sender) {
+            if (InventoryGui.instance != null && sender == Player.m_localPlayer.GetZDOID()) {
+                InventoryGui.instance.UpdateCraftingPanel();
+            }
         }
 
         private static void DropItem(ItemDrop.ItemData responseItem, int amount) {
@@ -114,9 +109,7 @@ namespace NoChestBlock {
                 inventory.AddItemToInventory(switchItem, switchItem.m_stack, inventoryPos);
             }
 
-            if (InventoryGui.instance != null) {
-                InventoryGui.instance.SetupDragItem(null, null, 0);
-            }
+            UpdateGUIAfterPlayerMove(response.sender);
         }
 
         public static void RPC_RequestItemConsumeResponse(RequestConsumeResponse response) {

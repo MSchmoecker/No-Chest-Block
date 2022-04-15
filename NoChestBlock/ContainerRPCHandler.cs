@@ -220,7 +220,7 @@ namespace NoChestBlock {
             ItemDrop.ItemData responseItem = from.Clone();
             responseItem.m_stack = removedAmount;
 
-            return new RequestDropResponse(responseItem);
+            return new RequestDropResponse(responseItem, request.sender);
         }
     }
 }

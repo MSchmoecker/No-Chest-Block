@@ -51,6 +51,8 @@ namespace NoChestBlock.Patches {
                 gui.m_currentContainer.RemoveItemFromChest(grid.m_inventory, zdoid, fromPos, toPos, dragAmount, prevItem);
             }
 
+            gui.SetupDragItem(null, null, 1);
+
             Log.LogDebug("MoveItem in other inventory");
             return false;
         }

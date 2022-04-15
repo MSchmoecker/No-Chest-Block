@@ -9,12 +9,14 @@ namespace UnitTests {
         private Vector2i posA;
         private Vector2i posB;
         private ItemDrop.ItemData item;
+        private ZDOID zdoid;
 
         [SetUp]
         public void Setup() {
             posA = new Vector2i(1, 2);
             posB = new Vector2i(2, 1);
             item = Helper.CreateItem("my item", 3);
+            zdoid = new ZDOID(1234, 1);
         }
 
         private static T GetFromZPackage<T>(T request, Func<ZPackage, T> newRequest) where T : IPackage {
@@ -25,7 +27,7 @@ namespace UnitTests {
 
         [Test]
         public void RequestAdd_PackageReadWrite() {
-            RequestAdd requestAdd = new RequestAdd(posA, 4, item, "inv", true, ZDOID.None);
+            RequestAdd requestAdd = new RequestAdd(posA, 4, item, "inv", true, zdoid);
             RequestAdd fromPackage = GetFromZPackage(requestAdd, package => new RequestAdd(package));
 
             Assert.AreEqual(fromPackage.toPos, posA);
@@ -33,12 +35,12 @@ namespace UnitTests {
             TestForItem(fromPackage.dragItem, new TestItem("my item", 3, Vector2i.zero));
             Assert.AreEqual(fromPackage.fromInventoryHash, "inv".GetStableHashCode());
             Assert.True(fromPackage.allowSwitch);
-            Assert.AreEqual(fromPackage.sender, ZDOID.None);
+            Assert.AreEqual(fromPackage.sender, zdoid);
         }
 
         [Test]
         public void RequestAddResponse_PackageReadWrite() {
-            RequestAddResponse requestAdd = new RequestAddResponse(true, posA, 4, 5, item, ZDOID.None);
+            RequestAddResponse requestAdd = new RequestAddResponse(true, posA, 4, 5, item, zdoid);
             RequestAddResponse fromPackage = GetFromZPackage(requestAdd, package => new RequestAddResponse(package));
 
             Assert.True(fromPackage.Success);
@@ -46,7 +48,7 @@ namespace UnitTests {
             Assert.AreEqual(fromPackage.Amount, 4);
             Assert.AreEqual(fromPackage.inventoryHash, 5);
             TestForItem(fromPackage.switchItem, new TestItem("my item", 3, Vector2i.zero));
-            Assert.AreEqual(fromPackage.sender, ZDOID.None);
+            Assert.AreEqual(fromPackage.sender, zdoid);
         }
 
         [Test]
@@ -70,20 +72,22 @@ namespace UnitTests {
 
         [Test]
         public void RequestDrop_PackageReadWrite() {
-            RequestDrop requestAdd = new RequestDrop(posA, 3);
+            RequestDrop requestAdd = new RequestDrop(posA, 3, zdoid);
             RequestDrop fromPackage = GetFromZPackage(requestAdd, package => new RequestDrop(package));
 
             Assert.AreEqual(fromPackage.targetContainerSlot, posA);
             Assert.AreEqual(fromPackage.amount, 3);
+            Assert.AreEqual(fromPackage.sender, zdoid);
         }
 
         [Test]
         public void RequestDropResponse_PackageReadWrite() {
             item.m_gridPos = posA;
-            RequestDropResponse requestAdd = new RequestDropResponse(item);
+            RequestDropResponse requestAdd = new RequestDropResponse(item, zdoid);
             RequestDropResponse fromPackage = GetFromZPackage(requestAdd, package => new RequestDropResponse(package));
 
             TestForItem(fromPackage.responseItem, new TestItem("my item", 3, posA));
+            Assert.AreEqual(fromPackage.sender, zdoid);
         }
 
         [Test]
@@ -98,7 +102,7 @@ namespace UnitTests {
 
         [Test]
         public void RequestRemove_PackageReadWrite() {
-            RequestRemove requestAdd = new RequestRemove(posA, posB, 3, "inv", item, ZDOID.None);
+            RequestRemove requestAdd = new RequestRemove(posA, posB, 3, "inv", item, zdoid);
             RequestRemove fromPackage = GetFromZPackage(requestAdd, package => new RequestRemove(package));
 
             Assert.AreEqual(fromPackage.fromPos, posA);
@@ -106,12 +110,12 @@ namespace UnitTests {
             Assert.AreEqual(fromPackage.dragAmount, 3);
             TestForItem(fromPackage.switchItem, new TestItem("my item", 3, Vector2i.zero));
             Assert.AreEqual(fromPackage.fromInventoryHash, "inv".GetStableHashCode());
-            Assert.AreEqual(fromPackage.sender, ZDOID.None);
+            Assert.AreEqual(fromPackage.sender, zdoid);
         }
 
         [Test]
         public void RequestRemoveResponse_PackageReadWrite() {
-            RequestRemoveResponse requestAdd = new RequestRemoveResponse(true, 3, false, posA, "inv".GetStableHashCode(), item, ZDOID.None);
+            RequestRemoveResponse requestAdd = new RequestRemoveResponse(true, 3, false, posA, "inv".GetStableHashCode(), item, zdoid);
             RequestRemoveResponse fromPackage = GetFromZPackage(requestAdd, package => new RequestRemoveResponse(package));
 
             Assert.True(fromPackage.Success);
@@ -119,7 +123,7 @@ namespace UnitTests {
             Assert.AreEqual(fromPackage.inventoryPos, posA);
             Assert.AreEqual(fromPackage.inventoryHash, "inv".GetStableHashCode());
             TestForItem(fromPackage.responseItem, new TestItem("my item", 3, Vector2i.zero));
-            Assert.AreEqual(fromPackage.sender, ZDOID.None);
+            Assert.AreEqual(fromPackage.sender, zdoid);
             Assert.False(fromPackage.hasSwitched);
         }
 

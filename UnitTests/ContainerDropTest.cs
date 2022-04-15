@@ -19,7 +19,7 @@ namespace UnitTests {
         public void RPC_RequestDropItem_FullStack() {
             container.CreateItem("my item", 5, 2, 2);
 
-            RequestDrop request = new RequestDrop(new Vector2i(2, 2), 5);
+            RequestDrop request = new RequestDrop(new Vector2i(2, 2), 5, ZDOID.None);
             RequestDropResponse response = GetDropResponse(request);
 
             TestForItem(response.responseItem, new TestItem("my item", 5, new Vector2i(2, 2)));
@@ -30,7 +30,7 @@ namespace UnitTests {
         public void RPC_RequestDropItem_SplitStack() {
             container.CreateItem("my item", 5, 2, 2);
 
-            RequestDrop request = new RequestDrop(new Vector2i(2, 2), 3);
+            RequestDrop request = new RequestDrop(new Vector2i(2, 2), 3, ZDOID.None);
             RequestDropResponse response = GetDropResponse(request);
 
             TestForItem(response.responseItem, new TestItem("my item", 3, new Vector2i(2, 2)));

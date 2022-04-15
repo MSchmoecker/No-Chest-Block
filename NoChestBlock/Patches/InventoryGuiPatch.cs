@@ -86,7 +86,7 @@ namespace NoChestBlock.Patches {
                 return true;
             }
 
-            RequestDrop request = new RequestDrop(gui.m_dragItem.m_gridPos, gui.m_dragAmount);
+            RequestDrop request = new RequestDrop(gui.m_dragItem.m_gridPos, gui.m_dragAmount, player.GetZDOID());
             Timer.Start(request);
 
             gui.m_currentContainer.m_nview.InvokeRPC("RequestDropItems", request.WriteToPackage());
