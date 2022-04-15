@@ -173,13 +173,13 @@ namespace NoChestBlock {
             ItemDrop.ItemData toConsume = inventory.GetItemAt(request.itemPosX, request.itemPosY);
 
             if (toConsume == null || toConsume.m_stack <= 0) {
-                return new RequestConsumeResponse(item: null);
+                return new RequestConsumeResponse(null, false, 0);
             }
 
             inventory.RemoveOneItem(toConsume);
             ItemDrop.ItemData returnItem = toConsume.Clone();
             returnItem.m_stack = 1;
-            return new RequestConsumeResponse(returnItem);
+            return new RequestConsumeResponse(returnItem, true, 1);
         }
 
         private static bool RequestItemMove(this Inventory inventory, RequestMove request) {
@@ -220,7 +220,7 @@ namespace NoChestBlock {
             ItemDrop.ItemData responseItem = from.Clone();
             responseItem.m_stack = removedAmount;
 
-            return new RequestDropResponse(responseItem, request.sender);
+            return new RequestDropResponse(responseItem, request.sender, removedAmount != 0, removedAmount);
         }
     }
 }

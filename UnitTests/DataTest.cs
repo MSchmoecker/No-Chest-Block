@@ -64,10 +64,12 @@ namespace UnitTests {
         [Test]
         public void RequestConsumeResponse_PackageReadWrite() {
             item.m_gridPos = posA;
-            RequestConsumeResponse requestAdd = new RequestConsumeResponse(item);
+            RequestConsumeResponse requestAdd = new RequestConsumeResponse(item, true, 3);
             RequestConsumeResponse fromPackage = GetFromZPackage(requestAdd, package => new RequestConsumeResponse(package));
 
             TestForItem(fromPackage.item, new TestItem("my item", 3, posA));
+            Assert.True(fromPackage.Success);
+            Assert.AreEqual(fromPackage.Amount, 3);
         }
 
         [Test]
@@ -83,11 +85,13 @@ namespace UnitTests {
         [Test]
         public void RequestDropResponse_PackageReadWrite() {
             item.m_gridPos = posA;
-            RequestDropResponse requestAdd = new RequestDropResponse(item, zdoid);
+            RequestDropResponse requestAdd = new RequestDropResponse(item, zdoid, true, 7);
             RequestDropResponse fromPackage = GetFromZPackage(requestAdd, package => new RequestDropResponse(package));
 
             TestForItem(fromPackage.responseItem, new TestItem("my item", 3, posA));
             Assert.AreEqual(fromPackage.sender, zdoid);
+            Assert.True(fromPackage.Success);
+            Assert.AreEqual(fromPackage.Amount, 7);
         }
 
         [Test]

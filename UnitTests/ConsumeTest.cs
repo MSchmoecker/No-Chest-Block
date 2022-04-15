@@ -21,6 +21,7 @@ namespace UnitTests {
 
             RequestConsume request = new RequestConsume(container.GetItemAt(2, 3));
             RequestConsumeResponse response = GetConsumeResponse(request);
+            TestResponse(response, true, 1);
 
             TestForItem(response.item, new TestItem("my item", 1, new Vector2i(2, 3)));
             TestForItems(container, new TestItem("my item", 9, new Vector2i(2, 3)));
@@ -32,6 +33,7 @@ namespace UnitTests {
 
             RequestConsume request = new RequestConsume(container.GetItemAt(2, 3));
             RequestConsumeResponse response = GetConsumeResponse(request);
+            TestResponse(response, true, 1);
 
             TestForItem(response.item, new TestItem("my item", 1, new Vector2i(2, 3)));
             TestForItems(container);
@@ -43,6 +45,7 @@ namespace UnitTests {
 
             RequestConsume request = new RequestConsume(itemData);
             RequestConsumeResponse response = GetConsumeResponse(request);
+            TestResponse(response, false, 0);
 
             TestForItem(response.item, null);
             TestForItems(container);
