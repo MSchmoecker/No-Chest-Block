@@ -14,6 +14,7 @@ namespace NoChestBlock.Patches {
                    .MatchForward(true, new CodeMatch(i => CodeMatcherExtensions.IsVirtCall(i, nameof(InventoryGrid), nameof(InventoryGrid.DropItem))))
                    .Advance(-8)
                    .InsertAndAdvance(new CodeInstruction(OpCodes.Ldarg_1),
+                                     new CodeInstruction(OpCodes.Ldarg_2),
                                      new CodeInstruction(OpCodes.Ldarg_3),
                                      new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(InventoryGuiOnSelectedItemMovePatch), nameof(MoveItem))),
                                      new CodeInstruction(OpCodes.Brtrue, label),
@@ -22,7 +23,7 @@ namespace NoChestBlock.Patches {
                    .InstructionEnumeration();
         }
 
-        private static bool MoveItem(InventoryGrid grid, Vector2i toPos) {
+        private static bool MoveItem(InventoryGrid grid, ItemDrop.ItemData item, Vector2i toPos) {
             Log.LogDebug("MoveItem");
 
             InventoryGui gui = InventoryGui.instance;
@@ -44,11 +45,11 @@ namespace NoChestBlock.Patches {
 
                 gui.m_currentContainer.m_nview.InvokeRPC("RequestItemMove", request.WriteToPackage());
             } else if (grid.m_inventory == gui.m_currentContainer.GetInventory()) {
-                gui.m_currentContainer.AddItemToChest(gui.m_dragInventory, Player.m_localPlayer.GetZDOID(), fromPos, toPos, dragAmount, true);
+                gui.m_currentContainer.AddItemToChest(item, gui.m_dragInventory, toPos, Player.m_localPlayer.GetZDOID(), dragAmount, true);
             } else {
                 ItemDrop.ItemData prevItem = grid.GetInventory().GetItemAt(toPos.x, toPos.y);
                 ZDOID zdoid = Player.m_localPlayer.GetZDOID();
-                gui.m_currentContainer.RemoveItemFromChest(grid.m_inventory, zdoid, fromPos, toPos, dragAmount, prevItem);
+                gui.m_currentContainer.RemoveItemFromChest(gui.m_dragItem, grid.m_inventory, toPos, zdoid, dragAmount, prevItem);
             }
 
             gui.SetupDragItem(null, null, 1);

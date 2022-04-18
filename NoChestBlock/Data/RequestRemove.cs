@@ -12,7 +12,7 @@ namespace NoChestBlock {
             this.toPos = toPos;
             this.dragAmount = dragAmount;
             fromInventoryHash = fromInventory.GetStableHashCode();
-            this.switchItem = switchItem;
+            this.switchItem = switchItem?.Clone();
             this.sender = sender;
         }
 

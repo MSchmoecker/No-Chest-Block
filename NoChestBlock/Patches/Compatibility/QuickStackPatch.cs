@@ -59,7 +59,7 @@ namespace NoChestBlock.Patches.Compatibility {
                 moved += movable.Count;
 
                 foreach (ItemDrop.ItemData item in movable) {
-                    container.AddItemToChest(playerInventory, player.GetZDOID(), item.m_gridPos, new Vector2i(-1, -1), item.m_stack, true);
+                    container.AddItemToChest(item, playerInventory, new Vector2i(-1, -1), player.GetZDOID(), item.m_stack, true);
                 }
             }
 

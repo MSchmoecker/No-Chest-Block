@@ -18,16 +18,16 @@ namespace NoChestBlock {
         }
 
         [UsedImplicitly]
-        public static RequestAdd AddItemToChest(this Container containerTo, Container containerFrom, Vector2i from, Vector2i to, int dragAmount = 1, bool allowSwitch = false) {
-            return AddItemToChest(containerTo, containerFrom.GetInventory(), containerFrom.m_nview.m_zdo.m_uid, from, to, dragAmount, allowSwitch);
+        public static RequestAdd AddItemToChest(this Container containerTo, ItemDrop.ItemData item, Container targetContainer, Vector2i to, int dragAmount = -1, bool allowSwitch = false) {
+            return AddItemToChest(containerTo, item, targetContainer.GetInventory(), to, targetContainer.m_nview.m_zdo.m_uid, dragAmount, allowSwitch);
         }
 
-        public static RequestAdd AddItemToChest(this Container container, Inventory inventory, ZDOID sender, Vector2i from, Vector2i to, int dragAmount, bool allowSwitch) {
-            ItemDrop.ItemData item = inventory.GetItemAt(from.x, from.y).Clone();
-            RequestAdd request = new RequestAdd(to, dragAmount, item, inventory.m_name, allowSwitch, sender);
-            inventory.RemoveItem(inventory.GetItemAt(from.x, from.y), dragAmount);
+        public static RequestAdd AddItemToChest(this Container container, ItemDrop.ItemData item, Inventory targetInventory, Vector2i to, ZDOID sender, int dragAmount = -1, bool allowSwitch = false) {
+            dragAmount = dragAmount < 0 ? item.m_stack : dragAmount;
+            RequestAdd request = new RequestAdd(to, dragAmount, item, targetInventory.m_name, allowSwitch, sender);
+            InventoryHandler.BlockSlot(item.m_gridPos);
 
-            InventoryHandler.BlockSlot(from);
+            targetInventory.RemoveItem(item.m_shared.m_name, dragAmount);
 
             if (container != null && container.m_nview) {
                 Timer.Start(request);
@@ -38,17 +38,17 @@ namespace NoChestBlock {
         }
 
         [UsedImplicitly]
-        public static RequestRemove RemoveItemFromChest(this Container container, Container targetContainer, Vector2i from, Vector2i to, int dragAmount = 1, ItemDrop.ItemData switchItem = null) {
-            return RemoveItemFromChest(container, targetContainer.GetInventory(), targetContainer.m_nview.m_zdo.m_uid, from, to, dragAmount, switchItem);
+        public static RequestRemove RemoveItemFromChest(this Container container, ItemDrop.ItemData item, Container targetContainer, Vector2i to, int dragAmount = -1, ItemDrop.ItemData switchItem = null) {
+            return RemoveItemFromChest(container, item, targetContainer.GetInventory(), to, targetContainer.m_nview.m_zdo.m_uid, dragAmount, switchItem);
         }
 
-        public static RequestRemove RemoveItemFromChest(this Container container, Player targetPlayer, Vector2i from, Vector2i to, int dragAmount = 1, ItemDrop.ItemData switchItem = null) {
-            return RemoveItemFromChest(container, targetPlayer.GetInventory(), targetPlayer.GetZDOID(), from, to, dragAmount, switchItem);
+        public static RequestRemove RemoveItemFromChest(this Container container, ItemDrop.ItemData item, Player targetPlayer, Vector2i to, int dragAmount = -1, ItemDrop.ItemData switchItem = null) {
+            return RemoveItemFromChest(container, item, targetPlayer.GetInventory(), to, targetPlayer.GetZDOID(), dragAmount, switchItem);
         }
 
-        public static RequestRemove RemoveItemFromChest(this Container container, Inventory targetInventory, ZDOID sender, Vector2i from, Vector2i to, int dragAmount = 1, ItemDrop.ItemData switchItem = null) {
-            RequestRemove request = new RequestRemove(from, to, dragAmount, targetInventory.m_name, switchItem, sender);
-
+        public static RequestRemove RemoveItemFromChest(this Container container, ItemDrop.ItemData item, Inventory targetInventory, Vector2i to, ZDOID sender, int dragAmount = -1, ItemDrop.ItemData switchItem = null) {
+            dragAmount = dragAmount < 0 ? item.m_stack : dragAmount;
+            RequestRemove request = new RequestRemove(item.m_gridPos, to, dragAmount, targetInventory.m_name, switchItem, sender);
             InventoryHandler.BlockSlot(request.toPos);
 
             if (container != null && container.m_nview) {

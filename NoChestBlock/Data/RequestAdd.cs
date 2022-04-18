@@ -10,7 +10,7 @@ namespace NoChestBlock {
         public RequestAdd(Vector2i toPos, int dragAmount, ItemDrop.ItemData dragItem, string inventoryName, bool allowSwitch, ZDOID sender) {
             this.toPos = toPos;
             this.dragAmount = dragAmount;
-            this.dragItem = dragItem;
+            this.dragItem = dragItem?.Clone();
             fromInventoryHash = inventoryName.GetStableHashCode();
             this.allowSwitch = allowSwitch;
             this.sender = sender;
