@@ -47,6 +47,7 @@ namespace NoChestBlock {
         }
 
         public void PrintDebug() {
+#if FULL_DEBUG
             Log.LogDebug($"RequestAddResponse:");
             Log.LogDebug($"  inventoryPos: {inventoryPos}");
             Log.LogDebug($"  success: {Success}");
@@ -55,6 +56,7 @@ namespace NoChestBlock {
             Log.LogDebug($"  switchItem: {switchItem != null}");
             Log.LogDebug($"  sender: {sender}");
             InventoryHelper.PrintItem(switchItem);
+#endif
         }
     }
 }

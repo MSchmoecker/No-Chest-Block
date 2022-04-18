@@ -35,9 +35,11 @@
         }
 
         public void PrintDebug() {
+#if FULL_DEBUG
             Log.LogDebug($"RequestDropResponse:");
             Log.LogDebug($"  switchItem: {responseItem != null}");
             InventoryHelper.PrintItem(responseItem);
+#endif
         }
     }
 }

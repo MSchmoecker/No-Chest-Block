@@ -33,7 +33,9 @@ namespace NoChestBlock {
         }
 
         public static void LogDebug(string data) {
+#if FULL_DEBUG
             fileLogger.Debug(data);
+#endif
         }
 
         public static void LogError(string data) {

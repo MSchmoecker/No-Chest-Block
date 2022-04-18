@@ -53,6 +53,7 @@ namespace NoChestBlock {
         }
 
         public void PrintDebug() {
+#if FULL_DEBUG
             Log.LogDebug($"RequestRemoveResponse:");
             Log.LogDebug($"  success: {Success}");
             Log.LogDebug($"  amount: {Amount}");
@@ -62,6 +63,7 @@ namespace NoChestBlock {
             Log.LogDebug($"  responseItem: {responseItem != null}");
             Log.LogDebug($"  sender: {sender}");
             InventoryHelper.PrintItem(responseItem);
+#endif
         }
     }
 }

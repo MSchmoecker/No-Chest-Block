@@ -39,6 +39,7 @@ namespace NoChestBlock {
         }
 
         public void PrintDebug() {
+#if FULL_DEBUG
             Log.LogDebug($"RequestItemAdd:");
             Log.LogDebug($"  toContainer: {toPos}");
             Log.LogDebug($"  dragAmount: {dragAmount}");
@@ -47,6 +48,7 @@ namespace NoChestBlock {
             Log.LogDebug($"  dragItem: {dragItem != null}");
             Log.LogDebug($"  sender: {sender}");
             InventoryHelper.PrintItem(dragItem);
+#endif
         }
     }
 }

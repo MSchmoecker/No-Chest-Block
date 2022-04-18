@@ -189,6 +189,7 @@ namespace NoChestBlock {
         }
 
         public static void PrintItem(ItemDrop.ItemData itemData) {
+#if FULL_DEBUG
             if (itemData == null) {
                 return;
             }
@@ -196,6 +197,7 @@ namespace NoChestBlock {
             Log.LogDebug($"    drop name: {(itemData.m_dropPrefab != null ? itemData.m_dropPrefab.name : "null!!!")}");
             Log.LogDebug($"    shared name: {itemData.m_shared.m_name}");
             Log.LogDebug($"    stack: {itemData.m_stack}");
+#endif
         }
     }
 }

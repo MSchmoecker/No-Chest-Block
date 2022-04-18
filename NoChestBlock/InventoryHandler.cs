@@ -32,8 +32,10 @@ namespace NoChestBlock {
         public static void RPC_RequestItemMoveResponse(long sender, bool success) {
             Timer.Stop("RPC_RequestItemMoveResponse");
             InventoryGui.instance.SetupDragItem(null, null, 0);
+#if FULL_DEBUG
             Log.LogDebug($"RequestItemMoveResponse:");
             Log.LogDebug($"\tsuccess: {success}");
+#endif
         }
 
         private static void HandleRPC<T>(T package, Func<T, Inventory> inventory, Container container, Action<Inventory, Container, T> handle) where T : IPackage {

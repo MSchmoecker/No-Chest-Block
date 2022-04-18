@@ -31,9 +31,11 @@
         }
 
         public void PrintDebug() {
+#if FULL_DEBUG
             Log.LogDebug($"RequestConsumeResponse:");
             Log.LogDebug($"  item: {item != null}");
             InventoryHelper.PrintItem(item);
+#endif
         }
     }
 }

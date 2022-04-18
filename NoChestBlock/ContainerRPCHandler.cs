@@ -17,7 +17,9 @@ namespace NoChestBlock {
         }
 
         public static void RPC_RequestItemMove(Container container, long sender, ZPackage package) {
+#if FULL_DEBUG
             Log.LogDebug("RequestItemMove");
+#endif
             HandleRPC(container, sender, "RequestItemMoveResponse", RequestItemMove, () => new RequestMove(package));
         }
 
