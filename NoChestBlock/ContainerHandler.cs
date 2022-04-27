@@ -30,6 +30,12 @@ namespace NoChestBlock {
             targetInventory.RemoveItem(item.m_shared.m_name, dragAmount);
 
             if (container != null && container.m_nview) {
+                if (container.m_nview.IsOwner()) {
+                    RequestAddResponse response = container.GetInventory().RequestItemAdd(request);
+                    InventoryHandler.RPC_RequestItemAddResponse(targetInventory, response);
+                    return null;
+                }
+
                 Timer.Start(request);
                 container.m_nview.InvokeRPC("RequestItemAdd", request.WriteToPackage());
             }
@@ -52,6 +58,12 @@ namespace NoChestBlock {
             InventoryHandler.BlockSlot(request.toPos);
 
             if (container != null && container.m_nview) {
+                if (container.m_nview.IsOwner()) {
+                    RequestRemoveResponse response = container.GetInventory().RequestItemRemove(request);
+                    InventoryHandler.RPC_RequestItemRemoveResponse(targetInventory, response);
+                    return null;
+                }
+
                 Timer.Start(request);
                 container.m_nview.InvokeRPC("RequestItemRemove", request.WriteToPackage());
             }
