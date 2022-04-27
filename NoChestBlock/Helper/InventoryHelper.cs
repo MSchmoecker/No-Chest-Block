@@ -67,7 +67,7 @@ namespace NoChestBlock {
         }
 
         public static ItemDrop.ItemData GetItemDataFromObjectDB(string name) {
-            GameObject itemPrefab = ObjectDB.instance.GetItemPrefab(name);
+            GameObject itemPrefab = ObjectDB.instance.GetItemPrefab(name.GetStableHashCode());
 
             if (itemPrefab == null) {
                 Log.LogWarning("Failed to find item prefab " + name);
