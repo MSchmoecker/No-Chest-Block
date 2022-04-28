@@ -1,7 +1,6 @@
 ﻿using HarmonyLib;
 
 namespace NoChestBlock.Patches.Compatibility {
-    [HarmonyPatch]
     public static class ValheimSimpleAutoSortPatch {
         [HarmonyPatch("ValheimAutoSort.ValheimAutoSort, ValheimAutoSort", "MoveItems"), HarmonyPrefix]
         public static bool MoveItemPatch(Container container, Inventory playerInventory, ItemDrop.ItemData item, ref bool __result) {
