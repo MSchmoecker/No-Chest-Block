@@ -8,29 +8,36 @@ namespace NoChestBlock {
     public class Plugin : BaseUnityPlugin {
         public const string ModName = "MultiUserChest";
         public const string ModGuid = "com.maxsch.valheim.MultiUserChest";
-        public const string ModVersion = "0.1.3";
+        public const string ModVersion = "0.1.5";
 
         public static Plugin Instance { get; private set; }
 
-        private Harmony harmony;
+        private static Harmony harmony = new Harmony(ModGuid);
 
         private void Awake() {
             Instance = this;
             Log.Init(Logger);
 
-            harmony = new Harmony(ModGuid);
             harmony.PatchAll();
 
             InvokeRepeating(nameof(UpdateAccessedContainer), 0, 0.1f);
         }
 
         private void Start() {
+            ApplyModPatches();
+        }
+
+        public static void ApplyModPatches() {
             if (Chainloader.PluginInfos.ContainsKey("com.MaGic.QuickDeposit")) {
                 harmony.PatchAll(typeof(QuickDepositPatch));
             }
 
             if (Chainloader.PluginInfos.ContainsKey("org.bepinex.plugins.valheim.quick_stack")) {
                 harmony.PatchAll(typeof(QuickStackPatch));
+            }
+
+            if (Chainloader.PluginInfos.ContainsKey("ch.elusia.plugins.valheim.autosort")) {
+                harmony.PatchAll(typeof(ValheimSimpleAutoSortPatch));
             }
         }
 
