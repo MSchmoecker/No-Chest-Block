@@ -1,3 +1,5 @@
+using System.IO;
+using BepInEx;
 using NoChestBlock;
 using HarmonyLib;
 using NUnit.Framework;
@@ -12,6 +14,7 @@ namespace UnitTests {
             harmony.PatchAll(typeof(LogPatch));
             harmony.PatchAll(typeof(InventoryAddItemPatch));
             harmony.PatchAll(typeof(WriteItemToPackageNoObjectDB));
+            harmony.PatchAll(typeof(PathsPatches));
         }
 
         [HarmonyPatch]
@@ -76,6 +79,19 @@ namespace UnitTests {
                 };
 
                 return false;
+            }
+        }
+        
+        private static class PathsPatches {
+            private static string BepInExConfigPath = "";
+
+            [HarmonyPatch(typeof(Paths), nameof(Paths.BepInExConfigPath), MethodType.Getter), HarmonyPostfix]
+            public static void PatchPluginInfos(ref string __result) {
+                if (BepInExConfigPath == "") {
+                    BepInExConfigPath = Path.GetTempFileName();
+                }
+
+                __result = BepInExConfigPath;
             }
         }
     }

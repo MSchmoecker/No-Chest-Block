@@ -12,19 +12,22 @@ namespace NoChestBlock {
 
         public static Plugin Instance { get; private set; }
 
-        private Harmony harmony;
+        private static Harmony harmony = new Harmony(ModGuid);
 
         private void Awake() {
             Instance = this;
             Log.Init(Logger);
 
-            harmony = new Harmony(ModGuid);
             harmony.PatchAll();
 
             InvokeRepeating(nameof(UpdateAccessedContainer), 0, 0.1f);
         }
 
         private void Start() {
+            ApplyModPatches();
+        }
+
+        public static void ApplyModPatches() {
             if (Chainloader.PluginInfos.ContainsKey("com.MaGic.QuickDeposit")) {
                 harmony.PatchAll(typeof(QuickDepositPatch));
             }
