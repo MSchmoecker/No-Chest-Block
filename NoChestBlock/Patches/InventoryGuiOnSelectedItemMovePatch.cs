@@ -44,12 +44,12 @@ namespace NoChestBlock.Patches {
                 Timer.Start(request);
 
                 gui.m_currentContainer.m_nview.InvokeRPC("RequestItemMove", request.WriteToPackage());
-            } else if (grid.m_inventory == gui.m_currentContainer.GetInventory()) {
+            } else if (grid.GetInventory() == gui.m_currentContainer.GetInventory()) {
                 gui.m_currentContainer.AddItemToChest(item, gui.m_dragInventory, toPos, Player.m_localPlayer.GetZDOID(), dragAmount, true);
             } else {
                 ItemDrop.ItemData prevItem = grid.GetInventory().GetItemAt(toPos.x, toPos.y);
                 ZDOID zdoid = Player.m_localPlayer.GetZDOID();
-                gui.m_currentContainer.RemoveItemFromChest(gui.m_dragItem, grid.m_inventory, toPos, zdoid, dragAmount, prevItem);
+                gui.m_currentContainer.RemoveItemFromChest(gui.m_dragItem, grid.GetInventory(), toPos, zdoid, dragAmount, prevItem);
             }
 
             gui.SetupDragItem(null, null, 1);
@@ -60,17 +60,17 @@ namespace NoChestBlock.Patches {
 
         private static bool IsPlayerInventory(InventoryGrid grid, InventoryGui gui) {
             Player player = Player.m_localPlayer;
-            bool fromPlayer = gui.m_dragInventory == player.m_inventory;
-            bool toPlayer = grid.m_inventory == player.m_inventory;
+            bool fromPlayer = gui.m_dragInventory == player.GetInventory();
+            bool toPlayer = grid.GetInventory() == player.GetInventory();
 
             if (fromPlayer && toPlayer) {
                 return true;
             }
 
-            if (player.m_inventory.IsType("ExtendedInventory") && player.m_inventory.HasField("_inventories")) {
-                List<Inventory> inventories = player.m_inventory.GetField<List<Inventory>>("_inventories");
+            if (player.GetInventory().IsType("ExtendedInventory") && player.GetInventory().HasField("_inventories")) {
+                List<Inventory> inventories = player.GetInventory().GetField<List<Inventory>>("_inventories");
                 fromPlayer = inventories.Any(i => gui.m_dragInventory == i);
-                toPlayer = inventories.Any(i => grid.m_inventory == i);
+                toPlayer = inventories.Any(i => grid.GetInventory() == i);
             }
 
             return fromPlayer && toPlayer;

@@ -114,7 +114,7 @@ namespace NoChestBlock {
 
         public static void RPC_RequestItemConsumeResponse(RequestConsumeResponse response) {
             Player player = Player.m_localPlayer;
-            InventoryBlock.Get(player.m_inventory).BlockConsume(false);
+            InventoryBlock.Get(player.GetInventory()).BlockConsume(false);
 
             if (response.item == null) {
                 return;
@@ -158,7 +158,7 @@ namespace NoChestBlock {
 
             if (target.TryGetComponent(out Player player)) {
                 if (player.GetInventory().IsType("ExtendedInventory") && player.GetInventory().HasField("_inventories")) {
-                    List<Inventory> inventories = Player.m_localPlayer.m_inventory.GetField<List<Inventory>>("_inventories");
+                    List<Inventory> inventories = Player.m_localPlayer.GetInventory().GetField<List<Inventory>>("_inventories");
                     return inventories.FirstOrDefault(i => i.m_name.GetStableHashCode() == hash) ?? player.GetInventory();
                 }
 
