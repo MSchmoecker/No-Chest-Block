@@ -5,10 +5,6 @@ using UnityEngine;
 
 namespace NoChestBlock {
     public class InventoryHandler {
-        public static readonly List<Vector2i> blockedSlots = new List<Vector2i>();
-        public static bool blockConsume;
-        public static bool blockAllSlots;
-
         public static void RPC_RequestItemAddResponse(long sender, ZPackage package) {
             HandleRPC(new RequestAddResponse(package), p => GetInventory(p.sender, p.inventoryHash), RPC_RequestItemAddResponse);
         }
@@ -38,7 +34,8 @@ namespace NoChestBlock {
 #endif
         }
 
-        private static void HandleRPC<T>(T package, Func<T, Inventory> inventory, Container container, Action<Inventory, Container, T> handle) where T : IPackage {
+        private static void HandleRPC<T>(T package, Func<T, Inventory> inventory, Container container,
+            Action<Inventory, Container, T> handle) where T : IPackage {
             CallRPC(handle.Method.Name, package, () => handle.Invoke(inventory.Invoke(package), container, package));
         }
 
@@ -58,7 +55,7 @@ namespace NoChestBlock {
 
         public static void RPC_RequestItemRemoveResponse(Inventory inventory, RequestRemoveResponse response) {
             Vector2i inventoryPos = response.inventoryPos;
-            ReleaseSlot(inventoryPos);
+            InventoryBlock.Get(inventory).ReleaseSlot(inventoryPos);
 
             if (response.Success) {
                 if (response.hasSwitched) {
@@ -98,14 +95,15 @@ namespace NoChestBlock {
             Player.m_localPlayer.m_dropEffects.Create(player.position, Quaternion.identity);
 
             ItemDrop.ItemData dropData = drop.m_itemData;
-            Player.m_localPlayer.Message(MessageHud.MessageType.TopLeft, "$msg_dropped " + dropData.m_shared.m_name, dropData.m_stack, dropData.GetIcon());
+            Player.m_localPlayer.Message(MessageHud.MessageType.TopLeft, "$msg_dropped " + dropData.m_shared.m_name, dropData.m_stack,
+                dropData.GetIcon());
         }
 
         public static void RPC_RequestItemAddResponse(Inventory inventory, RequestAddResponse response) {
             Vector2i inventoryPos = response.inventoryPos;
             ItemDrop.ItemData switchItem = response.switchItem;
 
-            ReleaseSlot(inventoryPos);
+            InventoryBlock.Get(inventory).ReleaseSlot(inventoryPos);
 
             if (switchItem != null) {
                 inventory.AddItemToInventory(switchItem, switchItem.m_stack, inventoryPos);
@@ -116,7 +114,7 @@ namespace NoChestBlock {
 
         public static void RPC_RequestItemConsumeResponse(RequestConsumeResponse response) {
             Player player = Player.m_localPlayer;
-            blockConsume = false;
+            InventoryBlock.Get(player.m_inventory).BlockConsume(false);
 
             if (response.item == null) {
                 return;
@@ -136,7 +134,7 @@ namespace NoChestBlock {
         }
 
         private static void RPC_RequestTakeAllItemsResponse(Inventory inventory, Container container, RequestTakeAll response) {
-            blockAllSlots = false;
+            InventoryBlock.Get(inventory).BlockAllSlots(false);
 
             if (response.items.Count == 0) {
                 return;
@@ -172,22 +170,6 @@ namespace NoChestBlock {
             }
 
             return null;
-        }
-
-        public static void BlockSlot(Vector2i slot) {
-            blockedSlots.Add(slot);
-        }
-
-        public static void ReleaseSlot(Vector2i slot) {
-            blockedSlots.RemoveAll(i => i.x == slot.x && i.y == slot.y);
-        }
-
-        public static bool IsSlotBlocked(Vector2i slot) {
-            return !blockAllSlots && blockedSlots.Contains(slot);
-        }
-
-        public static bool IsAnySlotBlocked() {
-            return blockAllSlots || blockedSlots.Count > 0;
         }
     }
 }

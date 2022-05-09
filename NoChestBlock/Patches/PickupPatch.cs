@@ -8,25 +8,25 @@ namespace NoChestBlock.Patches {
     [HarmonyPatch]
     public static class PickupPatch {
         [HarmonyPatch(typeof(Inventory), nameof(Inventory.HaveEmptySlot)), HarmonyPrefix, HarmonyPriority(Priority.VeryLow)]
-        public static void HaveEmptySlotPrefix(ref bool __result) {
-            __result = __result && !InventoryHandler.IsAnySlotBlocked();
+        public static void HaveEmptySlotPrefix(Inventory __instance, ref bool __result) {
+            __result = __result && !InventoryBlock.Get(__instance).IsAnySlotBlocked();
         }
 
         [HarmonyPatch(typeof(Inventory), nameof(Inventory.HaveEmptySlot)), HarmonyPostfix, HarmonyPriority(Priority.VeryLow)]
-        public static void HaveEmptySlotPostfix(ref bool __result) {
-            __result = __result && !InventoryHandler.IsAnySlotBlocked();
+        public static void HaveEmptySlotPostfix(Inventory __instance, ref bool __result) {
+            __result = __result && !InventoryBlock.Get(__instance).IsAnySlotBlocked();
         }
 
         [HarmonyPatch(typeof(Inventory), nameof(Inventory.FindFreeStackSpace)), HarmonyPrefix, HarmonyPriority(Priority.VeryLow)]
-        public static void FindFreeStackSpacePrefix(ref int __result) {
-            if (InventoryHandler.IsAnySlotBlocked()) {
+        public static void FindFreeStackSpacePrefix(Inventory __instance, ref int __result) {
+            if (InventoryBlock.Get(__instance).IsAnySlotBlocked()) {
                 __result = 0;
             }
         }
 
         [HarmonyPatch(typeof(Inventory), nameof(Inventory.FindFreeStackSpace)), HarmonyPostfix, HarmonyPriority(Priority.VeryLow)]
-        public static void FindFreeStackSpacePostfix(ref int __result) {
-            if (InventoryHandler.IsAnySlotBlocked()) {
+        public static void FindFreeStackSpacePostfix(Inventory __instance, ref int __result) {
+            if (InventoryBlock.Get(__instance).IsAnySlotBlocked()) {
                 __result = 0;
             }
         }

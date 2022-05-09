@@ -30,11 +30,13 @@ namespace NoChestBlock.Patches {
 
         [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.OnRightClickItem)), HarmonyPrefix]
         public static bool InventoryGuiOnRightClickItemPatch(InventoryGui __instance, InventoryGrid grid, ItemDrop.ItemData item) {
-            if (item == null || !Player.m_localPlayer) {
+            Player player = Player.m_localPlayer;
+
+            if (item == null || !player) {
                 return true;
             }
 
-            if (grid.GetInventory() == Player.m_localPlayer.GetInventory()) {
+            if (grid.GetInventory() == player.GetInventory()) {
                 return true;
             }
 
@@ -42,12 +44,12 @@ namespace NoChestBlock.Patches {
                 return true;
             }
 
-            if (InventoryHandler.blockConsume) {
+            if (InventoryBlock.Get(player.GetInventory()).IsConsumeBlocked()) {
                 return false;
             }
 
-            if (Player.m_localPlayer.CanConsumeItem(item)) {
-                InventoryHandler.blockConsume = true;
+            if (player.CanConsumeItem(item)) {
+                InventoryBlock.Get(player.GetInventory()).BlockConsume(true);
                 RequestConsume request = new RequestConsume(item);
 
                 Timer.Start(request);
