@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using BepInEx.Bootstrap;
 using HarmonyLib;
-using NoChestBlock;
+using MultiUserChest;
 using NUnit.Framework;
 
 namespace UnitTests {
@@ -26,7 +26,7 @@ namespace UnitTests {
         [Test]
         public void NoCompatHasHarmonyPatchAttribute() {
             foreach (Type type in typeof(Plugin).Module.GetTypes()) {
-                if (type.Namespace == "NoChestBlock.Patches.Compatibility") {
+                if (type.Namespace == "MultiUserChest.Patches.Compatibility") {
                     HasNoHarmonyPatchAttribute(type);
                 }
             }

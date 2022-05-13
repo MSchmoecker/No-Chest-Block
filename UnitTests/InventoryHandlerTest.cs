@@ -1,5 +1,5 @@
-using NoChestBlock;
-using NoChestBlock.Patches;
+using MultiUserChest;
+using MultiUserChest.Patches;
 using NUnit.Framework;
 
 namespace UnitTests {

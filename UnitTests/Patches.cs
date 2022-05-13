@@ -1,6 +1,6 @@
 using System.IO;
 using BepInEx;
-using NoChestBlock;
+using MultiUserChest;
 using HarmonyLib;
 using NUnit.Framework;
 

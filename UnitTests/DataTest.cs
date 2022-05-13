@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using NoChestBlock;
+using MultiUserChest;
 using NUnit.Framework;
 
 namespace UnitTests {

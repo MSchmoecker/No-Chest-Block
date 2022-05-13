@@ -94,9 +94,9 @@
         <Compile Include="ItemTestBase.cs" />
     </ItemGroup>
     <ItemGroup>
-      <ProjectReference Include="..\NoChestBlock\NoChestBlock.csproj">
+      <ProjectReference Include="..\MultiUserChest\MultiUserChest.csproj">
         <Project>{fe8b42e3-7082-4dff-a5cc-6b62b0315aca}</Project>
-        <Name>NoChestBlock</Name>
+        <Name>MultiUserChest</Name>
       </ProjectReference>
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

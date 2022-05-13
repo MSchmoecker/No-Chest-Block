@@ -1,4 +1,4 @@
-﻿using NoChestBlock;
+﻿using MultiUserChest;
 using NUnit.Framework;
 
 namespace UnitTests {

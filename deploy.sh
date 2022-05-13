@@ -1,5 +1,5 @@
 ModName="MultiUserChest"
-ModPath="NoChestBlock"
+ModPath="MultiUserChest"
 
 # function for xml reading
 read_dom () {

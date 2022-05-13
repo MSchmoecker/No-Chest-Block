@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NoChestBlock", "NoChestBlock\NoChestBlock.csproj", "{FE8B42E3-7082-4DFF-A5CC-6B62B0315ACA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiUserChest", "MultiUserChest\MultiUserChest.csproj", "{FE8B42E3-7082-4DFF-A5CC-6B62B0315ACA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\UnitTests.csproj", "{CE6CA703-7B4B-4EDF-8748-259E15EF4D6E}"
 EndProject

@@ -1,4 +1,4 @@
-using NoChestBlock;
+using MultiUserChest;
 using HarmonyLib;
 using NUnit.Framework;
 using UnityEngine;
