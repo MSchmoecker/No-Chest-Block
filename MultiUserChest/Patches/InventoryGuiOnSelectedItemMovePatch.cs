@@ -23,7 +23,7 @@ namespace MultiUserChest.Patches {
                    .InstructionEnumeration();
         }
 
-        private static bool MoveItem(InventoryGrid grid, ItemDrop.ItemData item, Vector2i toPos) {
+        private static bool MoveItem(InventoryGrid grid, ItemDrop.ItemData prevItem, Vector2i toPos) {
             Log.LogDebug("MoveItem");
 
             InventoryGui gui = InventoryGui.instance;
@@ -45,9 +45,8 @@ namespace MultiUserChest.Patches {
 
                 gui.m_currentContainer.m_nview.InvokeRPC("RequestItemMove", request.WriteToPackage());
             } else if (grid.GetInventory() == gui.m_currentContainer.GetInventory()) {
-                gui.m_currentContainer.AddItemToChest(item, gui.m_dragInventory, toPos, Player.m_localPlayer.GetZDOID(), dragAmount, true);
+                gui.m_currentContainer.AddItemToChest(gui.m_dragItem, gui.m_dragInventory, toPos, Player.m_localPlayer.GetZDOID(), dragAmount, true);
             } else {
-                ItemDrop.ItemData prevItem = grid.GetInventory().GetItemAt(toPos.x, toPos.y);
                 ZDOID zdoid = Player.m_localPlayer.GetZDOID();
                 gui.m_currentContainer.RemoveItemFromChest(gui.m_dragItem, grid.GetInventory(), toPos, zdoid, dragAmount, prevItem);
             }
