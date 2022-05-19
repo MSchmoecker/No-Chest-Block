@@ -15,6 +15,8 @@ namespace UnitTests {
             harmony.PatchAll(typeof(InventoryAddItemPatch));
             harmony.PatchAll(typeof(WriteItemToPackageNoObjectDB));
             harmony.PatchAll(typeof(PathsPatches));
+            harmony.PatchAll(typeof(MultiUserChest.Patches.PickupPatch));
+            harmony.PatchAll(typeof(MultiUserChest.Patches.TombStonePatch));
         }
 
         [HarmonyPatch]

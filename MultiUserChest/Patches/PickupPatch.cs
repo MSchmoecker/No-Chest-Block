@@ -17,6 +17,20 @@ namespace MultiUserChest.Patches {
             __result = __result && !InventoryBlock.Get(__instance).IsAnySlotBlocked();
         }
 
+        [HarmonyPatch(typeof(Inventory), nameof(Inventory.FindEmptySlot)), HarmonyPostfix, HarmonyPriority(Priority.VeryLow)]
+        public static void FindEmptySlotPostfix(Inventory __instance, ref Vector2i __result) {
+            if (InventoryBlock.Get(__instance).IsSlotBlocked(__result)) {
+                __result = new Vector2i(-1, -1);
+            }
+        }
+
+        [HarmonyPatch(typeof(Inventory), nameof(Inventory.FindFreeStackItem)), HarmonyPostfix, HarmonyPriority(Priority.VeryLow)]
+        public static void FindFreeStackItemPostfix(Inventory __instance, ref ItemDrop.ItemData __result) {
+            if (__result != null && InventoryBlock.Get(__instance).IsSlotBlocked(__result.m_gridPos)) {
+                __result = null;
+            }
+        }
+
         [HarmonyPatch(typeof(Inventory), nameof(Inventory.FindFreeStackSpace)), HarmonyPrefix, HarmonyPriority(Priority.VeryLow)]
         public static void FindFreeStackSpacePrefix(Inventory __instance, ref int __result) {
             if (InventoryBlock.Get(__instance).IsAnySlotBlocked()) {
