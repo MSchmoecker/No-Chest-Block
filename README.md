@@ -75,6 +75,9 @@ If you use r2modman/Tunderstore Mod Manager you can set the path too, but this i
 ```
 
 ## Changelog
+0.1.6
+- Fixed errors with Jewelcrafting
+
 0.1.5
 - Fixed the compatibility patch with Valheim Simple Auto Sort was always active, resulting in a harmony error
 
