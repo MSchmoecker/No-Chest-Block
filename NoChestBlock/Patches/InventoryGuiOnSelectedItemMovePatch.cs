@@ -30,7 +30,7 @@ namespace NoChestBlock.Patches {
             bool isOwnerOfContainer = gui.m_currentContainer && gui.m_currentContainer.IsOwner();
             bool isPlayerInventory = IsPlayerInventory(grid, gui);
 
-            if (isOwnerOfContainer || isPlayerInventory) {
+            if (isOwnerOfContainer || isPlayerInventory || !gui.m_currentContainer) {
                 Log.LogDebug("MoveItem in own inventory");
                 return true;
             }

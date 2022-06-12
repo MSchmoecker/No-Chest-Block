@@ -34,7 +34,7 @@ namespace NoChestBlock.Patches {
 
             bool isOwnerOfContainer = gui.m_currentContainer && gui.m_currentContainer.IsOwner();
 
-            if (isOwnerOfContainer) {
+            if (isOwnerOfContainer || !gui.m_currentContainer) {
                 Log.LogDebug("FastMoveItem in own inventory");
                 return true;
             }
