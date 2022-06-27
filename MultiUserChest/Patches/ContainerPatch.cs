@@ -6,11 +6,6 @@ using UnityEngine;
 namespace MultiUserChest.Patches {
     [HarmonyPatch]
     public static class ContainerPatch {
-        [HarmonyPatch(typeof(Container), nameof(Container.IsInUse)), HarmonyPostfix]
-        public static void IsInUsePatch(ref bool __result, ref bool ___m_inUse) {
-            __result = false;
-        }
-
         [HarmonyPatch(typeof(Container), nameof(Container.Awake)), HarmonyPostfix]
         public static void ContainerAwakePatch(Container __instance) {
             if (!__instance.m_nview) {
@@ -46,14 +41,14 @@ namespace MultiUserChest.Patches {
             }
 
             if (!__instance.CheckAccess(playerID)) {
-                ZLog.Log("  not yours");
                 __instance.m_nview.InvokeRPC(uid, "OpenRespons", false);
             }
 
-            bool containerUse = __instance.m_inUse;
-            bool wagonUse = __instance.m_wagon && __instance.m_wagon.m_container && __instance.m_wagon.m_container.m_inUse;
+            bool containerUse = __instance.IsInUse();
+            bool wagonUse = __instance.m_wagon && __instance.m_wagon.InUse();
+            bool isMe = uid == ZNet.instance.GetUID();
 
-            if ((containerUse || wagonUse) && uid != ZNet.instance.GetUID()) {
+            if ((containerUse || wagonUse) && !isMe) {
                 __instance.m_nview.InvokeRPC(uid, "OpenRespons", true);
                 return false;
             }
