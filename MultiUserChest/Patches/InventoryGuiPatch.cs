@@ -17,7 +17,7 @@ namespace MultiUserChest.Patches {
         [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.OnTakeAll)), HarmonyPrefix]
         public static bool InventoryGuiTakeAllPatch(InventoryGui __instance) {
             if (Player.m_localPlayer.IsTeleporting() || !__instance.m_currentContainer) {
-                return false;
+                return true;
             }
 
             if (__instance.m_currentContainer.IsOwner()) {
