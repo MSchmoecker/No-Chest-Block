@@ -5,23 +5,6 @@ using UnityEngine;
 
 namespace MultiUserChest.Patches.Compatibility {
     public class QuickStackPatch {
-        [HarmonyPatch("QuickStack.QuickStackPlugin, QuickStack", "StackToMany"), HarmonyPrefix]
-        public static bool StackToManyPatch(Player player, List<Container> containers) {
-            long playerID = player.GetPlayerID();
-            int moved = 0;
-
-            foreach (Container container in containers) {
-                if (container.m_checkGuardStone && !PrivateArea.CheckAccess(container.transform.position) || !container.CheckAccess(playerID)) {
-                    continue;
-                }
-
-                moved = CallStackItems(player, container, moved);
-            }
-
-            ReportResult(player, moved);
-            return false;
-        }
-
         [HarmonyPatch("QuickStack.QuickStackPlugin, QuickStack", "DoQuickStack"), HarmonyPrefix]
         public static bool DoQuickStackPatch(Player player) {
             if (player.IsTeleporting()) {
@@ -38,7 +21,7 @@ namespace MultiUserChest.Patches.Compatibility {
 
             List<Container> nearbyContainers = FindNearbyContainers(player.transform.position);
             if (nearbyContainers.Count != 0) {
-                StackToManyPatch(player, nearbyContainers);
+                StackToMany(player, nearbyContainers);
             }
 
             return false;
@@ -64,6 +47,10 @@ namespace MultiUserChest.Patches.Compatibility {
             }
 
             return moved;
+        }
+
+        private static void StackToMany(Player player, List<Container> containers) {
+            ReflectionHelper.InvokeStaticMethod<object>("QuickStack.QuickStackPlugin, QuickStack", "StackToMany", player, containers);
         }
 
         private static void ReportResult(Player player, int moved) {
