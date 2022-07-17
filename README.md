@@ -33,17 +33,17 @@ Please report all errors and desyncs that occur.
 
 ## Confirmed Incompatible Mods
 These mods cause desync with Multi User Chest and should not be used together
-- QuickStore https://valheim.thunderstore.io/package/fenrir0054/QuickStore/
+- QuickStore https://www.nexusmods.com/valheim/mods/1595
 - SmartContainers https://www.nexusmods.com/valheim/mods/332
-- DepositAnywhere https://valheim.thunderstore.io/package/Lookenpeepers/DepositAnywhere/
-- SimpleSort https://valheim.thunderstore.io/package/Nexus/SimpleSort/
+- DepositAnywhere https://valheim.thunderstore.io/package/Lookenpeepers/DepositAnywhere
+- SimpleSort https://www.nexusmods.com/valheim/mods/584
 
 
 ## Compatible Mods
 These mods are patched by Multi User Chest to make them work together.
 The version number indicates the tested version of the other mod, a different one may also work but isn't confirmed.
-- QuickDeposit 1.0.1 https://valheim.thunderstore.io/package/MaGic/Quick_Deposit/
-- QuickStack 0.6.6 https://valheim.thunderstore.io/package/damnsneaker/QuickStack/
+- QuickDeposit 1.0.1 https://valheim.thunderstore.io/package/MaGic/Quick_Deposit
+- QuickStack 0.6.6 https://valheim.thunderstore.io/package/damnsneaker/QuickStack
 - Valheim Simple Auto Sort 1.0.6 https://www.nexusmods.com/valheim/mods/1824
 
 
