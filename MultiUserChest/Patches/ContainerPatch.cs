@@ -85,10 +85,10 @@ namespace MultiUserChest.Patches {
             return false;
         }
 
-        [HarmonyPatch(typeof(Container), nameof(Container.UpdateUseVisual)), HarmonyPrefix]
-        public static bool ContainerUpdateUseVisualPatch(Container __instance) {
+        [HarmonyPatch(typeof(Container), nameof(Container.UpdateUseVisual)), HarmonyPostfix]
+        public static void ContainerUpdateUseVisualPatch(Container __instance) {
             if (!__instance.m_nview.IsValid() || !Player.m_localPlayer || !InventoryGui.instance) {
-                return false;
+                return;
             }
 
             bool inUse = __instance == InventoryGui.instance.m_currentContainer || IsContainerInUse(__instance);
@@ -100,8 +100,6 @@ namespace MultiUserChest.Patches {
             if (__instance.m_closed) {
                 __instance.m_closed.SetActive(!inUse);
             }
-
-            return false;
         }
 
         private static bool IsContainerInUse(Container container) {
