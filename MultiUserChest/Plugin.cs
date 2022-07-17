@@ -1,6 +1,7 @@
 ﻿using BepInEx;
 using BepInEx.Bootstrap;
 using HarmonyLib;
+using Jotunn.Utils;
 using MultiUserChest.Patches.Compatibility;
 
 namespace MultiUserChest {
@@ -9,6 +10,7 @@ namespace MultiUserChest {
     [BepInIncompatibility("aedenthorn.QuickStore")]
     [BepInIncompatibility("Lookenpeepers-DepositAnywhere")]
     [BepInIncompatibility("aedenthorn.SimpleSort")]
+    [NetworkCompatibility(CompatibilityLevel.ClientMustHaveMod, VersionStrictness.Minor)]
     public class Plugin : BaseUnityPlugin {
         public const string ModName = "MultiUserChest";
         public const string ModGuid = "com.maxsch.valheim.MultiUserChest";

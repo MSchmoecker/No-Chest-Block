@@ -49,10 +49,6 @@
             <HintPath>$(VALHEIM_INSTALL)\BepInEx\core\MonoMod.Utils.dll</HintPath>
             <HintPath>$(R2MODMAN_INSTALL)\BepInEx\core\MonoMod.Utils.dll</HintPath>
         </Reference>
-        <Reference Include="Mono.Cecil, Culture=neutral">
-            <HintPath>$(VALHEIM_INSTALL)\BepInEx\core\Mono.Cecil.dll</HintPath>
-            <HintPath>$(R2MODMAN_INSTALL)\BepInEx\core\Mono.Cecil.dll</HintPath>
-        </Reference>
         <Reference Include="assembly_utils, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
             <HintPath>$(VALHEIM_INSTALL)\valheim_Data\Managed\publicized_assemblies\assembly_utils_publicized.dll</HintPath>
         </Reference>

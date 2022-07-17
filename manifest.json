@@ -4,6 +4,7 @@
 	"version_number": "0.1.5",
 	"website_url": "https://github.com/MSchmoecker/No-Chest-Block",
 	"dependencies": [
-		"denikson-BepInExPack_Valheim-5.4.1900"
+		"denikson-BepInExPack_Valheim-5.4.1901",
+        "ValheimModding-Jotunn-2.7.2"
 	]
 }
