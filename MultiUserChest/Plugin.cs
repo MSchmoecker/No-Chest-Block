@@ -11,6 +11,7 @@ namespace MultiUserChest {
     [BepInIncompatibility("Lookenpeepers-DepositAnywhere")]
     [BepInIncompatibility("aedenthorn.SimpleSort")]
     [NetworkCompatibility(CompatibilityLevel.ClientMustHaveMod, VersionStrictness.Minor)]
+    [BepInDependency(Jotunn.Main.ModGuid)]
     public class Plugin : BaseUnityPlugin {
         public const string ModName = "MultiUserChest";
         public const string ModGuid = "com.maxsch.valheim.MultiUserChest";
