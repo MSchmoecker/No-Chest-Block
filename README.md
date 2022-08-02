@@ -6,19 +6,18 @@ Allows multiple players to interact with the same chest at the same time.
 
 
 ## Installation
-This mod requires [BepInEx](https://valheim.thunderstore.io/package/denikson/BepInExPack_Valheim/).
+This mod requires [BepInEx](https://valheim.thunderstore.io/package/denikson/BepInExPack_Valheim/) and [Jötunn](https://valheim.thunderstore.io/package/ValheimModding/Jotunn/).
 Extract all files to `BepInEx/plugins/MultiUserChest`
 
-All player need to install this mod. It can be installed at a server, but doesn't do anything.\
-It is highly recommended to force the installation as items may be deleted or duplicated otherwise.
+All player need to install this mod.
+It can be installed at a server to enforce the installation on all clients.
 
-I have tested this mod to my best ability but cannot ensure there all edge cases covered, especially with other mods.
 Please report all errors and desyncs that occur.
 
 
 ## FAQ
 - Who needs this installed?
-  - Ever player, server is not needed.
+  - Ever player, server is optional to enforce the installation.
 - When two players move an item at the exact same time, will it be duplicated?
   - No, only one movement will be accepted.
 - Can this be added to an existing game?
@@ -32,7 +31,7 @@ Please report all errors and desyncs that occur.
 
 
 ## Confirmed Incompatible Mods
-These mods cause desync with Multi User Chest and should not be used together
+These mods cause desync with Multi User Chest and can not be used together
 - QuickStore https://www.nexusmods.com/valheim/mods/1595
 - SmartContainers https://www.nexusmods.com/valheim/mods/332
 - DepositAnywhere https://valheim.thunderstore.io/package/Lookenpeepers/DepositAnywhere
@@ -44,7 +43,7 @@ These mods are patched by Multi User Chest to make them work together.
 The version number indicates the tested version of the other mod, a different one may also work but isn't confirmed.
 - QuickDeposit 1.0.1 https://valheim.thunderstore.io/package/MaGic/Quick_Deposit
 - QuickStack 0.6.6 https://valheim.thunderstore.io/package/damnsneaker/QuickStack
-- Valheim Simple Auto Sort 1.0.6 https://www.nexusmods.com/valheim/mods/1824
+- Valheim Simple Auto Sort 1.0.7 https://www.nexusmods.com/valheim/mods/1824
 
 
 ## Links
@@ -75,6 +74,15 @@ If you use r2modman/Tunderstore Mod Manager you can set the path too, but this i
 ```
 
 ## Changelog
+0.2.0
+- Added ability to making synced non-player interactions on chests possible. This will be the base for other mods I am working on
+- Added BepInEx incompatibility for conflicting mods to prevent item issues. This means Multi User Chest will not start if any of the incompatible mods are installed
+- Added Jotunn dependency for utilities
+- Added enforcement of mod version if the mod is installed on the server
+- Removed Container.IsInUse() patch to improve mod compatibility
+- Removed custom file logger
+- General improvements
+
 0.1.6
 - Fixed errors with Jewelcrafting
 
