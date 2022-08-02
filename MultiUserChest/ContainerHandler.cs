@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using JetBrains.Annotations;
+using UnityEngine;
 
 namespace MultiUserChest {
     public static class ContainerHandler {
@@ -26,11 +27,11 @@ namespace MultiUserChest {
 
         public static RequestAdd AddItemToChest(this Container container, ItemDrop.ItemData item, Inventory targetInventory, Vector2i to,
             ZDOID sender, int dragAmount = -1, bool allowSwitch = false) {
-            dragAmount = dragAmount < 0 ? item.m_stack : dragAmount;
+            dragAmount = dragAmount < 0 ? item.m_stack : Mathf.Min(dragAmount, item.m_stack);
             RequestAdd request = new RequestAdd(to, dragAmount, item, targetInventory.m_name, allowSwitch, sender);
             InventoryBlock.Get(targetInventory).BlockSlot(item.m_gridPos);
 
-            targetInventory.RemoveItem(item.m_shared.m_name, dragAmount);
+            targetInventory.RemoveItem(item, dragAmount);
 
             if (container != null && container.m_nview) {
                 if (container.m_nview.IsOwner()) {

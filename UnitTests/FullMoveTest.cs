@@ -166,6 +166,48 @@ namespace UnitTests {
         }
 
         [Test]
+        public void AddItemToChestHigherDragAmount() {
+            player.CreateItem("my item A", 5, 3, 3);
+
+            RequestAdd request = ContainerHandler.AddItemToChest(null, player.GetItemAt(3, 3), player, new Vector2i(1, 1), ZDOID.None, 7, false);
+            RequestAddResponse response = GetAddResponse(request);
+            InventoryHandler.RPC_RequestItemAddResponse(player, response);
+
+            TestForItems(player);
+            TestForItems(container, new TestItem("my item A", 5, new Vector2i(1, 1)));
+        }
+
+        [Test]
+        public void AddItemToChestDifferentSlotSameItems() {
+            player.CreateItem("my item A", 10, 2, 2);
+            player.CreateItem("my item A", 10, 3, 2);
+
+            RequestAdd request = ContainerHandler.AddItemToChest(null, player.GetItemAt(3, 2), player, new Vector2i(1, 2), ZDOID.None, 3, false);
+            RequestAddResponse response = GetAddResponse(request);
+            InventoryHandler.RPC_RequestItemAddResponse(player, response);
+
+            TestForItems(player, new[] {
+                new TestItem("my item A", 10, new Vector2i(2, 2)),
+                new TestItem("my item A", 7, new Vector2i(3, 2)),
+            });
+            TestForItems(container, new[] {
+                new TestItem("my item A", 3, new Vector2i(1, 2)),
+            });
+
+            request = ContainerHandler.AddItemToChest(null, player.GetItemAt(2, 2), player, new Vector2i(1, 2), ZDOID.None, 2, false);
+            response = GetAddResponse(request);
+            InventoryHandler.RPC_RequestItemAddResponse(player, response);
+
+            TestForItems(player, new[] {
+                new TestItem("my item A", 8, new Vector2i(2, 2)),
+                new TestItem("my item A", 7, new Vector2i(3, 2)),
+            });
+            TestForItems(container, new[] {
+                new TestItem("my item A", 5, new Vector2i(1, 2)),
+            });
+        }
+
+        [Test]
         public void RemoveFromChest_SlotOccupied_DifferentItem_FullMove() {
             player.CreateItem("itemA", 5, 2, 2);
             container.CreateItem("itemB", 5, 2, 2);
