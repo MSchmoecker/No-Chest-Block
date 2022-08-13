@@ -81,7 +81,7 @@ namespace MultiUserChest {
         }
 
         private static void UpdateGUIAfterPlayerMove(ZDOID sender) {
-            if (InventoryGui.instance != null && sender == Player.m_localPlayer.GetZDOID()) {
+            if (InventoryGui.instance && Player.m_localPlayer && sender == Player.m_localPlayer.GetZDOID()) {
                 InventoryGui.instance.UpdateCraftingPanel();
             }
         }
