@@ -42,6 +42,7 @@ namespace MultiUserChest.Patches {
 
             if (!__instance.CheckAccess(playerID)) {
                 __instance.m_nview.InvokeRPC(uid, "OpenRespons", false);
+                return false;
             }
 
             bool containerUse = __instance.IsInUse();
