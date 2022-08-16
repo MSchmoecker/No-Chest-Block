@@ -57,6 +57,9 @@ The version number indicates the tested version of the other mod, a different on
 See [contributing](https://github.com/MSchmoecker/No-Chest-Block/blob/master/CONTRIBUTING.md).
 
 ## Changelog
+0.2.1
+- Fixed an error that could occur when an item was moved while the player is spawning
+
 0.2.0
 - Added ability to making synced non-player interactions on chests possible. This will be the base for other mods I am working on
 - Added BepInEx incompatibility for conflicting mods to prevent item issues. This means Multi User Chest will not start if any of the incompatible mods are installed

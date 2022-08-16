@@ -15,7 +15,7 @@ namespace MultiUserChest {
     public class Plugin : BaseUnityPlugin {
         public const string ModName = "MultiUserChest";
         public const string ModGuid = "com.maxsch.valheim.MultiUserChest";
-        public const string ModVersion = "0.2.0";
+        public const string ModVersion = "0.2.1";
 
         public static Plugin Instance { get; private set; }
 

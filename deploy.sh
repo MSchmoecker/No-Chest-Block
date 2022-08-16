@@ -30,7 +30,6 @@ fi
 PluginFolder="$BepInExFolder/plugins"
 ModDir="$PluginFolder/$ModName"
 
-echo Coping...
 echo "$ModDir"
 
 # copy content
@@ -44,8 +43,8 @@ cp icon.png "$ModDir"
 # make zip files
 cd "$ModDir" || exit
 
-[ -f "$ModName.zip" ] && rm "$ModName.zip"
-[ -f "$ModName-Nexus.zip" ] && rm "$ModName-Nexus.zip"
+[[ -f "$ModName.zip" ]] && rm "$ModName.zip"
+[[ -f "$ModName-Nexus.zip" ]] && rm "$ModName-Nexus.zip"
 
 mkdir -p plugins/"$ModName"
 cp "$ModName.dll" plugins/"$ModName"
