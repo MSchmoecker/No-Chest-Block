@@ -12,7 +12,7 @@ Extract all files to `BepInEx/plugins/MultiUserChest`
 All player need to install this mod.
 It can be installed at a server to enforce the installation on all clients.
 
-Please report all errors and desyncs that occur.
+Please report all errors and desyncs if they occur.
 
 
 ## FAQ
@@ -31,16 +31,16 @@ Please report all errors and desyncs that occur.
 
 
 ## Confirmed Incompatible Mods
-These mods cause desync with Multi User Chest and can not be used together
+These mods cause desync with Multi User Chest and will not startup together
 - QuickStore https://www.nexusmods.com/valheim/mods/1595
-- SmartContainers https://www.nexusmods.com/valheim/mods/332
 - DepositAnywhere https://valheim.thunderstore.io/package/Lookenpeepers/DepositAnywhere
 - SimpleSort https://www.nexusmods.com/valheim/mods/584
 
 
 ## Compatible Mods
-These mods are patched by Multi User Chest to make them work together.
+Some of those mods are patched by Multi User Chest to make them work together.
 The version number indicates the tested version of the other mod, a different one may also work but isn't confirmed.
+- SmartContainers 1.6.3 https://www.nexusmods.com/valheim/mods/332
 - QuickDeposit 1.0.1 https://valheim.thunderstore.io/package/MaGic/Quick_Deposit
 - QuickStack 0.6.6 https://valheim.thunderstore.io/package/damnsneaker/QuickStack
 - Valheim Simple Auto Sort 1.0.7 https://www.nexusmods.com/valheim/mods/1824
@@ -57,6 +57,9 @@ The version number indicates the tested version of the other mod, a different on
 See [contributing](https://github.com/MSchmoecker/No-Chest-Block/blob/master/CONTRIBUTING.md).
 
 ## Changelog
+0.2.2
+- Added compatibility with [SmartContainers](https://www.nexusmods.com/valheim/mods/332)
+
 0.2.1
 - Fixed an error that could occur when an item was moved while the player is spawning
 
