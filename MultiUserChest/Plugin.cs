@@ -6,7 +6,6 @@ using MultiUserChest.Patches.Compatibility;
 
 namespace MultiUserChest {
     [BepInPlugin(ModGuid, ModName, ModVersion)]
-    [BepInIncompatibility("flueno.SmartContainers")]
     [BepInIncompatibility("aedenthorn.QuickStore")]
     [BepInIncompatibility("Lookenpeepers-DepositAnywhere")]
     [BepInIncompatibility("aedenthorn.SimpleSort")]
