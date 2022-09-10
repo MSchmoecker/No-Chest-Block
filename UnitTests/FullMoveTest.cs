@@ -231,5 +231,19 @@ namespace UnitTests {
             TestForItems(player, new TestItem("itemB", 5, new Vector2i(2, 2)));
             TestForItems(container);
         }
+
+        [Test]
+        public void AddToChest_InventoryChangedAfterRequestConstructed() {
+            player.CreateItem("itemA", 5, 2, 2);
+
+            RequestAdd request = ContainerHandler.AddItemToChest(null, player.GetItemAt(2, 2), player, new Vector2i(2, 2), ZDOID.None, 5, true);
+            container.CreateItem("itemB", 5, 2, 2);
+
+            RequestAddResponse response = GetAddResponse(request);
+            InventoryHandler.RPC_RequestItemAddResponse(player, response);
+
+            TestForItems(player, new TestItem("itemB", 5, new Vector2i(2, 2)));
+            TestForItems(container, new TestItem("itemA", 5, new Vector2i(2, 2)));
+        }
     }
 }
