@@ -106,7 +106,11 @@ namespace MultiUserChest {
             InventoryBlock.Get(inventory).ReleaseSlot(inventoryPos);
 
             if (switchItem != null) {
-                inventory.AddItemToInventory(switchItem, switchItem.m_stack, inventoryPos);
+                bool added = inventory.AddItemToInventory(switchItem, switchItem.m_stack, inventoryPos);
+
+                if (!added) {
+                    DropItem(switchItem, switchItem.m_stack);
+                }
             }
 
             UpdateGUIAfterPlayerMove(response.sender);
