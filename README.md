@@ -9,7 +9,7 @@ Allows multiple players to interact with the same chest at the same time.
 This mod requires [BepInEx](https://valheim.thunderstore.io/package/denikson/BepInExPack_Valheim/) and [Jötunn](https://valheim.thunderstore.io/package/ValheimModding/Jotunn/).
 Extract all files to `BepInEx/plugins/MultiUserChest`
 
-All player need to install this mod.
+All players need to install this mod.
 It can be installed at a server to enforce the installation on all clients.
 
 Please report all errors and desyncs if they occur.
@@ -57,6 +57,9 @@ The version number indicates the tested version of the other mod, a different on
 See [contributing](https://github.com/MSchmoecker/No-Chest-Block/blob/master/CONTRIBUTING.md).
 
 ## Changelog
+0.2.3
+- Fixed item loss in high latency situations. This could occur when the receiving slot was occupied before the item was fully transferred. If items cannot be delivered, they are now dropped to the ground 
+
 0.2.2
 - Added compatibility with [SmartContainers](https://www.nexusmods.com/valheim/mods/332)
 
