@@ -183,6 +183,22 @@ namespace MultiUserChest {
         }
 
         public static bool AddItemToInventory(this Inventory target, ItemDrop.ItemData item, int amount, Vector2i pos) {
+            if (amount == 0) {
+                return false;
+            }
+
+            ItemDrop.ItemData curItem = target.GetItemAt(pos.x, pos.y);
+
+            if (curItem != null) {
+                if (!IsSameItem(curItem, item)) {
+                    return false;
+                }
+
+                if (curItem.m_stack + amount > curItem.m_shared.m_maxStackSize) {
+                    return false;
+                }
+            }
+
             string name = item.m_dropPrefab != null ? item.m_dropPrefab.name : item.m_shared.m_name;
             return target.AddItem(name, amount, item.m_durability, pos, item.m_equiped, item.m_quality,
                                   item.m_variant, item.m_crafterID, item.m_crafterName);

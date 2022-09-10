@@ -48,9 +48,7 @@ namespace UnitTests {
             [HarmonyPatch(typeof(Inventory), nameof(Inventory.AddItem), typeof(string), typeof(int), typeof(float), typeof(Vector2i),
                           typeof(bool), typeof(int), typeof(int), typeof(long), typeof(string)), HarmonyPrefix]
             public static bool AddNoMonoBehaviourPatch(Inventory __instance, ref bool __result, string name, int stack, float durability,
-                Vector2i pos,
-                bool equiped, int quality, int variant,
-                long crafterID, string crafterName) {
+                Vector2i pos, bool equiped, int quality, int variant, long crafterID, string crafterName) {
                 ItemDrop.ItemData itemData = new ItemDrop.ItemData() {
                     m_stack = stack,
                     m_durability = durability,
@@ -64,7 +62,8 @@ namespace UnitTests {
                         m_maxStackSize = 20
                     }
                 };
-                __result = __instance.AddItem(itemData, itemData.m_stack, pos.x, pos.y);
+                __instance.AddItem(itemData, itemData.m_stack, pos.x, pos.y);
+                __result = true;
                 return false;
             }
         }
@@ -83,7 +82,7 @@ namespace UnitTests {
                 return false;
             }
         }
-        
+
         private static class PathsPatches {
             private static string BepInExConfigPath = "";
 

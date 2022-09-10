@@ -108,5 +108,64 @@ namespace UnitTests {
                 new TestItem("my item 2", 10, new Vector2i(3, 3)),
             });
         }
+
+        [Test]
+        public void AddItem_FreeSlot() {
+            ItemDrop.ItemData item = Helper.CreateItem("itemA", 5);
+            bool success = inventory.AddItemToInventory(item, 5, new Vector2i(2, 2));
+
+            Assert.True(success);
+            TestForItems(inventory, new TestItem("itemA", 5, new Vector2i(2, 2)));
+        }
+
+        [Test]
+        public void AddItem_Stack() {
+            inventory.CreateItem("itemA", 5, 2, 2);
+            ItemDrop.ItemData item = Helper.CreateItem("itemA", 5);
+            bool success = inventory.AddItemToInventory(item, 5, new Vector2i(2, 2));
+
+            Assert.True(success);
+            TestForItems(inventory, new TestItem("itemA", 10, new Vector2i(2, 2)));
+        }
+
+        [Test]
+        public void AddItem_ExactStack() {
+            inventory.CreateItem("itemA", 15, 2, 2);
+            ItemDrop.ItemData item = Helper.CreateItem("itemA", 5);
+            bool success = inventory.AddItemToInventory(item, 5, new Vector2i(2, 2));
+
+            Assert.True(success);
+            TestForItems(inventory, new TestItem("itemA", 20, new Vector2i(2, 2)));
+        }
+
+        [Test]
+        public void AddItem_DifferentStack() {
+            inventory.CreateItem("itemA", 5, 2, 2);
+            ItemDrop.ItemData item = Helper.CreateItem("itemB", 5);
+            bool success = inventory.AddItemToInventory(item, 5, new Vector2i(2, 2));
+
+            Assert.False(success);
+            TestForItems(inventory, new TestItem("itemA", 5, new Vector2i(2, 2)));
+        }
+
+        [Test]
+        public void AddItem_NoSpace() {
+            inventory.CreateItem("itemA", 20, 2, 2);
+            ItemDrop.ItemData item = Helper.CreateItem("itemA", 5);
+            bool success = inventory.AddItemToInventory(item, 5, new Vector2i(2, 2));
+
+            Assert.False(success);
+            TestForItems(inventory, new TestItem("itemA", 20, new Vector2i(2, 2)));
+        }
+
+        [Test]
+        public void AddItem_NotEnoughSpace() {
+            inventory.CreateItem("itemA", 17, 2, 2);
+            ItemDrop.ItemData item = Helper.CreateItem("itemA", 5);
+            bool success = inventory.AddItemToInventory(item, 5, new Vector2i(2, 2));
+
+            Assert.False(success);
+            TestForItems(inventory, new TestItem("itemA", 17, new Vector2i(2, 2)));
+        }
     }
 }
