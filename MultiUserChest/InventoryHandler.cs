@@ -64,11 +64,21 @@ namespace MultiUserChest {
                 }
 
                 if (inventoryPos.x >= 0 && inventoryPos.y >= 0) {
-                    inventory.AddItemToInventory(response.responseItem, response.Amount, inventoryPos);
+                    bool added = inventory.AddItemToInventory(response.responseItem, response.Amount, inventoryPos);
+
+                    if (!added) {
+                        DropItem(response.responseItem, response.Amount);
+                    }
                 } else {
                     Inventory tmp = new Inventory("tmp", null, 1, 1);
                     tmp.AddItem(response.responseItem);
                     inventory.MoveItemToThis(tmp, response.responseItem);
+
+                    ItemDrop.ItemData notMovedItem = tmp.GetItemAt(0, 0);
+
+                    if (notMovedItem != null) {
+                        DropItem(notMovedItem, notMovedItem.m_stack);
+                    }
                 }
             }
 
@@ -86,17 +96,16 @@ namespace MultiUserChest {
             }
         }
 
-        private static void DropItem(ItemDrop.ItemData responseItem, int amount) {
+        public static void DropItem(ItemDrop.ItemData item, int amount) {
             Transform player = Player.m_localPlayer.transform;
-            ItemDrop drop = ItemDrop.DropItem(responseItem, amount, player.position + player.forward + player.up, player.rotation);
+            ItemDrop drop = ItemDrop.DropItem(item, amount, player.position + player.forward + player.up, player.rotation);
             drop.OnPlayerDrop();
             drop.GetComponent<Rigidbody>().velocity = (player.forward + Vector3.up) * 5f;
             Player.m_localPlayer.m_zanim.SetTrigger("interact");
             Player.m_localPlayer.m_dropEffects.Create(player.position, Quaternion.identity);
 
             ItemDrop.ItemData dropData = drop.m_itemData;
-            Player.m_localPlayer.Message(MessageHud.MessageType.TopLeft, "$msg_dropped " + dropData.m_shared.m_name, dropData.m_stack,
-                dropData.GetIcon());
+            Player.m_localPlayer.Message(MessageHud.MessageType.TopLeft, "$msg_dropped " + dropData.m_shared.m_name, dropData.m_stack, dropData.GetIcon());
         }
 
         public static void RPC_RequestItemAddResponse(Inventory inventory, RequestAddResponse response) {
