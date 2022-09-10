@@ -12,6 +12,7 @@ namespace UnitTests {
             player = new Inventory("player", null, 5, 5);
             container = new Inventory("container", null, 5, 5);
             InventoryBlock.Get(player).ReleaseBlockedSlots();
+            InventoryBlock.Get(container).ReleaseBlockedSlots();
         }
 
         private RequestAddResponse GetAddResponse(RequestAdd request) {
