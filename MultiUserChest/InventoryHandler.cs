@@ -163,6 +163,10 @@ namespace MultiUserChest {
 
             inventory.MoveAll(tmp);
 
+            foreach (ItemDrop.ItemData notMovedItem in tmp.m_inventory) {
+                DropItem(notMovedItem, notMovedItem.m_stack);
+            }
+
             container.m_onTakeAllSuccess?.Invoke();
         }
 
