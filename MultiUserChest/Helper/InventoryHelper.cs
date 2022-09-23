@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
-using MultiUserChest.Patches;
+using BepInEx.Bootstrap;
+using MultiUserChest.Patches.Compatibility;
 using UnityEngine;
 
 namespace MultiUserChest {
@@ -38,6 +39,10 @@ namespace MultiUserChest {
             itemData.m_crafterID = crafterID;
             itemData.m_crafterName = crafterName;
             itemData.m_gridPos = new Vector2i(pos.x, pos.y);
+
+            if (Chainloader.PluginInfos.ContainsKey("randyknapp.mods.extendeditemdataframework")) {
+                return ExtendedItemDataFramework.CreateExtendedItemData(itemData);
+            }
 
             return itemData;
         }
@@ -199,9 +204,10 @@ namespace MultiUserChest {
                 }
             }
 
-            string name = item.m_dropPrefab != null ? item.m_dropPrefab.name : item.m_shared.m_name;
-            return target.AddItem(name, amount, item.m_durability, pos, item.m_equiped, item.m_quality,
-                                  item.m_variant, item.m_crafterID, item.m_crafterName);
+            ItemDrop.ItemData clone = item.Clone();
+            clone.m_stack = amount;
+
+            return target.AddItem(clone, amount, pos.x, pos.y);
         }
 
         public static void PrintItem(ItemDrop.ItemData itemData) {

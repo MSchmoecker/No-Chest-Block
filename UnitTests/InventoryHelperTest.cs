@@ -167,5 +167,21 @@ namespace UnitTests {
             Assert.False(success);
             TestForItems(inventory, new TestItem("itemA", 17, new Vector2i(2, 2)));
         }
+
+        [Test]
+        public void AddItem_IsCloned() {
+            ItemDrop.ItemData item = Helper.CreateItem("itemA", 5);
+            inventory.AddItemToInventory(item, 3, new Vector2i(2, 2));
+
+            Assert.AreNotSame(item, inventory.GetItemAt(2, 2));
+        }
+
+        [Test]
+        public void AddItem_IsNotModified() {
+            ItemDrop.ItemData item = Helper.CreateItem("itemA", 5);
+            inventory.AddItemToInventory(item, 3, new Vector2i(2, 2));
+
+            Assert.AreEqual(5, item.m_stack);
+        }
     }
 }

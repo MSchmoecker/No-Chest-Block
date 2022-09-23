@@ -94,6 +94,7 @@
         <Compile Include="Helper\Timer.cs" />
         <Compile Include="InventoryBlock.cs" />
         <Compile Include="InventoryHandler.cs" />
+        <Compile Include="Patches\Compatibility\ExtendedItemDataFramework.cs" />
         <Compile Include="Patches\Compatibility\QuickDepositPatch.cs" />
         <Compile Include="Patches\Compatibility\QuickStackPatch.cs" />
         <Compile Include="Patches\Compatibility\ValheimSimpleAutoSortPatch.cs" />
