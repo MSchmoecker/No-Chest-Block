@@ -50,15 +50,19 @@ The version number indicates the tested version of the other mod, a different on
 - Thunderstore: https://valheim.thunderstore.io/package/MSchmoecker/MultiUserChest/
 - Nexus: https://www.nexusmods.com/valheim/mods/1766
 - Github: https://github.com/MSchmoecker/No-Chest-Block
-- Discord: Margmas#9562
+- Discord: Margmas#9562. Feel free to DM or ping me in the [Jötunn discord](https://discord.gg/DdUt6g7gyA)
 
 
 ## Development
 See [contributing](https://github.com/MSchmoecker/No-Chest-Block/blob/master/CONTRIBUTING.md).
 
 ## Changelog
+0.2.4
+- Fixed items from EIDF were not loaded correctly when fast moving them inside shared chests. They had to be picked up to show the extended item data again
+- Improved performance of adding item to inventories by avoiding costly vanilla code
+
 0.2.3
-- Fixed item loss in high latency situations. This could occur when the receiving slot was occupied before the item was fully transferred. If items cannot be delivered, they are now dropped to the ground 
+- Fixed item loss in high latency situations. This could occur when the receiving slot was occupied before the item was fully transferred. If items cannot be delivered, they are now dropped to the ground
 
 0.2.2
 - Added compatibility with [SmartContainers](https://www.nexusmods.com/valheim/mods/332)
