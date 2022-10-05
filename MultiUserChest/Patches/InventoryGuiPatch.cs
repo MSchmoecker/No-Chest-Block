@@ -94,5 +94,32 @@ namespace MultiUserChest.Patches {
             __instance.SetupDragItem(null, null, 1);
             return false;
         }
+
+        [HarmonyPatch(typeof(Inventory), nameof(Inventory.Load)), HarmonyPostfix]
+        public static void InventorySelectSameItemAfterLoad(Inventory __instance) {
+            if (!InventoryGui.instance || InventoryGui.instance.m_dragItem == null) {
+                return;
+            }
+
+            if (!InventoryGui.instance.m_currentContainer || InventoryGui.instance.m_currentContainer.GetInventory() != __instance) {
+                return;
+            }
+
+            if (InventoryGui.instance.m_dragInventory == null || InventoryGui.instance.m_dragInventory != __instance) {
+                return;
+            }
+
+            ItemDrop.ItemData dragItem = InventoryGui.instance.m_dragItem;
+            ItemDrop.ItemData newItem = __instance.GetItemAt(dragItem.m_gridPos.x, dragItem.m_gridPos.y);
+
+            if (newItem == null) {
+                InventoryGui.instance.SetupDragItem(null, null, 1);
+                return;
+            }
+
+            int amount = Mathf.Min(newItem.m_stack, InventoryGui.instance.m_dragAmount);
+            InventoryGui.instance.m_dragAmount = amount;
+            InventoryGui.instance.m_dragItem = newItem;
+        }
     }
 }
