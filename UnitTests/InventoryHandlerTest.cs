@@ -68,10 +68,12 @@ namespace UnitTests {
         }
 
         [Test]
-        public void SlotTwoBlockOneReleased() {
+        public void SlotTwoBlock() {
             Assert.False(InventoryBlock.Get(inventory).IsSlotBlocked(new Vector2i(2, 4)));
             InventoryBlock.Get(inventory).BlockSlot(new Vector2i(2, 4));
             InventoryBlock.Get(inventory).BlockSlot(new Vector2i(2, 4));
+            Assert.True(InventoryBlock.Get(inventory).IsSlotBlocked(new Vector2i(2, 4)));
+            InventoryBlock.Get(inventory).ReleaseSlot(new Vector2i(2, 4));
             Assert.True(InventoryBlock.Get(inventory).IsSlotBlocked(new Vector2i(2, 4)));
             InventoryBlock.Get(inventory).ReleaseSlot(new Vector2i(2, 4));
             Assert.False(InventoryBlock.Get(inventory).IsSlotBlocked(new Vector2i(2, 4)));

@@ -5,7 +5,7 @@ namespace MultiUserChest {
     public class InventoryBlock {
         private static readonly Dictionary<Inventory, InventoryBlock> Inventories = new Dictionary<Inventory, InventoryBlock>();
 
-        private readonly List<Vector2i> blockedSlots = new List<Vector2i>();
+        private readonly Dictionary<Vector2i, int> blockedSlots = new Dictionary<Vector2i, int>();
         private bool blockConsume;
         private bool blockAllSlots;
 
@@ -20,11 +20,23 @@ namespace MultiUserChest {
         }
 
         public void BlockSlot(Vector2i slot) {
-            blockedSlots.Add(slot);
+            if (blockedSlots.ContainsKey(slot)) {
+                blockedSlots[slot]++;
+            } else {
+                blockedSlots[slot] = 1;
+            }
         }
 
         public void ReleaseSlot(Vector2i slot) {
-            blockedSlots.RemoveAll(i => i.x == slot.x && i.y == slot.y);
+            if (!blockedSlots.ContainsKey(slot)) {
+                return;
+            }
+
+            blockedSlots[slot]--;
+
+            if (blockedSlots[slot] <= 0) {
+                blockedSlots.Remove(slot);
+            }
         }
 
         public void ReleaseBlockedSlots() {
@@ -40,7 +52,7 @@ namespace MultiUserChest {
         }
 
         public bool IsSlotBlocked(Vector2i slot) {
-            return !blockAllSlots && blockedSlots.Contains(slot);
+            return !blockAllSlots && blockedSlots.ContainsKey(slot);
         }
 
         public bool IsAnySlotBlocked() {

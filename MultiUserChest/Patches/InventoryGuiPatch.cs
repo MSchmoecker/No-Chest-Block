@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace MultiUserChest.Patches {
     [HarmonyPatch]
-    public class InventoryGuiPatch {
+    public static class InventoryGuiPatch {
         [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.Update)), HarmonyPrefix]
         public static void InventoryGuiUpdatePatch(InventoryGui __instance) {
             if (__instance.m_currentContainer) {
