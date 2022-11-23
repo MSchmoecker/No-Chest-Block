@@ -4,13 +4,9 @@ using BepInEx.Bootstrap;
 
 namespace MultiUserChest.Patches.Compatibility {
     public static class ExtendedItemDataFramework {
-        private static ConstructorInfo extendedItemDataConstructor;
+        private static ConstructorInfo ExtendedItemDataConstructor { get; } = FindExtendedItemDataConstructor();
 
         public static ItemDrop.ItemData CreateExtendedItemData(ItemDrop.ItemData itemData) {
-            if (extendedItemDataConstructor == null) {
-                FindExtendedItemDataConstructor();
-            }
-
             object[] parameter = {
                 itemData,
                 itemData.m_stack,
@@ -23,10 +19,10 @@ namespace MultiUserChest.Patches.Compatibility {
                 itemData.m_crafterName
             };
 
-            return (ItemDrop.ItemData)extendedItemDataConstructor?.Invoke(parameter);
+            return (ItemDrop.ItemData)ExtendedItemDataConstructor?.Invoke(parameter);
         }
 
-        private static void FindExtendedItemDataConstructor() {
+        private static ConstructorInfo FindExtendedItemDataConstructor() {
             const string typeName = "ExtendedItemDataFramework.ExtendedItemData, ExtendedItemDataFramework";
             Type type = Type.GetType(typeName);
             const BindingFlags flags = BindingFlags.Instance | BindingFlags.Public;
@@ -43,7 +39,7 @@ namespace MultiUserChest.Patches.Compatibility {
                 typeof(string)
             };
 
-            extendedItemDataConstructor = type?.GetConstructor(flags, null, CallingConventions.HasThis, parameterTypes, null);
+            return type?.GetConstructor(flags, null, CallingConventions.HasThis, parameterTypes, null);
         }
     }
 }
