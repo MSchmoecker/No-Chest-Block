@@ -35,6 +35,17 @@ namespace MultiUserChest {
 #if FULL_DEBUG
             Log.LogDebug($"TakeAll:");
             Log.LogDebug($"  items: {items.Count}");
+
+            for (int i = 0; i < items.Count; i++) {
+                ItemDrop.ItemData item = items[i];
+
+                if (item == null) {
+                    Log.LogDebug($"    {i} item is null");
+                } else {
+                    Log.LogDebug($"    {i} {item.m_shared?.m_name}");
+                    Log.LogDebug($"    {i} {item.m_stack}");
+                }
+            }
 #endif
         }
     }

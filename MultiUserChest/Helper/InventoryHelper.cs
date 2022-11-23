@@ -74,22 +74,20 @@ namespace MultiUserChest {
         public static ItemDrop.ItemData GetItemDataFromObjectDB(string name) {
             GameObject itemPrefab = ObjectDB.instance.GetItemPrefab(name.GetStableHashCode());
 
-            if (itemPrefab == null) {
+            if (!itemPrefab) {
                 Log.LogWarning("Failed to find item prefab " + name);
                 return null;
             }
 
-            ItemDrop component = itemPrefab.GetComponent<ItemDrop>();
-
-            if (component == null) {
-                Log.LogWarning("Missing itemdrop in " + name);
+            if (!itemPrefab.TryGetComponent(out ItemDrop component)) {
+                Log.LogWarning("Missing ItemDrop in " + name);
                 return null;
             }
 
-            return new ItemDrop.ItemData {
-                m_shared = component.m_itemData.m_shared,
-                m_dropPrefab = itemPrefab,
-            };
+            ItemDrop.ItemData item = component.m_itemData.Clone();
+            item.m_dropPrefab = itemPrefab;
+
+            return item;
         }
 
         public static bool MoveItem(Inventory inventory, ItemDrop.ItemData item, int amount, Vector2i toPos) {
