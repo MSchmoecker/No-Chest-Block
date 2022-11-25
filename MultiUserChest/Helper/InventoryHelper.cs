@@ -19,7 +19,6 @@ namespace MultiUserChest {
             int stack = pkg.ReadInt();
             float durability = pkg.ReadSingle();
             Vector2i pos = pkg.ReadVector2i();
-            bool equipped = pkg.ReadBool();
             int quality = pkg.ReadInt();
             int variant = pkg.ReadInt();
             long crafterID = pkg.ReadLong();
@@ -33,12 +32,18 @@ namespace MultiUserChest {
 
             itemData.m_stack = Mathf.Min(stack, itemData.m_shared.m_maxStackSize);
             itemData.m_durability = durability;
-            itemData.m_equiped = equipped;
             itemData.m_quality = quality;
             itemData.m_variant = variant;
             itemData.m_crafterID = crafterID;
             itemData.m_crafterName = crafterName;
             itemData.m_gridPos = new Vector2i(pos.x, pos.y);
+
+            int customDataCount = pkg.ReadInt();
+            for (int i = 0; i < customDataCount; i++) {
+                string key = pkg.ReadString();
+                string value = pkg.ReadString();
+                itemData.m_customData[key] = value;
+            }
 
             if (Chainloader.PluginInfos.ContainsKey("randyknapp.mods.extendeditemdataframework")) {
                 return ExtendedItemDataFramework.CreateExtendedItemData(itemData);
@@ -64,11 +69,16 @@ namespace MultiUserChest {
             pkg.Write(itemData.m_stack);
             pkg.Write(itemData.m_durability);
             pkg.Write(itemData.m_gridPos);
-            pkg.Write(itemData.m_equiped);
             pkg.Write(itemData.m_quality);
             pkg.Write(itemData.m_variant);
             pkg.Write(itemData.m_crafterID);
             pkg.Write(itemData.m_crafterName);
+
+            pkg.Write(itemData.m_customData.Count);
+            foreach (KeyValuePair<string, string> pair in itemData.m_customData) {
+                pkg.Write(pair.Key);
+                pkg.Write(pair.Value);
+            }
         }
 
         public static ItemDrop.ItemData GetItemDataFromObjectDB(string name) {

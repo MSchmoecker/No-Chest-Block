@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO;
 using BepInEx;
 using MultiUserChest;
@@ -46,9 +47,9 @@ namespace UnitTests {
         [HarmonyPatch]
         public static class InventoryAddItemPatch {
             [HarmonyPatch(typeof(Inventory), nameof(Inventory.AddItem), typeof(string), typeof(int), typeof(float), typeof(Vector2i),
-                          typeof(bool), typeof(int), typeof(int), typeof(long), typeof(string)), HarmonyPrefix]
+                          typeof(bool), typeof(int), typeof(int), typeof(long), typeof(string), typeof(Dictionary<string, string>)), HarmonyPrefix]
             public static bool AddNoMonoBehaviourPatch(Inventory __instance, ref bool __result, string name, int stack, float durability,
-                Vector2i pos, bool equiped, int quality, int variant, long crafterID, string crafterName) {
+                Vector2i pos, bool equiped, int quality, int variant, long crafterID, string crafterName, Dictionary<string, string> customData) {
                 ItemDrop.ItemData itemData = new ItemDrop.ItemData() {
                     m_stack = stack,
                     m_durability = durability,
@@ -57,6 +58,7 @@ namespace UnitTests {
                     m_variant = variant,
                     m_crafterID = crafterID,
                     m_crafterName = crafterName,
+                    m_customData = customData,
                     m_shared = new ItemDrop.ItemData.SharedData() {
                         m_name = name,
                         m_maxStackSize = 20
