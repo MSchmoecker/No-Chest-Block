@@ -57,6 +57,11 @@ The version number indicates the tested version of the other mod, a different on
 See [contributing](https://github.com/MSchmoecker/No-Chest-Block/blob/master/CONTRIBUTING.md).
 
 ## Changelog
+0.3.0
+- Updated for Valheim 0.212.7 (Mistlands)
+- Fixed that an item will not be deselected if the underlying chest reloads
+- Fixed that a slot could stay blocked if the owner of the chest changes
+
 0.2.4
 - Fixed items from EIDF were not loaded correctly when fast moving them inside shared chests. They had to be picked up to show the extended item data again
 - Improved performance of adding item to inventories by avoiding costly vanilla code
