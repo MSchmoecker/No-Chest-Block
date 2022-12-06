@@ -31,14 +31,14 @@ namespace MultiUserChest {
             HandleRPC(container, sender, "RequestDropResponse", RequestDrop, () => new RequestDrop(package));
         }
 
-        private static void HandleRPC<T, T2>(Container container, long target, string rpcInvoke, Func<Inventory, T2, T> message, Func<T2> input) where T : new() where T2 : IPackage {
+        private static void HandleRPC<TResponse, TInput>(Container container, long target, string rpcInvoke, Func<Inventory, TInput, TResponse> message, Func<TInput> input) where TResponse : new() where TInput : IPackage {
             if (!container.IsOwner()) {
                 Log.LogDebug("I am not the owner");
-                container.m_nview.InvokeRPC(target, rpcInvoke, Unpack(new T()));
+                container.m_nview.InvokeRPC(target, rpcInvoke, Unpack(new TResponse()));
                 return;
             }
 
-            T2 inputPackage = input();
+            TInput inputPackage = input();
             inputPackage.PrintDebug();
 
             container.m_nview.InvokeRPC(target, rpcInvoke, Unpack(message(container.m_inventory, inputPackage)));

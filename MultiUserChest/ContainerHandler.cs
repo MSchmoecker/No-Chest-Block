@@ -4,8 +4,7 @@ using UnityEngine;
 
 namespace MultiUserChest {
     public static class ContainerHandler {
-        public static void TakeAll(Container container) {
-            Inventory playerInventory = Player.m_localPlayer.GetInventory();
+        public static void TakeAll(Container container, Inventory playerInventory) {
             List<ItemDrop.ItemData> wanted = InventoryHelper.GetAllMoveableItems(container.GetInventory(), playerInventory);
 
             InventoryBlock.Get(playerInventory).BlockAllSlots(true);

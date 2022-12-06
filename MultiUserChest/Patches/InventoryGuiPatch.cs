@@ -24,7 +24,7 @@ namespace MultiUserChest.Patches {
                 return true;
             }
 
-            ContainerHandler.TakeAll(__instance.m_currentContainer);
+            ContainerHandler.TakeAll(__instance.m_currentContainer, Player.m_localPlayer.GetInventory());
             return false;
         }
 

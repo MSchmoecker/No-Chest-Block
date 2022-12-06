@@ -81,8 +81,7 @@ namespace MultiUserChest.Patches {
                 return false;
             }
 
-            ContainerHandler.TakeAll(__instance);
-
+            ContainerHandler.TakeAll(__instance, character.GetInventory());
             return false;
         }
 
