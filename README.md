@@ -17,7 +17,7 @@ Please report all errors and desyncs if they occur.
 
 ## FAQ
 - Who needs this installed?
-  - Ever player, server is optional to enforce the installation.
+  - Every player, server is optional to enforce the installation.
 - When two players move an item at the exact same time, will it be duplicated?
   - No, only one movement will be accepted.
 - Can this be added to an existing game?
