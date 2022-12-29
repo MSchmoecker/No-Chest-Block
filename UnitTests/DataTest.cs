@@ -25,6 +25,13 @@ namespace UnitTests {
             return newRequest(package);
         }
 
+        private static ItemDrop.ItemData GetFromZPackage(ItemDrop.ItemData item) {
+            ZPackage package = new ZPackage();
+            InventoryHelper.WriteItemToPackage(item, package);
+            package.SetPos(0);
+            return InventoryHelper.LoadItemFromPackage(package);
+        }
+
         [Test]
         public void RequestAdd_PackageReadWrite() {
             RequestAdd requestAdd = new RequestAdd(posA, 4, item, "inv", true, zdoid);
@@ -138,6 +145,35 @@ namespace UnitTests {
 
             Assert.AreEqual(fromPackage.items.Count, 1);
             TestForItem(fromPackage.items[0], new TestItem("my item", 3, Vector2i.zero));
+        }
+
+        [Test]
+        public void LoadItemPosition() {
+            item.m_gridPos = new Vector2i(0, 0);
+            ItemDrop.ItemData fromPackage = GetFromZPackage(item);
+
+            Assert.AreEqual(fromPackage.m_gridPos, new Vector2i(0, 0));
+
+            item.m_gridPos = new Vector2i(1, 2);
+            fromPackage = GetFromZPackage(item);
+
+            Assert.AreEqual(fromPackage.m_gridPos, new Vector2i(1, 2));
+        }
+
+        [Test]
+        public void LoadItemNull() {
+            ItemDrop.ItemData fromPackage = GetFromZPackage(null);
+            Assert.AreEqual(fromPackage, null);
+        }
+
+        [Test]
+        public void LoadItemData() {
+            item.m_customData["testkey"] = "test";
+            ItemDrop.ItemData fromPackage = GetFromZPackage(item);
+
+            Assert.AreEqual(fromPackage.m_customData["testkey"], "test");
+            Assert.AreEqual(fromPackage.m_customData, item.m_customData);
+            Assert.AreNotSame(fromPackage.m_customData, item.m_customData);
         }
     }
 }
