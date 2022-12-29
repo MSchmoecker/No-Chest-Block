@@ -14,7 +14,6 @@ namespace UnitTests {
             harmony.PatchAll(typeof(ZLogPatch));
             harmony.PatchAll(typeof(LogPatch));
             harmony.PatchAll(typeof(InventoryAddItemPatch));
-            harmony.PatchAll(typeof(WriteItemToPackageNoObjectDB));
             harmony.PatchAll(typeof(PathsPatches));
             harmony.PatchAll(typeof(MultiUserChest.Patches.PickupPatch));
             harmony.PatchAll(typeof(MultiUserChest.Patches.TombStonePatch));
@@ -66,21 +65,6 @@ namespace UnitTests {
                 };
                 __instance.AddItem(itemData, itemData.m_stack, pos.x, pos.y);
                 __result = true;
-                return false;
-            }
-        }
-
-        [HarmonyPatch]
-        public static class WriteItemToPackageNoObjectDB {
-            [HarmonyPatch(typeof(InventoryHelper), nameof(InventoryHelper.GetItemDataFromObjectDB)), HarmonyPrefix]
-            public static bool WriteItemToPackagePatch(ref ItemDrop.ItemData __result, string name) {
-                __result = new ItemDrop.ItemData() {
-                    m_shared = new ItemDrop.ItemData.SharedData() {
-                        m_name = name,
-                        m_maxStackSize = 20,
-                    }
-                };
-
                 return false;
             }
         }

@@ -24,30 +24,22 @@ namespace MultiUserChest {
             long crafterID = pkg.ReadLong();
             string crafterName = pkg.ReadString();
 
-            ItemDrop.ItemData itemData = GetItemDataFromObjectDB(name);
-
-            if (itemData == null) {
-                return null;
-            }
-
-            itemData.m_stack = Mathf.Min(stack, itemData.m_shared.m_maxStackSize);
-            itemData.m_durability = durability;
-            itemData.m_quality = quality;
-            itemData.m_variant = variant;
-            itemData.m_crafterID = crafterID;
-            itemData.m_crafterName = crafterName;
-            itemData.m_gridPos = new Vector2i(pos.x, pos.y);
-
+            Dictionary<string, string> customData = new Dictionary<string, string>();
             int customDataCount = pkg.ReadInt();
+
             for (int i = 0; i < customDataCount; i++) {
                 string key = pkg.ReadString();
                 string value = pkg.ReadString();
-                itemData.m_customData[key] = value;
+                customData[key] = value;
             }
 
-            if (Chainloader.PluginInfos.ContainsKey("randyknapp.mods.extendeditemdataframework")) {
-                return ExtendedItemDataFramework.CreateExtendedItemData(itemData);
-            }
+            // invoke vanilla method to add a new item into the inventory system
+            // while not as performant as adding creating a ItemDrop manually, this improves compatibility with other mods
+            Inventory tempInventory = new Inventory("tmp", null, pos.x + 1, pos.y + 1);
+            tempInventory.AddItem(name, stack, durability, pos, false, quality, variant, crafterID, crafterName, customData);
+
+            ItemDrop.ItemData itemData = tempInventory.GetItemAt(pos.x, pos.y);
+            tempInventory.RemoveItem(itemData);
 
             return itemData;
         }
@@ -79,25 +71,6 @@ namespace MultiUserChest {
                 pkg.Write(pair.Key);
                 pkg.Write(pair.Value);
             }
-        }
-
-        public static ItemDrop.ItemData GetItemDataFromObjectDB(string name) {
-            GameObject itemPrefab = ObjectDB.instance.GetItemPrefab(name.GetStableHashCode());
-
-            if (!itemPrefab) {
-                Log.LogWarning("Failed to find item prefab " + name);
-                return null;
-            }
-
-            if (!itemPrefab.TryGetComponent(out ItemDrop component)) {
-                Log.LogWarning("Missing ItemDrop in " + name);
-                return null;
-            }
-
-            ItemDrop.ItemData item = component.m_itemData.Clone();
-            item.m_dropPrefab = itemPrefab;
-
-            return item;
         }
 
         public static bool MoveItem(Inventory inventory, ItemDrop.ItemData item, int amount, Vector2i toPos) {
