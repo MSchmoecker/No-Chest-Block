@@ -7,9 +7,9 @@ using UnityEngine;
 namespace MultiUserChest.Patches {
     [HarmonyPatch]
     public static class InventoryGuiPatch {
-        [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.Update)), HarmonyPrefix]
+        [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.Update)), HarmonyPostfix]
         public static void InventoryGuiUpdatePatch(InventoryGui __instance) {
-            if (__instance.m_currentContainer) {
+            if (__instance.m_currentContainer && __instance.m_currentContainer.m_nview && __instance.m_currentContainer.m_nview.IsValid()) {
                 __instance.m_currentContainer.CheckForChanges();
             }
         }
