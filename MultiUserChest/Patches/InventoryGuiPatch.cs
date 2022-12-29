@@ -59,9 +59,9 @@ namespace MultiUserChest.Patches {
             return false;
         }
 
-        // Remove IsOwner() check
         [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.UpdateContainer)), HarmonyTranspiler]
-        public static IEnumerable<CodeInstruction> UpdateContainerPatch(IEnumerable<CodeInstruction> instructions) {
+        public static IEnumerable<CodeInstruction> RemoveOwnerCheck(IEnumerable<CodeInstruction> instructions) {
+            // any player can potentially open a container, thus the owner check needs to be removed
             return new CodeMatcher(instructions)
                    .MatchForward(false,
                                  new CodeMatch(OpCodes.Ldarg_0),
