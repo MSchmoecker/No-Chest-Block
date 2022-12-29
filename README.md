@@ -23,11 +23,11 @@ Please report all errors and desyncs if they occur.
 - Can this be added to an existing game?
   - Yes, you can add and remove this mod anytime. Just make sure it is the same for all players.
 - Does it work with other modded chests
-  - Yes, most likely. But it can make problems when other mods change the behaviour of chests
+  - Yes, most likely. But it can make problems when other mods change the behaviour of chests.
 - Does it work with mods that change inventory sizes
-  - Yes
+  - Yes.
 - Does it work with mods that add quick stacking / chest sorting
-  - Depends on the mod, see [Incompatible Mods](#confirmed-incompatible-mods) and [Compatible Mods](#compatible-mods). If it not listed there, assume it doesn't work
+  - Depends on the mod, see [Incompatible Mods](#confirmed-incompatible-mods) and [Compatible Mods](#compatible-mods). If it not listed there, assume it doesn't work.
 
 
 ## Confirmed Incompatible Mods
@@ -35,6 +35,8 @@ These mods cause desync with Multi User Chest and will not startup together
 - QuickStore https://www.nexusmods.com/valheim/mods/1595
 - DepositAnywhere https://valheim.thunderstore.io/package/Lookenpeepers/DepositAnywhere
 - SimpleSort https://www.nexusmods.com/valheim/mods/584
+- Quick Stack Store Sort Trash Restock https://valheim.thunderstore.io/package/Goldenrevolver/Quick_Stack_Store_Sort_Trash_Restock (compatibility is being worked on)
+- OdinsQOL https://valheim.thunderstore.io/package/OdinPlus/OdinsQOL (only some features like AutoStore are effected, both mods will start up so make sure incomatible features are disabled)
 
 
 ## Compatible Mods
@@ -57,6 +59,11 @@ The version number indicates the tested version of the other mod, a different on
 See [contributing](https://github.com/MSchmoecker/No-Chest-Block/blob/master/CONTRIBUTING.md).
 
 ## Changelog
+0.3.1
+- Improved mod compatibility by loading items into a temporary inventory first
+- Fixed item stack size modification from V+ was causing issues
+- Changed chest inventory reload to be called after vanilla, this makes the inventory not break completely with OdinsQOL AutoStore feature. Nevertheless, both AutoStore and MUC are incompatible at this time
+
 0.3.0
 - Updated for Valheim 0.212.7 (Mistlands)
 - Fixed that an item will not be deselected if the underlying chest reloads
