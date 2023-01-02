@@ -77,5 +77,12 @@ namespace MultiUserChest {
 
             return request;
         }
+
+        public static void MoveItemInChest(this Container container, Vector2i fromPos, Vector2i toPos, int dragAmount) {
+            RequestMove request = new RequestMove(fromPos, toPos, dragAmount);
+            Timer.Start(request);
+
+            container.m_nview.InvokeRPC("RequestItemMove", request.WriteToPackage());
+        }
     }
 }

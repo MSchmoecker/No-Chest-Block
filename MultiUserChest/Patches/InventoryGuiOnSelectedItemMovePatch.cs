@@ -40,10 +40,7 @@ namespace MultiUserChest.Patches {
             int dragAmount = gui.m_dragAmount;
 
             if (grid.GetInventory() == gui.m_dragInventory) {
-                RequestMove request = new RequestMove(fromPos, toPos, dragAmount);
-                Timer.Start(request);
-
-                gui.m_currentContainer.m_nview.InvokeRPC("RequestItemMove", request.WriteToPackage());
+                gui.m_currentContainer.MoveItemInChest(fromPos, toPos, dragAmount);
             } else if (grid.GetInventory() == gui.m_currentContainer.GetInventory()) {
                 gui.m_currentContainer.AddItemToChest(gui.m_dragItem, gui.m_dragInventory, toPos, Player.m_localPlayer.GetZDOID(), dragAmount, true);
             } else {
