@@ -13,6 +13,7 @@ namespace MultiUserChest.Patches {
             }
 
             __instance.RegisterRPCs();
+            __instance.gameObject.AddComponent<ContainerExtend>();
         }
 
         public static void RegisterRPCs(this Container __instance) {

@@ -74,6 +74,7 @@
     </ItemGroup>
     <ItemGroup>
         <Compile Include="CodeMatcherExtensions.cs" />
+        <Compile Include="ContainerExtend.cs" />
         <Compile Include="ContainerHandler.cs" />
         <Compile Include="ContainerRPCHandler.cs" />
         <Compile Include="Data\IPackage.cs" />
@@ -92,15 +93,17 @@
         <Compile Include="Helper\Log.cs" />
         <Compile Include="Helper\ReflectionHelper.cs" />
         <Compile Include="Helper\Timer.cs" />
+        <Compile Include="HumanoidExtend.cs" />
         <Compile Include="InventoryBlock.cs" />
         <Compile Include="InventoryHandler.cs" />
+        <Compile Include="InventoryOwner.cs" />
         <Compile Include="Patches\Compatibility\QuickDepositPatch.cs" />
         <Compile Include="Patches\Compatibility\QuickStackPatch.cs" />
         <Compile Include="Patches\Compatibility\ValheimSimpleAutoSortPatch.cs" />
         <Compile Include="Patches\ContainerPatch.cs" />
-        <Compile Include="Patches\InventoryGuiOnSelectedItemMovePatch.cs" />
-        <Compile Include="Patches\InventoryGuiOnSelectedItemFastMovePatch.cs" />
+        <Compile Include="Patches\HumanoidPatch.cs" />
         <Compile Include="Patches\InventoryGuiPatch.cs" />
+        <Compile Include="Patches\InventoryPatch.cs" />
         <Compile Include="Patches\PickupPatch.cs" />
         <Compile Include="Patches\TombStonePatch.cs" />
         <Compile Include="Plugin.cs" />
