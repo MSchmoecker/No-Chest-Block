@@ -1,7 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using BepInEx.Bootstrap;
-using MultiUserChest.Patches.Compatibility;
 using UnityEngine;
 
 namespace MultiUserChest {

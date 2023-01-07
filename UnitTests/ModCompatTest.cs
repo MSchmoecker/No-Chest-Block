@@ -37,27 +37,6 @@ namespace UnitTests {
             Assert.DoesNotThrow(Plugin.ApplyModPatches);
         }
 
-        [Test]
-        public void QuickDepositIsApplied() {
-            Chainloader.PluginInfos.Add("com.MaGic.QuickDeposit", null);
-            FileNotFoundException exception = Assert.Throws<FileNotFoundException>(Plugin.ApplyModPatches, "QuickDeposit not patched");
-            Assert.IsTrue(exception.Message.Contains("QuickDeposit"));
-        }
-
-        [Test]
-        public void QuickStackIsApplied() {
-            Chainloader.PluginInfos.Add("org.bepinex.plugins.valheim.quick_stack", null);
-            FileNotFoundException exception = Assert.Throws<FileNotFoundException>(Plugin.ApplyModPatches, "QuickStack not patched");
-            Assert.IsTrue(exception.Message.Contains("QuickStack"));
-        }
-
-        [Test]
-        public void ValheimAutoSortIsApplied() {
-            Chainloader.PluginInfos.Add("ch.elusia.plugins.valheim.autosort", null);
-            FileNotFoundException exception = Assert.Throws<FileNotFoundException>(Plugin.ApplyModPatches, "ValheimAutoSort not patched");
-            Assert.IsTrue(exception.Message.Contains("ValheimAutoSort"));
-        }
-
         private static void HasNoHarmonyPatchAttribute(Type type) {
             Assert.False(type.CustomAttributes.Any(i => i.AttributeType.IsEquivalentTo(typeof(HarmonyPatch))),
                 $"{type.Name} has [HarmonyPatch] Attribute");

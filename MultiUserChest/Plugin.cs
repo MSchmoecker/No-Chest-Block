@@ -1,13 +1,10 @@
 ﻿using BepInEx;
-using BepInEx.Bootstrap;
 using HarmonyLib;
 using Jotunn.Utils;
-using MultiUserChest.Patches.Compatibility;
 
 namespace MultiUserChest {
     [BepInPlugin(ModGuid, ModName, ModVersion)]
     [BepInIncompatibility("aedenthorn.QuickStore")]
-    [BepInIncompatibility("Lookenpeepers-DepositAnywhere")]
     [BepInIncompatibility("aedenthorn.SimpleSort")]
     [NetworkCompatibility(CompatibilityLevel.ClientMustHaveMod, VersionStrictness.Minor)]
     [BepInDependency(Jotunn.Main.ModGuid)]
@@ -34,17 +31,6 @@ namespace MultiUserChest {
         }
 
         public static void ApplyModPatches() {
-            if (Chainloader.PluginInfos.ContainsKey("com.MaGic.QuickDeposit")) {
-                harmony.PatchAll(typeof(QuickDepositPatch));
-            }
-
-            if (Chainloader.PluginInfos.ContainsKey("org.bepinex.plugins.valheim.quick_stack")) {
-                harmony.PatchAll(typeof(QuickStackPatch));
-            }
-
-            if (Chainloader.PluginInfos.ContainsKey("ch.elusia.plugins.valheim.autosort")) {
-                harmony.PatchAll(typeof(ValheimSimpleAutoSortPatch));
-            }
         }
 
         private void UpdateAccessedContainer() {

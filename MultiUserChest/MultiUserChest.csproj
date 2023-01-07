@@ -97,9 +97,6 @@
         <Compile Include="InventoryBlock.cs" />
         <Compile Include="InventoryHandler.cs" />
         <Compile Include="InventoryOwner.cs" />
-        <Compile Include="Patches\Compatibility\QuickDepositPatch.cs" />
-        <Compile Include="Patches\Compatibility\QuickStackPatch.cs" />
-        <Compile Include="Patches\Compatibility\ValheimSimpleAutoSortPatch.cs" />
         <Compile Include="Patches\ContainerPatch.cs" />
         <Compile Include="Patches\HumanoidPatch.cs" />
         <Compile Include="Patches\InventoryGuiPatch.cs" />
