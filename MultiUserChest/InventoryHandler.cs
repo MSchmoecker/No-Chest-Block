@@ -56,28 +56,33 @@ namespace MultiUserChest {
             Vector2i inventoryPos = response.inventoryPos;
             InventoryBlock.Get(inventory).ReleaseSlot(inventoryPos);
 
-            if (response.Success) {
-                if (response.hasSwitched) {
-                    ItemDrop.ItemData atSlot = inventory.GetItemAt(inventoryPos.x, inventoryPos.y);
-                    inventory.RemoveItem(atSlot);
+            if (response.Success && inventoryPos.x >= 0 && inventoryPos.y >= 0) {
+                bool added = inventory.AddItemToInventory(response.responseItem, response.Amount, inventoryPos);
+
+                if (!added) {
+                    int dropAmount = response.Amount;
+                    ItemDrop.ItemData exisingItem = inventory.GetItemAt(inventoryPos.x, inventoryPos.y);
+
+                    if (exisingItem != null && InventoryHelper.IsSameItem(response.responseItem, exisingItem)) {
+                        int maxStackSize = exisingItem.m_shared.m_maxStackSize;
+                        int existingAmount = exisingItem.m_stack;
+                        int freeSpace = maxStackSize - existingAmount;
+
+                        exisingItem.m_stack += freeSpace;
+                        dropAmount -= freeSpace;
+                    }
+
+                    DropItem(response.responseItem, dropAmount);
                 }
+            } else if (response.responseItem != null) {
+                Inventory tmp = new Inventory("tmp", null, 1, 1);
+                tmp.AddItem(response.responseItem);
+                inventory.MoveItemToThis(tmp, response.responseItem);
 
-                if (inventoryPos.x >= 0 && inventoryPos.y >= 0) {
-                    bool added = inventory.AddItemToInventory(response.responseItem, response.Amount, inventoryPos);
+                ItemDrop.ItemData notMovedItem = tmp.GetItemAt(0, 0);
 
-                    if (!added) {
-                        DropItem(response.responseItem, response.Amount);
-                    }
-                } else {
-                    Inventory tmp = new Inventory("tmp", null, 1, 1);
-                    tmp.AddItem(response.responseItem);
-                    inventory.MoveItemToThis(tmp, response.responseItem);
-
-                    ItemDrop.ItemData notMovedItem = tmp.GetItemAt(0, 0);
-
-                    if (notMovedItem != null) {
-                        DropItem(notMovedItem, notMovedItem.m_stack);
-                    }
+                if (notMovedItem != null) {
+                    DropItem(notMovedItem, notMovedItem.m_stack);
                 }
             }
 

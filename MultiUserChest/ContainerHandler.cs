@@ -64,6 +64,16 @@ namespace MultiUserChest {
             RequestRemove request = new RequestRemove(item.m_gridPos, to, dragAmount, targetInventory.m_name, switchItem, sender);
             InventoryBlock.Get(targetInventory).BlockSlot(request.toPos);
 
+            if (switchItem != null) {
+                if (!InventoryHelper.IsSameItem(item, switchItem)) {
+                    if (dragAmount != item.m_stack) {
+                        return new RequestRemove(Vector2i.zero, Vector2i.zero, 0, "", null, ZDOID.None);
+                    }
+
+                    targetInventory.RemoveItem(switchItem);
+                }
+            }
+
             if (container != null && container.m_nview) {
                 if (container.m_nview.IsOwner()) {
                     RequestRemoveResponse response = container.GetInventory().RequestItemRemove(request);
