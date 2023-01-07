@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using BepInEx;
@@ -14,13 +15,13 @@ namespace UnitTests {
             harmony.PatchAll(typeof(ZLogPatch));
             harmony.PatchAll(typeof(LogPatch));
             harmony.PatchAll(typeof(InventoryAddItemPatch));
+            harmony.PatchAll(typeof(DropPatch));
             harmony.PatchAll(typeof(PathsPatches));
             harmony.PatchAll(typeof(MultiUserChest.Patches.PickupPatch));
             harmony.PatchAll(typeof(MultiUserChest.Patches.TombStonePatch));
         }
 
-        [HarmonyPatch]
-        public static class ZLogPatch {
+        private static class ZLogPatch {
             [HarmonyPatch(typeof(ZLog), nameof(ZLog.Log)), HarmonyPrefix]
             public static bool NoZLogPatch(object o) {
                 System.Console.WriteLine(o);
@@ -28,8 +29,7 @@ namespace UnitTests {
             }
         }
 
-        [HarmonyPatch]
-        public static class LogPatch {
+        private static class LogPatch {
             [HarmonyPatch(typeof(Log), nameof(Log.LogDebug)), HarmonyPrefix]
             public static bool NoLogPatch(object data) {
                 System.Console.WriteLine(data);
@@ -43,8 +43,7 @@ namespace UnitTests {
             }
         }
 
-        [HarmonyPatch]
-        public static class InventoryAddItemPatch {
+        private static class InventoryAddItemPatch {
             [HarmonyPatch(typeof(Inventory), nameof(Inventory.AddItem), typeof(string), typeof(int), typeof(float), typeof(Vector2i),
                           typeof(bool), typeof(int), typeof(int), typeof(long), typeof(string), typeof(Dictionary<string, string>)), HarmonyPrefix]
             public static bool AddNoMonoBehaviourPatch(Inventory __instance, ref bool __result, string name, int stack, float durability,
@@ -65,6 +64,16 @@ namespace UnitTests {
                 };
                 __instance.AddItem(itemData, itemData.m_stack, pos.x, pos.y);
                 __result = true;
+                return false;
+            }
+        }
+
+        public static class DropPatch {
+            public static event Action<ItemDrop.ItemData, int> OnDrop;
+
+            [HarmonyPatch(typeof(InventoryHandler), nameof(InventoryHandler.DropItem), typeof(ItemDrop.ItemData), typeof(int)), HarmonyPrefix]
+            private static bool NoDrop(ItemDrop.ItemData item, int amount) {
+                OnDrop?.Invoke(item, amount);
                 return false;
             }
         }

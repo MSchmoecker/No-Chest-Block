@@ -96,15 +96,20 @@ namespace MultiUserChest {
         }
 
         public static void DropItem(ItemDrop.ItemData item, int amount) {
-            Transform player = Player.m_localPlayer.transform;
-            ItemDrop drop = ItemDrop.DropItem(item, amount, player.position + player.forward + player.up, player.rotation);
+            DropItem(Player.m_localPlayer, item, amount);
+        }
+
+        private static void DropItem(Player player, ItemDrop.ItemData item, int amount) {
+            Transform playerTransform = player.transform;
+
+            ItemDrop drop = ItemDrop.DropItem(item, amount, playerTransform.position + playerTransform.forward + playerTransform.up, playerTransform.rotation);
             drop.OnPlayerDrop();
-            drop.GetComponent<Rigidbody>().velocity = (player.forward + Vector3.up) * 5f;
-            Player.m_localPlayer.m_zanim.SetTrigger("interact");
-            Player.m_localPlayer.m_dropEffects.Create(player.position, Quaternion.identity);
+            drop.GetComponent<Rigidbody>().velocity = (playerTransform.forward + Vector3.up) * 5f;
+            player.m_zanim.SetTrigger("interact");
+            player.m_dropEffects.Create(playerTransform.position, Quaternion.identity);
 
             ItemDrop.ItemData dropData = drop.m_itemData;
-            Player.m_localPlayer.Message(MessageHud.MessageType.TopLeft, "$msg_dropped " + dropData.m_shared.m_name, dropData.m_stack, dropData.GetIcon());
+            player.Message(MessageHud.MessageType.TopLeft, "$msg_dropped " + dropData.m_shared.m_name, dropData.m_stack, dropData.GetIcon());
         }
 
         public static void RPC_RequestItemAddResponse(Inventory inventory, RequestAddResponse response) {
