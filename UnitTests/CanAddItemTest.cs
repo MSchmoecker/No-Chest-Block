@@ -17,19 +17,19 @@ namespace UnitTests {
 
         [Test]
         public void CanAddItem_Blocked_SlotEmpty() {
-            ContainerHandler.AddItemToChest(null, player.GetItemAt(0, 0), player, new Vector2i(0, 0), ZDOID.None, 5, true);
+            Helper.CreateContainer().AddItemToChest(player.GetItemAt(0, 0), player, new Vector2i(0, 0), ZDOID.None, 5, true);
             Assert.False(player.CanAddItem(item));
         }
 
         [Test]
         public void CanAddItem_Blocked_SlotNotEmpty() {
-            ContainerHandler.AddItemToChest(null, player.GetItemAt(0, 0), player, new Vector2i(0, 0), ZDOID.None, 3, true);
+            Helper.CreateContainer().AddItemToChest(player.GetItemAt(0, 0), player, new Vector2i(0, 0), ZDOID.None, 3, true);
             Assert.False(player.CanAddItem(item));
         }
 
         [Test]
         public void AddItem_Blocked_Empty() {
-            ContainerHandler.AddItemToChest(null, player.GetItemAt(0, 0), player, new Vector2i(0, 0), ZDOID.None, 5, true);
+            Helper.CreateContainer().AddItemToChest(player.GetItemAt(0, 0), player, new Vector2i(0, 0), ZDOID.None, 5, true);
             bool result = player.AddItem(item);
             Assert.False(result);
             Assert.AreEqual(5, item.m_stack);
@@ -38,7 +38,7 @@ namespace UnitTests {
 
         [Test]
         public void AddItem_Blocked_NotEmpty() {
-            ContainerHandler.AddItemToChest(null, player.GetItemAt(0, 0), player, new Vector2i(0, 0), ZDOID.None, 3, true);
+            Helper.CreateContainer().AddItemToChest(player.GetItemAt(0, 0), player, new Vector2i(0, 0), ZDOID.None, 3, true);
             bool result = player.AddItem(item);
             Assert.False(result);
             Assert.AreEqual(5, item.m_stack);

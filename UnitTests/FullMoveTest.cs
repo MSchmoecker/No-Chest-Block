@@ -44,7 +44,7 @@ namespace UnitTests {
             player.CreateItem("itemA", 5, 2, 2);
             container.CreateItem("itemB", 5, 2, 2);
 
-            RequestAdd request = ContainerHandler.AddItemToChest(null, player.GetItemAt(2, 2), player, new Vector2i(2, 2), ZDOID.None, 3, true);
+            RequestAdd request = Helper.CreateContainer().AddItemToChest(player.GetItemAt(2, 2), player, new Vector2i(2, 2), ZDOID.None, 3, true);
             RequestAddResponse response = GetAddResponse(request);
             InventoryHandler.RPC_RequestItemAddResponse(player, response);
 
@@ -58,7 +58,7 @@ namespace UnitTests {
             player.CreateItem("itemA", 5, 2, 2);
             container.CreateItem("itemB", 5, 2, 2);
 
-            RequestAdd request = ContainerHandler.AddItemToChest(null, player.GetItemAt(2, 2), player, new Vector2i(2, 2), ZDOID.None, 5, true);
+            RequestAdd request = Helper.CreateContainer().AddItemToChest(player.GetItemAt(2, 2), player, new Vector2i(2, 2), ZDOID.None, 5, true);
             RequestAddResponse response = GetAddResponse(request);
             InventoryHandler.RPC_RequestItemAddResponse(player, response);
 
@@ -73,7 +73,7 @@ namespace UnitTests {
             player.CreateItem("itemA", 5, 2, 2);
             container.CreateItem("itemB", 5, 0, 0);
 
-            RequestAdd request = ContainerHandler.AddItemToChest(null, player.GetItemAt(2, 2), player, new Vector2i(-1, -1), ZDOID.None, 5, false);
+            RequestAdd request = Helper.CreateContainer().AddItemToChest(player.GetItemAt(2, 2), player, new Vector2i(-1, -1), ZDOID.None, 5, false);
             RequestAddResponse response = GetAddResponse(request);
             InventoryHandler.RPC_RequestItemAddResponse(player, response);
 
@@ -88,7 +88,7 @@ namespace UnitTests {
             player.CreateItem("itemA", 10, 3, 3);
             container.CreateItem("itemA", 15, 2, 2);
 
-            RequestAdd request = ContainerHandler.AddItemToChest(null, player.GetItemAt(3, 3), player, new Vector2i(-1, -1), ZDOID.None, 5, false);
+            RequestAdd request = Helper.CreateContainer().AddItemToChest(player.GetItemAt(3, 3), player, new Vector2i(-1, -1), ZDOID.None, 5, false);
             RequestAddResponse response = GetAddResponse(request);
             InventoryHandler.RPC_RequestItemAddResponse(player, response);
 
@@ -104,7 +104,7 @@ namespace UnitTests {
             player.CreateItem("itemA", 10, 3, 3);
             container.CreateItem("itemA", 15, 0, 0);
 
-            RequestAdd request = ContainerHandler.AddItemToChest(null, player.GetItemAt(3, 3), player, new Vector2i(-1, -1), ZDOID.None, 10, false);
+            RequestAdd request = Helper.CreateContainer().AddItemToChest(player.GetItemAt(3, 3), player, new Vector2i(-1, -1), ZDOID.None, 10, false);
             RequestAddResponse response = GetAddResponse(request);
             InventoryHandler.RPC_RequestItemAddResponse(player, response);
 
@@ -123,7 +123,7 @@ namespace UnitTests {
             player.CreateItem("itemA", 10, 3, 3);
             container.CreateItem("itemA", 15, 0, 0);
 
-            RequestAdd request = ContainerHandler.AddItemToChest(null, player.GetItemAt(3, 3), player, new Vector2i(-1, -1), ZDOID.None, 9, false);
+            RequestAdd request = Helper.CreateContainer().AddItemToChest(player.GetItemAt(3, 3), player, new Vector2i(-1, -1), ZDOID.None, 9, false);
             RequestAddResponse response = GetAddResponse(request);
             InventoryHandler.RPC_RequestItemAddResponse(player, response);
 
@@ -141,7 +141,7 @@ namespace UnitTests {
             player.CreateItem("itemA", 10, 2, 2);
             container.CreateItem("itemA", 15, 2, 2);
 
-            RequestAdd request = ContainerHandler.AddItemToChest(null, player.GetItemAt(2, 2), player, new Vector2i(2, 2), ZDOID.None, 10, true);
+            RequestAdd request = Helper.CreateContainer().AddItemToChest(player.GetItemAt(2, 2), player, new Vector2i(2, 2), ZDOID.None, 10, true);
             RequestAddResponse response = GetAddResponse(request);
             InventoryHandler.RPC_RequestItemAddResponse(player, response);
 
@@ -155,7 +155,7 @@ namespace UnitTests {
             player.CreateItem("itemA", 5, 2, 2);
             container.CreateItem("itemB", 5, 2, 2);
 
-            RequestRemove request = ContainerHandler.RemoveItemFromChest(null, container.GetItemAt(2, 2), player, new Vector2i(2, 2), ZDOID.None, 3, player.GetItemAt(2, 2));
+            RequestRemove request = Helper.CreateContainer().RemoveItemFromChest(container.GetItemAt(2, 2), player, new Vector2i(2, 2), ZDOID.None, 3, player.GetItemAt(2, 2));
             RequestRemoveResponse response = GetRemoveResponse(request);
             InventoryHandler.RPC_RequestItemRemoveResponse(player, response);
 
@@ -169,7 +169,7 @@ namespace UnitTests {
             player.CreateItem("itemA", 5, 2, 2);
             container.CreateItem("itemA", 5, 2, 2);
 
-            RequestRemove request = ContainerHandler.RemoveItemFromChest(null, container.GetItemAt(2, 2), player, new Vector2i(2, 2), ZDOID.None, 3, player.GetItemAt(2, 2));
+            RequestRemove request = Helper.CreateContainer().RemoveItemFromChest(container.GetItemAt(2, 2), player, new Vector2i(2, 2), ZDOID.None, 3, player.GetItemAt(2, 2));
             RequestRemoveResponse response = GetRemoveResponse(request);
             InventoryHandler.RPC_RequestItemRemoveResponse(player, response);
 
@@ -183,7 +183,7 @@ namespace UnitTests {
             player.CreateItem("itemA", 15, 2, 2);
             container.CreateItem("itemA", 15, 2, 2);
 
-            RequestRemove request = ContainerHandler.RemoveItemFromChest(null, container.GetItemAt(2, 2), player, new Vector2i(2, 2), ZDOID.None, 7, player.GetItemAt(2, 2));
+            RequestRemove request = Helper.CreateContainer().RemoveItemFromChest(container.GetItemAt(2, 2), player, new Vector2i(2, 2), ZDOID.None, 7, player.GetItemAt(2, 2));
             RequestRemoveResponse response = GetRemoveResponse(request);
             InventoryHandler.RPC_RequestItemRemoveResponse(player, response);
 
@@ -196,7 +196,7 @@ namespace UnitTests {
         public void AddToChest_SlotEmpty_FullMove() {
             player.CreateItem("itemA", 5, 2, 2);
 
-            RequestAdd request = ContainerHandler.AddItemToChest(null, player.GetItemAt(2, 2), player, new Vector2i(2, 2), ZDOID.None, 5, true);
+            RequestAdd request = Helper.CreateContainer().AddItemToChest(player.GetItemAt(2, 2), player, new Vector2i(2, 2), ZDOID.None, 5, true);
             RequestAddResponse response = GetAddResponse(request);
             InventoryHandler.RPC_RequestItemAddResponse(player, response);
 
@@ -211,7 +211,7 @@ namespace UnitTests {
             container.CreateItem("itemA", 15, 0, 0);
             player.CreateItem("itemA", 10, 2, 2);
 
-            RequestAdd request = ContainerHandler.AddItemToChest(null, player.GetItemAt(2, 2), player, new Vector2i(-1, -1), ZDOID.None, 10, false);
+            RequestAdd request = Helper.CreateContainer().AddItemToChest(player.GetItemAt(2, 2), player, new Vector2i(-1, -1), ZDOID.None, 10, false);
             RequestAddResponse response = GetAddResponse(request);
             InventoryHandler.RPC_RequestItemAddResponse(player, response);
 
@@ -224,7 +224,7 @@ namespace UnitTests {
         public void AddItemToChestHigherDragAmount() {
             player.CreateItem("my item A", 5, 3, 3);
 
-            RequestAdd request = ContainerHandler.AddItemToChest(null, player.GetItemAt(3, 3), player, new Vector2i(1, 1), ZDOID.None, 7, false);
+            RequestAdd request = Helper.CreateContainer().AddItemToChest(player.GetItemAt(3, 3), player, new Vector2i(1, 1), ZDOID.None, 7, false);
             RequestAddResponse response = GetAddResponse(request);
             InventoryHandler.RPC_RequestItemAddResponse(player, response);
 
@@ -238,7 +238,7 @@ namespace UnitTests {
             player.CreateItem("my item A", 10, 2, 2);
             player.CreateItem("my item A", 10, 3, 2);
 
-            RequestAdd request = ContainerHandler.AddItemToChest(null, player.GetItemAt(3, 2), player, new Vector2i(1, 2), ZDOID.None, 3, false);
+            RequestAdd request = Helper.CreateContainer().AddItemToChest(player.GetItemAt(3, 2), player, new Vector2i(1, 2), ZDOID.None, 3, false);
             RequestAddResponse response = GetAddResponse(request);
             InventoryHandler.RPC_RequestItemAddResponse(player, response);
 
@@ -251,7 +251,7 @@ namespace UnitTests {
             });
             TestForItems(ground);
 
-            request = ContainerHandler.AddItemToChest(null, player.GetItemAt(2, 2), player, new Vector2i(1, 2), ZDOID.None, 2, false);
+            request = Helper.CreateContainer().AddItemToChest(player.GetItemAt(2, 2), player, new Vector2i(1, 2), ZDOID.None, 2, false);
             response = GetAddResponse(request);
             InventoryHandler.RPC_RequestItemAddResponse(player, response);
 
@@ -270,7 +270,7 @@ namespace UnitTests {
             player.CreateItem("itemA", 5, 2, 2);
             container.CreateItem("itemB", 5, 2, 2);
 
-            RequestRemove request = ContainerHandler.RemoveItemFromChest(null, container.GetItemAt(2, 2), player, new Vector2i(2, 2), ZDOID.None, 5, player.GetItemAt(2, 2));
+            RequestRemove request = Helper.CreateContainer().RemoveItemFromChest(container.GetItemAt(2, 2), player, new Vector2i(2, 2), ZDOID.None, 5, player.GetItemAt(2, 2));
             RequestRemoveResponse response = GetRemoveResponse(request);
             InventoryHandler.RPC_RequestItemRemoveResponse(player, response);
 
@@ -283,7 +283,7 @@ namespace UnitTests {
         public void RemoveFromChest_SlotEmpty_FullMove() {
             container.CreateItem("itemB", 5, 2, 2);
 
-            RequestRemove request = ContainerHandler.RemoveItemFromChest(null, container.GetItemAt(2, 2), player, new Vector2i(2, 2), ZDOID.None, 5, player.GetItemAt(2, 2));
+            RequestRemove request = Helper.CreateContainer().RemoveItemFromChest(container.GetItemAt(2, 2), player, new Vector2i(2, 2), ZDOID.None, 5, player.GetItemAt(2, 2));
             RequestRemoveResponse response = GetRemoveResponse(request);
             InventoryHandler.RPC_RequestItemRemoveResponse(player, response);
 
@@ -296,7 +296,7 @@ namespace UnitTests {
         public void RemoveFromChest_SlotEmpty_SplitMove() {
             container.CreateItem("itemB", 5, 2, 2);
 
-            RequestRemove request = ContainerHandler.RemoveItemFromChest(null, container.GetItemAt(2, 2), player, new Vector2i(2, 2), ZDOID.None, 3, player.GetItemAt(2, 2));
+            RequestRemove request = Helper.CreateContainer().RemoveItemFromChest(container.GetItemAt(2, 2), player, new Vector2i(2, 2), ZDOID.None, 3, player.GetItemAt(2, 2));
             RequestRemoveResponse response = GetRemoveResponse(request);
             InventoryHandler.RPC_RequestItemRemoveResponse(player, response);
 
@@ -310,7 +310,7 @@ namespace UnitTests {
             player.CreateItem("itemA", 4, 2, 2);
             container.CreateItem("itemB", 5, 2, 2);
 
-            RequestRemove request = ContainerHandler.RemoveItemFromChest(null, container.GetItemAt(2, 2), player, new Vector2i(2, 2), ZDOID.None, 5, player.GetItemAt(2, 2));
+            RequestRemove request = Helper.CreateContainer().RemoveItemFromChest(container.GetItemAt(2, 2), player, new Vector2i(2, 2), ZDOID.None, 5, player.GetItemAt(2, 2));
 
             TestForItems(player);
 
@@ -326,7 +326,7 @@ namespace UnitTests {
         public void RemoveFromChest_ItemAddedBetweenRequest_DifferentItem() {
             container.CreateItem("itemB", 5, 2, 2);
 
-            RequestRemove request = ContainerHandler.RemoveItemFromChest(null, container.GetItemAt(2, 2), player, new Vector2i(2, 2), ZDOID.None, 5);
+            RequestRemove request = Helper.CreateContainer().RemoveItemFromChest(container.GetItemAt(2, 2), player, new Vector2i(2, 2), ZDOID.None, 5);
             RequestRemoveResponse response = GetRemoveResponse(request);
 
             player.CreateItem("itemA", 5, 2, 2);
@@ -342,7 +342,7 @@ namespace UnitTests {
         public void RemoveFromChest_ItemAddedBetweenRequest_SameItem() {
             container.CreateItem("itemA", 5, 2, 2);
 
-            RequestRemove request = ContainerHandler.RemoveItemFromChest(null, container.GetItemAt(2, 2), player, new Vector2i(2, 2), ZDOID.None, 5);
+            RequestRemove request = Helper.CreateContainer().RemoveItemFromChest(container.GetItemAt(2, 2), player, new Vector2i(2, 2), ZDOID.None, 5);
             RequestRemoveResponse response = GetRemoveResponse(request);
 
             player.CreateItem("itemA", 5, 2, 2);
@@ -358,7 +358,7 @@ namespace UnitTests {
         public void RemoveFromChest_ItemAddedBetweenRequest_SameItem_Overflow() {
             container.CreateItem("itemA", 5, 2, 2);
 
-            RequestRemove request = ContainerHandler.RemoveItemFromChest(null, container.GetItemAt(2, 2), player, new Vector2i(2, 2), ZDOID.None, 5);
+            RequestRemove request = Helper.CreateContainer().RemoveItemFromChest(container.GetItemAt(2, 2), player, new Vector2i(2, 2), ZDOID.None, 5);
             RequestRemoveResponse response = GetRemoveResponse(request);
 
             player.CreateItem("itemA", 19, 2, 2);
@@ -374,7 +374,7 @@ namespace UnitTests {
         public void AddToChest_InventoryChangedAfterRequestConstructed() {
             player.CreateItem("itemA", 5, 2, 2);
 
-            RequestAdd request = ContainerHandler.AddItemToChest(null, player.GetItemAt(2, 2), player, new Vector2i(2, 2), ZDOID.None, 5, true);
+            RequestAdd request = Helper.CreateContainer().AddItemToChest(player.GetItemAt(2, 2), player, new Vector2i(2, 2), ZDOID.None, 5, true);
             container.CreateItem("itemB", 5, 2, 2);
 
             RequestAddResponse response = GetAddResponse(request);
