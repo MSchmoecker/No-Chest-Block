@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using JetBrains.Annotations;
+using MultiUserChest.Patches;
 using UnityEngine;
 
 namespace MultiUserChest {
@@ -13,7 +14,7 @@ namespace MultiUserChest {
             Timer.Start(request);
 
             if (container != null && container.m_nview) {
-                container.m_nview.InvokeRPC("RequestTakeAllItems", request.WriteToPackage());
+                container.m_nview.InvokeRPC(ContainerPatch.ItemsTakeAllRPC, request.WriteToPackage());
             }
         }
 
@@ -40,7 +41,7 @@ namespace MultiUserChest {
                 }
 
                 Timer.Start(request);
-                container.m_nview.InvokeRPC("RequestItemAdd", request.WriteToPackage());
+                container.m_nview.InvokeRPC(ContainerPatch.ItemAddRPC, request.WriteToPackage());
             }
 
             return request;
@@ -82,7 +83,7 @@ namespace MultiUserChest {
                 }
 
                 Timer.Start(request);
-                container.m_nview.InvokeRPC("RequestItemRemove", request.WriteToPackage());
+                container.m_nview.InvokeRPC(ContainerPatch.ItemRemoveRPC, request.WriteToPackage());
             }
 
             return request;
@@ -92,7 +93,7 @@ namespace MultiUserChest {
             RequestMove request = new RequestMove(fromPos, toPos, dragAmount);
             Timer.Start(request);
 
-            container.m_nview.InvokeRPC("RequestItemMove", request.WriteToPackage());
+            container.m_nview.InvokeRPC(ContainerPatch.ItemMoveRPC, request.WriteToPackage());
         }
     }
 }

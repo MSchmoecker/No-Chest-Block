@@ -1,34 +1,35 @@
 using System;
 using System.Collections.Generic;
+using MultiUserChest.Patches;
 using UnityEngine;
 
 namespace MultiUserChest {
     public static class ContainerRPCHandler {
         public static void RPC_RequestItemAdd(Container container, long sender, ZPackage package) {
-            HandleRPC(container, sender, "RequestItemAddResponse", RequestItemAdd, () => new RequestAdd(package));
+            HandleRPC(container, sender,  ContainerPatch.ItemAddResponseRPC, RequestItemAdd, () => new RequestAdd(package));
         }
 
         public static void RPC_RequestItemRemove(Container container, long sender, ZPackage package) {
-            HandleRPC(container, sender, "RequestItemRemoveResponse", RequestItemRemove, () => new RequestRemove(package));
+            HandleRPC(container, sender, ContainerPatch.ItemRemoveResponseRPC, RequestItemRemove, () => new RequestRemove(package));
         }
 
         public static void RPC_RequestItemConsume(Container container, long sender, ZPackage package) {
-            HandleRPC(container, sender, "RequestItemConsumeResponse", RequestItemConsume, () => new RequestConsume(package));
+            HandleRPC(container, sender, ContainerPatch.ItemConsumeResponseRPC, RequestItemConsume, () => new RequestConsume(package));
         }
 
         public static void RPC_RequestItemMove(Container container, long sender, ZPackage package) {
 #if FULL_DEBUG
-            Log.LogDebug("RequestItemMove");
+            Log.LogDebug(nameof(RPC_RequestItemMove));
 #endif
-            HandleRPC(container, sender, "RequestItemMoveResponse", RequestItemMove, () => new RequestMove(package));
+            HandleRPC(container, sender, ContainerPatch.ItemMoveResponseRPC, RequestItemMove, () => new RequestMove(package));
         }
 
         public static void RPC_RequestTakeAllItems(Container container, long sender, ZPackage package) {
-            HandleRPC(container, sender, "RequestTakeAllItemsResponse", RequestTakeAllItems, () => new RequestTakeAll(package));
+            HandleRPC(container, sender, ContainerPatch.ItemsTakeAllResponseRPC, RequestTakeAllItems, () => new RequestTakeAll(package));
         }
 
         public static void RPC_RequestDrop(Container container, long sender, ZPackage package) {
-            HandleRPC(container, sender, "RequestDropResponse", RequestDrop, () => new RequestDrop(package));
+            HandleRPC(container, sender, ContainerPatch.ItemDropResponseRPC, RequestDrop, () => new RequestDrop(package));
         }
 
         private static void HandleRPC<TResponse, TInput>(Container container, long target, string rpcInvoke, Func<Inventory, TInput, TResponse> message, Func<TInput> input) where TResponse : new() where TInput : IPackage {

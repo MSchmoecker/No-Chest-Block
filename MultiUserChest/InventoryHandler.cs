@@ -26,7 +26,7 @@ namespace MultiUserChest {
         }
 
         public static void RPC_RequestItemMoveResponse(long sender, bool success) {
-            Timer.Stop("RPC_RequestItemMoveResponse");
+            Timer.Stop(nameof(RPC_RequestItemMoveResponse));
 #if FULL_DEBUG
             Log.LogDebug($"RequestItemMoveResponse:");
             Log.LogDebug($"\tsuccess: {success}");

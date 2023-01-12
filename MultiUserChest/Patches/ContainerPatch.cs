@@ -6,6 +6,24 @@ using UnityEngine;
 namespace MultiUserChest.Patches {
     [HarmonyPatch]
     public static class ContainerPatch {
+        public const string ItemMoveRPC = "MUC_RequestItemMove";
+        public const string ItemMoveResponseRPC = "MUC_RequestItemMoveResponse";
+
+        public const string ItemAddRPC = "MUC_RequestItemAdd";
+        public const string ItemAddResponseRPC = "MUC_RequestItemAddResponse";
+
+        public const string ItemRemoveRPC = "MUC_RequestItemRemove";
+        public const string ItemRemoveResponseRPC = "MUC_RequestItemRemoveResponse";
+
+        public const string ItemConsumeRPC = "MUC_RequestItemConsume";
+        public const string ItemConsumeResponseRPC = "MUC_RequestItemConsumeResponse";
+
+        public const string ItemDropRPC = "MUC_RequestItemDrop";
+        public const string ItemDropResponseRPC = "MUC_RequestItemDropResponse";
+
+        public const string ItemsTakeAllRPC = "MUC_RequestItemsTakeAll";
+        public const string ItemsTakeAllResponseRPC = "MUC_RequestItemsTakeAllResponse";
+
         [HarmonyPatch(typeof(Container), nameof(Container.Awake)), HarmonyPostfix]
         public static void ContainerAwakePatch(Container __instance) {
             if (!__instance.m_nview) {
@@ -19,19 +37,19 @@ namespace MultiUserChest.Patches {
         public static void RegisterRPCs(this Container __instance) {
             ZNetView nview = __instance.m_nview;
 
-            nview.Register<ZPackage>("RequestItemMove", (l, package) => ContainerRPCHandler.RPC_RequestItemMove(__instance, l, package));
-            nview.Register<ZPackage>("RequestItemAdd", (l, package) => ContainerRPCHandler.RPC_RequestItemAdd(__instance, l, package));
-            nview.Register<ZPackage>("RequestItemRemove", (l, package) => ContainerRPCHandler.RPC_RequestItemRemove(__instance, l, package));
-            nview.Register<ZPackage>("RequestItemConsume", (l, package) => ContainerRPCHandler.RPC_RequestItemConsume(__instance, l, package));
-            nview.Register<ZPackage>("RequestTakeAllItems", (l, package) => ContainerRPCHandler.RPC_RequestTakeAllItems(__instance, l, package));
-            nview.Register<ZPackage>("RequestDropItems", (l, package) => ContainerRPCHandler.RPC_RequestDrop(__instance, l, package));
+            nview.Register<ZPackage>(ItemMoveRPC, (l, package) => ContainerRPCHandler.RPC_RequestItemMove(__instance, l, package));
+            nview.Register<ZPackage>(ItemAddRPC, (l, package) => ContainerRPCHandler.RPC_RequestItemAdd(__instance, l, package));
+            nview.Register<ZPackage>(ItemRemoveRPC, (l, package) => ContainerRPCHandler.RPC_RequestItemRemove(__instance, l, package));
+            nview.Register<ZPackage>(ItemConsumeRPC, (l, package) => ContainerRPCHandler.RPC_RequestItemConsume(__instance, l, package));
+            nview.Register<ZPackage>(ItemsTakeAllRPC, (l, package) => ContainerRPCHandler.RPC_RequestTakeAllItems(__instance, l, package));
+            nview.Register<ZPackage>(ItemDropRPC, (l, package) => ContainerRPCHandler.RPC_RequestDrop(__instance, l, package));
 
-            nview.Register<bool>("RequestItemMoveResponse", InventoryHandler.RPC_RequestItemMoveResponse);
-            nview.Register<ZPackage>("RequestItemAddResponse", InventoryHandler.RPC_RequestItemAddResponse);
-            nview.Register<ZPackage>("RequestItemRemoveResponse", InventoryHandler.RPC_RequestItemRemoveResponse);
-            nview.Register<ZPackage>("RequestItemConsumeResponse", InventoryHandler.RPC_RequestItemConsumeResponse);
-            nview.Register<ZPackage>("RequestTakeAllItemsResponse", (l, package) => InventoryHandler.RPC_RequestTakeAllItemsResponse(__instance, l, package));
-            nview.Register<ZPackage>("RequestDropResponse", InventoryHandler.RPC_RequestDropResponse);
+            nview.Register<bool>(ItemMoveResponseRPC, InventoryHandler.RPC_RequestItemMoveResponse);
+            nview.Register<ZPackage>(ItemAddResponseRPC, InventoryHandler.RPC_RequestItemAddResponse);
+            nview.Register<ZPackage>(ItemRemoveResponseRPC, InventoryHandler.RPC_RequestItemRemoveResponse);
+            nview.Register<ZPackage>(ItemConsumeResponseRPC, InventoryHandler.RPC_RequestItemConsumeResponse);
+            nview.Register<ZPackage>(ItemsTakeAllResponseRPC, (l, package) => InventoryHandler.RPC_RequestTakeAllItemsResponse(__instance, l, package));
+            nview.Register<ZPackage>(ItemDropResponseRPC, InventoryHandler.RPC_RequestDropResponse);
         }
 
         // This could maybe converted to a transpiler but is currently not worth it as the order of the statements have to be changed

@@ -53,7 +53,7 @@ namespace MultiUserChest.Patches {
                 RequestConsume request = new RequestConsume(item);
 
                 Timer.Start(request);
-                __instance.m_currentContainer.m_nview.InvokeRPC("RequestItemConsume", request.WriteToPackage());
+                __instance.m_currentContainer.m_nview.InvokeRPC(ContainerPatch.ItemConsumeRPC, request.WriteToPackage());
             }
 
             return false;
@@ -90,7 +90,7 @@ namespace MultiUserChest.Patches {
             RequestDrop request = new RequestDrop(__instance.m_dragItem.m_gridPos, __instance.m_dragAmount, player.GetZDOID());
             Timer.Start(request);
 
-            __instance.m_currentContainer.m_nview.InvokeRPC("RequestDropItems", request.WriteToPackage());
+            __instance.m_currentContainer.m_nview.InvokeRPC(ContainerPatch.ItemDropRPC, request.WriteToPackage());
             __instance.SetupDragItem(null, null, 1);
             return false;
         }

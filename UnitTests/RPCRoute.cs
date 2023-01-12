@@ -10,23 +10,23 @@ namespace UnitTests {
         private Harmony harmony;
         private static Container container;
 
-        private const string RequestMoveRPC = "RequestItemMove";
-        private const string RequestMoveResponseRPC = "RequestItemMoveResponse";
+        private const string RequestMoveRPC = "MUC_RequestItemMove";
+        private const string RequestMoveResponseRPC = "MUC_RequestItemMoveResponse";
 
-        private const string RequestAddRPC = "RequestItemAdd";
-        private const string RequestAddResponseRPC = "RequestItemAddResponse";
+        private const string RequestAddRPC = "MUC_RequestItemAdd";
+        private const string RequestAddResponseRPC = "MUC_RequestItemAddResponse";
 
-        private const string RequestRemoveRPC = "RequestItemRemove";
-        private const string RequestRemoveResponseRPC = "RequestItemRemoveResponse";
+        private const string RequestRemoveRPC = "MUC_RequestItemRemove";
+        private const string RequestRemoveResponseRPC = "MUC_RequestItemRemoveResponse";
 
-        private const string RequestConsumeRPC = "RequestItemConsume";
-        private const string RequestConsumeResponseRPC = "RequestItemConsumeResponse";
+        private const string RequestConsumeRPC = "MUC_RequestItemConsume";
+        private const string RequestConsumeResponseRPC = "MUC_RequestItemConsumeResponse";
 
-        private const string RequestTakeAllRPC = "RequestTakeAllItems";
-        private const string RequestTakeAllResponseRPC = "RequestTakeAllItemsResponse";
+        private const string RequestTakeAllRPC = "MUC_RequestItemsTakeAll";
+        private const string RequestTakeAllResponseRPC = "MUC_RequestItemsTakeAllResponse";
 
-        private const string RequestDropRPC = "RequestDropItems";
-        private const string RequestDropResponseRPC = "RequestDropResponse";
+        private const string RequestDropRPC = "MUC_RequestItemDrop";
+        private const string RequestDropResponseRPC = "MUC_RequestItemDropResponse";
 
         [SetUp]
         public void SetUp() {
