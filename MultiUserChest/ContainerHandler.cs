@@ -25,9 +25,9 @@ namespace MultiUserChest {
                 allowSwitch);
         }
 
-        public static RequestAdd AddItemToChest(this Container container, ItemDrop.ItemData item, Inventory targetInventory, Vector2i to,
-            ZDOID sender, int dragAmount = -1, bool allowSwitch = false) {
-            dragAmount = dragAmount < 0 ? item.m_stack : Mathf.Min(dragAmount, item.m_stack);
+        public static RequestAdd AddItemToChest(this Container container, ItemDrop.ItemData item, Inventory targetInventory, Vector2i to, ZDOID sender, int dragAmount = -1, bool allowSwitch = false) {
+            dragAmount = PossibleDragAmount(container, item, to, dragAmount);
+
             RequestAdd request = new RequestAdd(to, dragAmount, item, targetInventory.m_name, allowSwitch, sender);
             InventoryBlock.Get(targetInventory).BlockSlot(item.m_gridPos);
 
@@ -45,6 +45,31 @@ namespace MultiUserChest {
             }
 
             return request;
+        }
+
+        internal static int PossibleDragAmount(Container container, ItemDrop.ItemData item, Vector2i to, int dragAmount) {
+            if (dragAmount < 0) {
+                dragAmount = item.m_stack;
+            } else {
+                dragAmount = Mathf.Min(dragAmount, item.m_stack);
+            }
+
+            if (to.x >= 0 && to.y >= 0) {
+                ItemDrop.ItemData targetItem = container.GetInventory().GetItemAt(to.x, to.y);
+
+                if (targetItem != null) {
+                    return Mathf.Min(dragAmount, targetItem.m_shared.m_maxStackSize - targetItem.m_stack);
+                }
+            } else {
+                bool hasEmptySlot = container.GetInventory().HaveEmptySlot();
+
+                if (!hasEmptySlot) {
+                    int freeStackSpace = container.GetInventory().FindFreeStackSpace(item.m_shared.m_name);
+                    return Mathf.Min(dragAmount, freeStackSpace);
+                }
+            }
+
+            return dragAmount;
         }
 
         [UsedImplicitly]

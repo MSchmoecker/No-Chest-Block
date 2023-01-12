@@ -84,6 +84,7 @@
     <ItemGroup>
         <Compile Include="CanAddItemTest.cs" />
         <Compile Include="ConsumeTest.cs" />
+        <Compile Include="ContainerAddItemToChestTest.cs" />
         <Compile Include="ContainerDropTest.cs" />
         <Compile Include="ContainerHandlerAddTest.cs" />
         <Compile Include="ContainerHandlerRemoveTest.cs" />
