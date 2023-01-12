@@ -101,7 +101,9 @@ namespace MultiUserChest {
         }
 
         public static void DropItem(ItemDrop.ItemData item, int amount) {
-            DropItem(Player.m_localPlayer, item, amount);
+            if (amount > 0) {
+                DropItem(Player.m_localPlayer, item, amount);
+            }
         }
 
         private static void DropItem(Player player, ItemDrop.ItemData item, int amount) {

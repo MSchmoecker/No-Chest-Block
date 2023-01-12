@@ -24,7 +24,7 @@ namespace UnitTests {
         }
 
         private void AddItemToGround(ItemDrop.ItemData item, int amount) {
-            if (item != null && amount > 0) {
+            if (item != null) {
                 ItemDrop.ItemData clone = item.Clone();
                 clone.m_stack = amount;
                 ground.AddItem(clone);
