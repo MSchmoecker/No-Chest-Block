@@ -15,15 +15,13 @@ namespace UnitTests {
             return container.RequestItemAdd(request);
         }
 
-        private static RequestChestAdd MakeRequest(bool allowSwitch, int itemAmount = 5, int dragAmount = 5) {
-            // TODO remove allowSwitch
+        private static RequestChestAdd MakeRequest(int itemAmount = 5, int dragAmount = 5) {
             ItemDrop.ItemData item = Helper.CreateItem("my item", itemAmount);
             item.m_gridPos = new Vector2i(2, 2);
             return new RequestChestAdd(new Vector2i(3, 3), dragAmount, item, "inv", ZDOID.None);
         }
 
-        private static RequestChestAdd MakeRequest(bool allowSwitch, Vector2i target, int itemAmount = 5) {
-            // TODO remove allowSwitch
+        private static RequestChestAdd MakeRequest(Vector2i target, int itemAmount = 5) {
             ItemDrop.ItemData item = Helper.CreateItem("my item", itemAmount);
             item.m_gridPos = new Vector2i(2, 2);
             return new RequestChestAdd(target, itemAmount, item, "inv", ZDOID.None);
@@ -31,7 +29,7 @@ namespace UnitTests {
 
         [Test]
         public void RPC_RequestItemAddToEmptySlotExactAmountAsInventory() {
-            RequestChestAdd request = MakeRequest(true);
+            RequestChestAdd request = MakeRequest();
             RequestChestAddResponse response = GetResponse(request);
 
             TestResponse(response, true, 5);
@@ -41,7 +39,7 @@ namespace UnitTests {
 
         [Test]
         public void RPC_RequestItemAddToEmptySlotNotAllowSwitch() {
-            RequestChestAdd request = MakeRequest(false);
+            RequestChestAdd request = MakeRequest();
             RequestChestAddResponse response = GetResponse(request);
 
             TestResponse(response, true, 5);
@@ -51,7 +49,7 @@ namespace UnitTests {
 
         [Test]
         public void RPC_RequestItemAddToEmptySlotMoreAmountAsInventory() {
-            RequestChestAdd request = MakeRequest(true, 3);
+            RequestChestAdd request = MakeRequest(3);
             RequestChestAddResponse response = GetResponse(request);
 
             TestResponse(response, true, 3);
@@ -61,7 +59,7 @@ namespace UnitTests {
 
         [Test]
         public void RPC_RequestItemAddToEmptySlotFewerAmountAsInventory() {
-            RequestChestAdd request = MakeRequest(true, 5, 3);
+            RequestChestAdd request = MakeRequest(5, 3);
             RequestChestAddResponse response = GetResponse(request);
 
             TestResponse(response, true, 3);
@@ -73,7 +71,7 @@ namespace UnitTests {
         public void RPC_RequestItemAddToDifferentItemSlotDragExact() {
             container.CreateItem("my item A", 5, 3, 3);
 
-            RequestChestAdd request = MakeRequest(true);
+            RequestChestAdd request = MakeRequest();
             RequestChestAddResponse response = GetResponse(request);
 
             TestResponse(response, true, 5);
@@ -85,7 +83,7 @@ namespace UnitTests {
         public void RPC_RequestItemAdd_ToDifferentItemSlot_DragTooFew() {
             container.CreateItem("my item A", 5, 3, 3);
 
-            RequestChestAdd request = MakeRequest(true, 5, 3);
+            RequestChestAdd request = MakeRequest(5, 3);
             RequestChestAddResponse response = GetResponse(request);
 
             TestResponse(response, false, 0);
@@ -97,7 +95,7 @@ namespace UnitTests {
         public void RPC_RequestItemAdd_ToDifferentItem_NotAllowSwitch() {
             container.CreateItem("my item A", 5, 3, 3);
 
-            RequestChestAdd request = MakeRequest(false, 6);
+            RequestChestAdd request = MakeRequest(6);
             RequestChestAddResponse response = GetResponse(request);
 
             TestResponse(response, false, 0);
@@ -109,7 +107,7 @@ namespace UnitTests {
         public void RPC_RequestItemAddToSameItemSlotDragCanStack() {
             container.CreateItem("my item", 5, 3, 3);
 
-            RequestChestAdd request = MakeRequest(true);
+            RequestChestAdd request = MakeRequest();
             RequestChestAddResponse response = GetResponse(request);
 
             TestResponse(response, true, 5);
@@ -121,7 +119,7 @@ namespace UnitTests {
         public void RPC_RequestItemAddToSameItemSlotDragCanStackNotAll() {
             container.CreateItem("my item", 19, 3, 3);
 
-            RequestChestAdd request = MakeRequest(true);
+            RequestChestAdd request = MakeRequest();
             RequestChestAddResponse response = GetResponse(request);
 
             TestResponse(response, true, 1);
@@ -133,7 +131,7 @@ namespace UnitTests {
         public void RPC_RequestItemFullSlot() {
             container.CreateItem("my item", 20, 3, 3);
 
-            RequestChestAdd request = MakeRequest(true);
+            RequestChestAdd request = MakeRequest();
             RequestChestAddResponse response = GetResponse(request);
 
             TestResponse(response, false, 0);
@@ -145,7 +143,7 @@ namespace UnitTests {
         public void RPC_RequestItemSwitched() {
             container.CreateItem("my item A", 20, 3, 3);
 
-            RequestChestAdd request = MakeRequest(true);
+            RequestChestAdd request = MakeRequest();
             RequestChestAddResponse response = GetResponse(request);
 
             TestResponse(response, true, 5);
@@ -155,7 +153,7 @@ namespace UnitTests {
 
         [Test]
         public void RPC_AddItemFast_NoSpecialSlot_Full() {
-            RequestChestAdd request = MakeRequest(true, new Vector2i(-1, -1));
+            RequestChestAdd request = MakeRequest(new Vector2i(-1, -1));
             RequestChestAddResponse response = GetResponse(request);
 
             TestResponse(response, true, 5);
@@ -168,7 +166,7 @@ namespace UnitTests {
             container = new Inventory("inv", null, 1, 1);
             container.CreateItem("my item", 15, 0, 0);
 
-            RequestChestAdd request = MakeRequest(false, new Vector2i(-1, -1), 15);
+            RequestChestAdd request = MakeRequest(new Vector2i(-1, -1), 15);
             RequestChestAddResponse response = GetResponse(request);
 
             TestResponse(response, true, 5);

@@ -19,7 +19,7 @@ namespace UnitTests {
 
             Assert.False(InventoryBlock.Get(inventory).IsSlotBlocked(new Vector2i(2, 3)));
 
-            container.AddItemToChest(inventory.GetItemAt(2, 3), inventory, new Vector2i(1, 1), ZDOID.None, 5, true);
+            container.AddItemToChest(inventory.GetItemAt(2, 3), inventory, new Vector2i(1, 1), ZDOID.None, 5);
 
             Assert.True(InventoryBlock.Get(inventory).IsSlotBlocked(new Vector2i(2, 3)));
             TestForItems(inventory);
@@ -32,7 +32,7 @@ namespace UnitTests {
 
             Assert.False(InventoryBlock.Get(inventory).IsSlotBlocked(new Vector2i(2, 3)));
 
-            container.AddItemToChest(inventory.GetItemAt(2, 3), inventory, new Vector2i(1, 1), ZDOID.None, 3, true);
+            container.AddItemToChest(inventory.GetItemAt(2, 3), inventory, new Vector2i(1, 1), ZDOID.None, 3);
 
             Assert.True(InventoryBlock.Get(inventory).IsSlotBlocked(new Vector2i(2, 3)));
             TestForItems(inventory, new TestItem("my item A", 2, new Vector2i(2, 3)));

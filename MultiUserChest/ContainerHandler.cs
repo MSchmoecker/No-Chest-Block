@@ -19,12 +19,11 @@ namespace MultiUserChest {
         }
 
         [UsedImplicitly]
-        public static RequestChestAdd AddItemToChest(this Container containerTo, ItemDrop.ItemData item, Container targetContainer, Vector2i to, int dragAmount = -1, bool allowSwitch = false) {
-            return AddItemToChest(containerTo, item, targetContainer.GetInventory(), to, targetContainer.m_nview.m_zdo.m_uid, dragAmount, allowSwitch);
+        public static RequestChestAdd AddItemToChest(this Container containerTo, ItemDrop.ItemData item, Container targetContainer, Vector2i to, int dragAmount = -1) {
+            return AddItemToChest(containerTo, item, targetContainer.GetInventory(), to, targetContainer.m_nview.m_zdo.m_uid, dragAmount);
         }
 
-        public static RequestChestAdd AddItemToChest(this Container container, ItemDrop.ItemData item, Inventory targetInventory, Vector2i to, ZDOID sender, int dragAmount = -1, bool allowSwitch = false) {
-            // TODO remove allowSwitch
+        public static RequestChestAdd AddItemToChest(this Container container, ItemDrop.ItemData item, Inventory targetInventory, Vector2i to, ZDOID sender, int dragAmount = -1) {
             dragAmount = PossibleDragAmount(container.GetInventory(), item, to, dragAmount);
 
             if (dragAmount <= 0) {
