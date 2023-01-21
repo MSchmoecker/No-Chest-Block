@@ -6,7 +6,7 @@ namespace MultiUserChest {
     [BepInPlugin(ModGuid, ModName, ModVersion)]
     [BepInIncompatibility("aedenthorn.QuickStore")]
     [BepInIncompatibility("aedenthorn.SimpleSort")]
-    [NetworkCompatibility(CompatibilityLevel.ClientMustHaveMod, VersionStrictness.Minor)]
+    [NetworkCompatibility(CompatibilityLevel.EveryoneMustHaveMod, VersionStrictness.Patch)]
     [BepInDependency(Jotunn.Main.ModGuid)]
     public class Plugin : BaseUnityPlugin {
         public const string ModName = "MultiUserChest";
@@ -15,13 +15,11 @@ namespace MultiUserChest {
 
         public static Plugin Instance { get; private set; }
 
-        private static Harmony harmony = new Harmony(ModGuid);
-
         private void Awake() {
             Instance = this;
             Log.Init(Logger);
 
-            harmony.PatchAll();
+            new Harmony(ModGuid).PatchAll();
 
             InvokeRepeating(nameof(UpdateAccessedContainer), 0, 0.1f);
         }
