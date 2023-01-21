@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using BepInEx;
 using HarmonyLib;
 
 namespace MultiUserChest.Patches {
     [HarmonyPatch]
     public static class InventoryPatch {
-        public static readonly Dictionary<ItemDrop.ItemData, Inventory> InventoryOfItem = new Dictionary<ItemDrop.ItemData, Inventory>();
+        public static readonly ConditionalWeakTable<ItemDrop.ItemData, Inventory> InventoryOfItem = new ConditionalWeakTable<ItemDrop.ItemData, Inventory>();
 
         [HarmonyPatch(typeof(Inventory), nameof(Inventory.AddItem), typeof(ItemDrop.ItemData), typeof(int), typeof(int), typeof(int))]
         [HarmonyPrefix]
@@ -35,8 +36,13 @@ namespace MultiUserChest.Patches {
 
         [HarmonyPatch(typeof(Inventory), nameof(Inventory.Changed)), HarmonyPostfix]
         public static void AddItemPostfix(Inventory __instance) {
-            foreach (ItemDrop.ItemData item in __instance.GetAllItems()) {
-                InventoryOfItem[item] = __instance;
+            AssignItemsOfInventory(__instance);
+        }
+
+        private static void AssignItemsOfInventory(Inventory inventory) {
+            foreach (ItemDrop.ItemData item in inventory.GetAllItems()) {
+                InventoryOfItem.Remove(item);
+                InventoryOfItem.Add(item, inventory);
             }
         }
 

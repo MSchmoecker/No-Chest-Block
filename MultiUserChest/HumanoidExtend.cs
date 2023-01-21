@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System.Runtime.CompilerServices;
 using UnityEngine;
 
 namespace MultiUserChest {
     public class HumanoidExtend : MonoBehaviour {
-        private static readonly Dictionary<Inventory, HumanoidInventoryOwner> Humanoids = new Dictionary<Inventory, HumanoidInventoryOwner>();
+        private static readonly ConditionalWeakTable<Inventory, HumanoidInventoryOwner> Humanoids = new ConditionalWeakTable<Inventory, HumanoidInventoryOwner>();
         private Humanoid humanoid;
 
         private void Awake() {

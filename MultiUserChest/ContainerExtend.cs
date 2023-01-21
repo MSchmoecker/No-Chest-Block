@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System.Runtime.CompilerServices;
 using UnityEngine;
 
 namespace MultiUserChest {
     public class ContainerExtend : MonoBehaviour {
-        private static readonly Dictionary<Inventory, ContainerInventoryOwner> Containers = new Dictionary<Inventory, ContainerInventoryOwner>();
+        private static readonly ConditionalWeakTable<Inventory, ContainerInventoryOwner> Containers = new ConditionalWeakTable<Inventory, ContainerInventoryOwner>();
         private Container container;
 
         private void Awake() {
