@@ -291,7 +291,7 @@ namespace UnitTests {
             TestForItems(container);
             TestForItems(ground);
         }
-        
+
         [Test]
         public void RemoveFromChest_SlotEmpty_SplitMove() {
             container.CreateItem("itemB", 5, 2, 2);
@@ -382,6 +382,25 @@ namespace UnitTests {
 
             TestForItems(player, new TestItem("itemB", 5, new Vector2i(2, 2)));
             TestForItems(container, new TestItem("itemA", 5, new Vector2i(2, 2)));
+            TestForItems(ground);
+        }
+
+        [Test]
+        public void AddAndRemove_Switch() {
+            player.CreateItem("itemA", 4, 2, 2);
+            container.CreateItem("itemB", 4, 2, 2);
+
+            RequestChestAdd addRequest = Helper.CreateContainer().AddItemToChest(player.GetItemAt(2, 2), player, new Vector2i(2, 2), ZDOID.None, 4);
+            RequestChestRemove removeRequest = Helper.CreateContainer().RemoveItemFromChest(container.GetItemAt(2, 2), player, new Vector2i(2, 2), ZDOID.None, 4);
+
+            RequestChestAddResponse addResponse = GetAddResponse(addRequest);
+            RequestChestRemoveResponse removeResponse = GetRemoveResponse(removeRequest);
+
+            InventoryHandler.RPC_RequestItemAddResponse(player, addResponse);
+            InventoryHandler.RPC_RequestItemRemoveResponse(player, removeResponse);
+
+            TestForItems(player, new TestItem("itemB", 4, new Vector2i(2, 2)));
+            TestForItems(container, new TestItem("itemA", 4, new Vector2i(2, 2)));
             TestForItems(ground);
         }
     }

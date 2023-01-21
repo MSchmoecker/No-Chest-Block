@@ -86,7 +86,7 @@ namespace MultiUserChest {
         public static RequestChestRemove RemoveItemFromChest(this Container container, ItemDrop.ItemData item, Inventory targetInventory, Vector2i to, ZDOID sender, int dragAmount = -1, ItemDrop.ItemData switchItem = null) {
             dragAmount = PossibleDragAmount(targetInventory, item, to, dragAmount);
 
-            if (dragAmount <= 0) {
+            if (dragAmount <= 0 || InventoryBlock.Get(targetInventory).IsSlotBlocked(to)) {
                 return new RequestChestRemove(Vector2i.zero, Vector2i.zero, 0, "", null, ZDOID.None);
             }
 
