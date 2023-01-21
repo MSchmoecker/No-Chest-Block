@@ -6,7 +6,7 @@ using UnityEngine;
 namespace MultiUserChest {
     public class InventoryHandler {
         public static void RPC_RequestItemAddResponse(long sender, ZPackage package) {
-            HandleRPC(new RequestAddResponse(package), p => GetInventory(p.sender, p.inventoryHash), RPC_RequestItemAddResponse);
+            HandleRPC(new RequestChestAddResponse(package), p => GetInventory(p.sender, p.inventoryHash), RPC_RequestItemAddResponse);
         }
 
         public static void RPC_RequestTakeAllItemsResponse(Container container, long sender, ZPackage package) {
@@ -14,7 +14,7 @@ namespace MultiUserChest {
         }
 
         public static void RPC_RequestItemRemoveResponse(long sender, ZPackage package) {
-            HandleRPC(new RequestRemoveResponse(package), p => GetInventory(p.sender, p.inventoryHash), RPC_RequestItemRemoveResponse);
+            HandleRPC(new RequestChestRemoveResponse(package), p => GetInventory(p.sender, p.inventoryHash), RPC_RequestItemRemoveResponse);
         }
 
         public static void RPC_RequestDropResponse(long sender, ZPackage package) {
@@ -52,7 +52,7 @@ namespace MultiUserChest {
             action?.Invoke();
         }
 
-        public static void RPC_RequestItemRemoveResponse(Inventory inventory, RequestRemoveResponse response) {
+        public static void RPC_RequestItemRemoveResponse(Inventory inventory, RequestChestRemoveResponse response) {
             Vector2i inventoryPos = response.inventoryPos;
             InventoryBlock.Get(inventory).ReleaseSlot(inventoryPos);
 
@@ -119,7 +119,7 @@ namespace MultiUserChest {
             player.Message(MessageHud.MessageType.TopLeft, "$msg_dropped " + dropData.m_shared.m_name, dropData.m_stack, dropData.GetIcon());
         }
 
-        public static void RPC_RequestItemAddResponse(Inventory inventory, RequestAddResponse response) {
+        public static void RPC_RequestItemAddResponse(Inventory inventory, RequestChestAddResponse response) {
             Vector2i inventoryPos = response.inventoryPos;
             ItemDrop.ItemData switchItem = response.switchItem;
 

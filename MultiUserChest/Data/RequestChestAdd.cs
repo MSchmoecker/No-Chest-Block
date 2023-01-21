@@ -1,5 +1,7 @@
+using System.Diagnostics;
+
 namespace MultiUserChest {
-    public class RequestAdd : IPackage {
+    public class RequestChestAdd : IPackage {
         public readonly Vector2i toPos;
         public readonly int dragAmount;
         public readonly ItemDrop.ItemData dragItem;
@@ -7,7 +9,7 @@ namespace MultiUserChest {
         public readonly ZDOID sender;
         public readonly bool allowSwitch;
 
-        public RequestAdd(Vector2i toPos, int dragAmount, ItemDrop.ItemData dragItem, string inventoryName, bool allowSwitch, ZDOID sender) {
+        public RequestChestAdd(Vector2i toPos, int dragAmount, ItemDrop.ItemData dragItem, string inventoryName, bool allowSwitch, ZDOID sender) {
             this.toPos = toPos;
             this.dragAmount = dragAmount;
             this.dragItem = dragItem?.Clone();
@@ -16,7 +18,7 @@ namespace MultiUserChest {
             this.sender = sender;
         }
 
-        public RequestAdd(ZPackage package) {
+        public RequestChestAdd(ZPackage package) {
             toPos = package.ReadVector2i();
             dragAmount = package.ReadInt();
             fromInventoryHash = package.ReadInt();
@@ -48,6 +50,7 @@ namespace MultiUserChest {
             Log.LogDebug($"  dragItem: {dragItem != null}");
             Log.LogDebug($"  sender: {sender}");
             InventoryHelper.PrintItem(dragItem);
+            Log.LogDebug(new StackTrace().ToString());
 #endif
         }
     }

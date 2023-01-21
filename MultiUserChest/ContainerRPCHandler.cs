@@ -6,11 +6,11 @@ using UnityEngine;
 namespace MultiUserChest {
     public static class ContainerRPCHandler {
         public static void RPC_RequestItemAdd(Container container, long sender, ZPackage package) {
-            HandleRPC(container, sender,  ContainerPatch.ItemAddResponseRPC, RequestItemAdd, () => new RequestAdd(package));
+            HandleRPC(container, sender, ContainerPatch.ItemAddResponseRPC, RequestItemAdd, () => new RequestChestAdd(package));
         }
 
         public static void RPC_RequestItemRemove(Container container, long sender, ZPackage package) {
-            HandleRPC(container, sender, ContainerPatch.ItemRemoveResponseRPC, RequestItemRemove, () => new RequestRemove(package));
+            HandleRPC(container, sender, ContainerPatch.ItemRemoveResponseRPC, RequestItemRemove, () => new RequestChestRemove(package));
         }
 
         public static void RPC_RequestItemConsume(Container container, long sender, ZPackage package) {
@@ -57,7 +57,7 @@ namespace MultiUserChest {
             return input;
         }
 
-        public static RequestAddResponse RequestItemAdd(this Inventory inventory, RequestAdd request) {
+        public static RequestChestAddResponse RequestItemAdd(this Inventory inventory, RequestChestAdd request) {
             if (request.toPos.x < 0 || request.toPos.y < 0) {
                 return AddToAnySlot(inventory, request);
             }
@@ -65,7 +65,7 @@ namespace MultiUserChest {
             return AddToSlot(inventory, request);
         }
 
-        private static RequestAddResponse AddToSlot(Inventory inventory, RequestAdd request) {
+        private static RequestChestAddResponse AddToSlot(Inventory inventory, RequestChestAdd request) {
             int dragAmount = request.dragAmount;
             ItemDrop.ItemData dragItem = request.dragItem;
 
@@ -74,7 +74,7 @@ namespace MultiUserChest {
 
             if (!canStack) {
                 dragItem.m_stack = dragAmount;
-                return new RequestAddResponse(false, dragItem.m_gridPos, 0, request.fromInventoryHash, dragItem, request.sender);
+                return new RequestChestAddResponse(false, dragItem.m_gridPos, 0, request.fromInventoryHash, dragItem, request.sender);
             }
 
             bool added = inventory.AddItemToInventory(dragItem, amount, request.toPos);
@@ -88,10 +88,10 @@ namespace MultiUserChest {
                 switched.m_gridPos = request.dragItem.m_gridPos;
             }
 
-            return new RequestAddResponse(added, request.dragItem.m_gridPos, amount, request.fromInventoryHash, switched, request.sender);
+            return new RequestChestAddResponse(added, request.dragItem.m_gridPos, amount, request.fromInventoryHash, switched, request.sender);
         }
 
-        private static bool CanStack(Inventory inventory, RequestAdd request, ref int amount, out ItemDrop.ItemData removedItem) {
+        private static bool CanStack(Inventory inventory, RequestChestAdd request, ref int amount, out ItemDrop.ItemData removedItem) {
             ItemDrop.ItemData prevItem = inventory.GetItemAt(request.toPos.x, request.toPos.y);
             removedItem = null;
 
@@ -117,7 +117,7 @@ namespace MultiUserChest {
             return false;
         }
 
-        private static RequestAddResponse AddToAnySlot(Inventory inventory, RequestAdd request) {
+        private static RequestChestAddResponse AddToAnySlot(Inventory inventory, RequestChestAdd request) {
             Inventory tmp = new Inventory("tmp", null, 1, 1);
             tmp.AddItem(request.dragItem.Clone(), request.dragAmount, 0, 0);
             inventory.MoveItemToThis(tmp, tmp.GetItemAt(0, 0));
@@ -125,7 +125,7 @@ namespace MultiUserChest {
             ItemDrop.ItemData now = tmp.GetItemAt(0, 0);
 
             if (now == null) {
-                return new RequestAddResponse(true, request.dragItem.m_gridPos, request.dragAmount, request.fromInventoryHash, null, request.sender);
+                return new RequestChestAddResponse(true, request.dragItem.m_gridPos, request.dragAmount, request.fromInventoryHash, null, request.sender);
             }
 
             ItemDrop.ItemData back = request.dragItem.Clone();
@@ -133,10 +133,10 @@ namespace MultiUserChest {
             back.m_stack -= amount;
 
             bool success = now.m_stack != request.dragItem.m_stack;
-            return new RequestAddResponse(success, request.dragItem.m_gridPos, amount, request.fromInventoryHash, back, request.sender);
+            return new RequestChestAddResponse(success, request.dragItem.m_gridPos, amount, request.fromInventoryHash, back, request.sender);
         }
 
-        public static RequestRemoveResponse RequestItemRemove(this Inventory inventory, RequestRemove request) {
+        public static RequestChestRemoveResponse RequestItemRemove(this Inventory inventory, RequestChestRemove request) {
             Vector2i fromContainer = request.fromPos;
             Vector2i toInventory = request.toPos;
             int dragAmount = request.dragAmount;
@@ -146,7 +146,7 @@ namespace MultiUserChest {
 
             if (from == null) {
                 Log.LogDebug("from is null");
-                return new RequestRemoveResponse(false, 0, false, toInventory, request.fromInventoryHash, null, request.sender);
+                return new RequestChestRemoveResponse(false, 0, false, toInventory, request.fromInventoryHash, null, request.sender);
             }
 
             int removedAmount = 0;
@@ -169,7 +169,7 @@ namespace MultiUserChest {
 
             ItemDrop.ItemData responseItem = from.Clone();
             responseItem.m_stack = removedAmount;
-            return new RequestRemoveResponse(removed, removedAmount, switched, toInventory, request.fromInventoryHash, responseItem, request.sender);
+            return new RequestChestRemoveResponse(removed, removedAmount, switched, toInventory, request.fromInventoryHash, responseItem, request.sender);
         }
 
         public static RequestConsumeResponse RequestItemConsume(this Inventory inventory, RequestConsume request) {

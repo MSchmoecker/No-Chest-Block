@@ -34,8 +34,8 @@ namespace UnitTests {
 
         [Test]
         public void RequestAdd_PackageReadWrite() {
-            RequestAdd requestAdd = new RequestAdd(posA, 4, item, "inv", true, zdoid);
-            RequestAdd fromPackage = GetFromZPackage(requestAdd, package => new RequestAdd(package));
+            RequestChestAdd requestChestAdd = new RequestChestAdd(posA, 4, item, "inv", true, zdoid);
+            RequestChestAdd fromPackage = GetFromZPackage(requestChestAdd, package => new RequestChestAdd(package));
 
             Assert.AreEqual(fromPackage.toPos, posA);
             Assert.AreEqual(fromPackage.dragAmount, 4);
@@ -47,8 +47,8 @@ namespace UnitTests {
 
         [Test]
         public void RequestAddResponse_PackageReadWrite() {
-            RequestAddResponse requestAdd = new RequestAddResponse(true, posA, 4, 5, item, zdoid);
-            RequestAddResponse fromPackage = GetFromZPackage(requestAdd, package => new RequestAddResponse(package));
+            RequestChestAddResponse requestChestAdd = new RequestChestAddResponse(true, posA, 4, 5, item, zdoid);
+            RequestChestAddResponse fromPackage = GetFromZPackage(requestChestAdd, package => new RequestChestAddResponse(package));
 
             Assert.True(fromPackage.Success);
             Assert.AreEqual(fromPackage.inventoryPos, posA);
@@ -113,8 +113,8 @@ namespace UnitTests {
 
         [Test]
         public void RequestRemove_PackageReadWrite() {
-            RequestRemove requestAdd = new RequestRemove(posA, posB, 3, "inv", item, zdoid);
-            RequestRemove fromPackage = GetFromZPackage(requestAdd, package => new RequestRemove(package));
+            RequestChestRemove requestChestAdd = new RequestChestRemove(posA, posB, 3, "inv", item, zdoid);
+            RequestChestRemove fromPackage = GetFromZPackage(requestChestAdd, package => new RequestChestRemove(package));
 
             Assert.AreEqual(fromPackage.fromPos, posA);
             Assert.AreEqual(fromPackage.toPos, posB);
@@ -126,8 +126,8 @@ namespace UnitTests {
 
         [Test]
         public void RequestRemoveResponse_PackageReadWrite() {
-            RequestRemoveResponse requestAdd = new RequestRemoveResponse(true, 3, false, posA, "inv".GetStableHashCode(), item, zdoid);
-            RequestRemoveResponse fromPackage = GetFromZPackage(requestAdd, package => new RequestRemoveResponse(package));
+            RequestChestRemoveResponse requestChestAdd = new RequestChestRemoveResponse(true, 3, false, posA, "inv".GetStableHashCode(), item, zdoid);
+            RequestChestRemoveResponse fromPackage = GetFromZPackage(requestChestAdd, package => new RequestChestRemoveResponse(package));
 
             Assert.True(fromPackage.Success);
             Assert.AreEqual(fromPackage.Amount, 3);

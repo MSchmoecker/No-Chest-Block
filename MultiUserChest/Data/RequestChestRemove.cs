@@ -1,5 +1,7 @@
+using System.Diagnostics;
+
 namespace MultiUserChest {
-    public class RequestRemove : IPackage {
+    public class RequestChestRemove : IPackage {
         public readonly Vector2i fromPos;
         public readonly Vector2i toPos;
         public readonly int dragAmount;
@@ -7,7 +9,7 @@ namespace MultiUserChest {
         public readonly int fromInventoryHash;
         public readonly ZDOID sender;
 
-        public RequestRemove(Vector2i fromPos, Vector2i toPos, int dragAmount, string fromInventory, ItemDrop.ItemData switchItem, ZDOID sender) {
+        public RequestChestRemove(Vector2i fromPos, Vector2i toPos, int dragAmount, string fromInventory, ItemDrop.ItemData switchItem, ZDOID sender) {
             this.fromPos = fromPos;
             this.toPos = toPos;
             this.dragAmount = dragAmount;
@@ -16,7 +18,7 @@ namespace MultiUserChest {
             this.sender = sender;
         }
 
-        public RequestRemove(ZPackage package) {
+        public RequestChestRemove(ZPackage package) {
             fromPos = package.ReadVector2i();
             toPos = package.ReadVector2i();
             dragAmount = package.ReadInt();
@@ -48,6 +50,7 @@ namespace MultiUserChest {
             Log.LogDebug($"  switchItem: {switchItem != null}");
             Log.LogDebug($"  sender: {sender}");
             InventoryHelper.PrintItem(switchItem);
+            Log.LogDebug(new StackTrace().ToString());
 #endif
         }
     }

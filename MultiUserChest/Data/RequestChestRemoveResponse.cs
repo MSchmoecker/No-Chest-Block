@@ -1,5 +1,5 @@
 namespace MultiUserChest {
-    public class RequestRemoveResponse : IPackage, IResponse {
+    public class RequestChestRemoveResponse : IPackage, IResponse {
         public bool Success { get; }
         public int Amount { get; }
         public readonly Vector2i inventoryPos;
@@ -8,7 +8,7 @@ namespace MultiUserChest {
         public readonly ZDOID sender;
         public readonly bool hasSwitched;
 
-        public RequestRemoveResponse(bool success, int amount, bool hasSwitched, Vector2i inventoryPos, int inventoryHash, ItemDrop.ItemData responseItem, ZDOID sender) {
+        public RequestChestRemoveResponse(bool success, int amount, bool hasSwitched, Vector2i inventoryPos, int inventoryHash, ItemDrop.ItemData responseItem, ZDOID sender) {
             Success = success;
             Amount = amount;
             this.hasSwitched = hasSwitched;
@@ -18,7 +18,7 @@ namespace MultiUserChest {
             this.sender = sender;
         }
 
-        public RequestRemoveResponse(ZPackage package) {
+        public RequestChestRemoveResponse(ZPackage package) {
             Success = package.ReadBool();
             Amount = package.ReadInt();
             hasSwitched = package.ReadBool();
@@ -28,7 +28,7 @@ namespace MultiUserChest {
             sender = package.ReadZDOID();
         }
 
-        public RequestRemoveResponse() {
+        public RequestChestRemoveResponse() {
             Success = false;
             Amount = 0;
             hasSwitched = false;

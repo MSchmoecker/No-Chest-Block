@@ -71,16 +71,16 @@ namespace MultiUserChest.Patches {
 
             if (from.ZNetView.IsOwner() && !to.ZNetView.IsOwner()) {
                 if (to is ContainerInventoryOwner toContainer) {
-                    RequestAdd requestAdd = toContainer.Container.AddItemToChest(item, from.Inventory, pos, from.ZNetView.GetZDO().m_uid, amount, true);
-                    successfulAdded = requestAdd.dragAmount == amount;
+                    RequestChestAdd requestChestAdd = toContainer.Container.AddItemToChest(item, from.Inventory, pos, from.ZNetView.GetZDO().m_uid, amount, true);
+                    successfulAdded = requestChestAdd.dragAmount == amount;
                     return true;
                 }
             }
 
             if (!from.ZNetView.IsOwner() && to.ZNetView.IsOwner()) {
                 if (from is ContainerInventoryOwner fromContainer) {
-                    RequestRemove requestRemove = fromContainer.Container.RemoveItemFromChest(item, to.Inventory, pos, to.ZNetView.GetZDO().m_uid, amount, to.Inventory.GetItemAt(pos.x, pos.y));
-                    successfulAdded = requestRemove.dragAmount == amount;
+                    RequestChestRemove requestChestRemove = fromContainer.Container.RemoveItemFromChest(item, to.Inventory, pos, to.ZNetView.GetZDO().m_uid, amount, to.Inventory.GetItemAt(pos.x, pos.y));
+                    successfulAdded = requestChestRemove.dragAmount == amount;
                     return true;
                 }
             }

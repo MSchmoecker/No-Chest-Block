@@ -13,12 +13,12 @@ namespace UnitTests {
             container = new Inventory("inventory", null, 4, 5);
         }
 
-        private RequestRemoveResponse GetResponse(RequestRemove request) {
+        private RequestChestRemoveResponse GetResponse(RequestChestRemove request) {
             return container.RequestItemRemove(request);
         }
 
-        private static RequestRemove MakeMessage(int dragAmount, ItemDrop.ItemData switchItem = null) {
-            return new RequestRemove(new Vector2i(2, 2),
+        private static RequestChestRemove MakeMessage(int dragAmount, ItemDrop.ItemData switchItem = null) {
+            return new RequestChestRemove(new Vector2i(2, 2),
                                      new Vector2i(4, 4),
                                      dragAmount,
                                      "inv",
@@ -30,8 +30,8 @@ namespace UnitTests {
         public void RPC_RequestItemRemoveToEmptyInventorySlotExactAmountAsContainer() {
             container.CreateItem("my item", 5, 2, 2);
 
-            RequestRemove request = MakeMessage(5);
-            RequestRemoveResponse response = GetResponse(request);
+            RequestChestRemove request = MakeMessage(5);
+            RequestChestRemoveResponse response = GetResponse(request);
 
             TestResponse(response, true, 5);
             Assert.False(response.hasSwitched);
@@ -42,8 +42,8 @@ namespace UnitTests {
         public void RPC_RequestItemRemoveToEmptyInventorySlotFewerAmountAsContainer() {
             container.CreateItem("my item", 5, 2, 2);
 
-            RequestRemove request = MakeMessage(3);
-            RequestRemoveResponse response = GetResponse(request);
+            RequestChestRemove request = MakeMessage(3);
+            RequestChestRemoveResponse response = GetResponse(request);
 
             TestResponse(response, true, 3);
             Assert.False(response.hasSwitched);
@@ -54,8 +54,8 @@ namespace UnitTests {
         public void RPC_RequestItemRemoveToEmptyInventorySlotMoreAmountAsContainer() {
             container.CreateItem("my item", 5, 2, 2);
 
-            RequestRemove request = MakeMessage(7);
-            RequestRemoveResponse response = GetResponse(request);
+            RequestChestRemove request = MakeMessage(7);
+            RequestChestRemoveResponse response = GetResponse(request);
 
             TestResponse(response, true, 5);
             Assert.False(response.hasSwitched);
@@ -64,8 +64,8 @@ namespace UnitTests {
 
         [Test]
         public void RPC_RequestItemRemoveToEmptyInventorySlotItemNotInContainer() {
-            RequestRemove request = MakeMessage(5);
-            RequestRemoveResponse response = GetResponse(request);
+            RequestChestRemove request = MakeMessage(5);
+            RequestChestRemoveResponse response = GetResponse(request);
 
             TestResponse(response, false, 0);
             Assert.False(response.hasSwitched);
@@ -76,8 +76,8 @@ namespace UnitTests {
         public void RPC_RequestItemRemoveDifferentItemToInventory() {
             container.CreateItem("my item A", 5, 2, 2);
 
-            RequestRemove request = MakeMessage(5, Helper.CreateItem("my item B", 3));
-            RequestRemoveResponse response = GetResponse(request);
+            RequestChestRemove request = MakeMessage(5, Helper.CreateItem("my item B", 3));
+            RequestChestRemoveResponse response = GetResponse(request);
 
             TestResponse(response, true, 5);
             Assert.True(response.hasSwitched);
@@ -88,8 +88,8 @@ namespace UnitTests {
         public void RPC_RequestItemRemoveDifferentItemToInventoryWithTrySplit() {
             container.CreateItem("my item A", 5, 2, 2);
 
-            RequestRemove request = MakeMessage(3, Helper.CreateItem("my item B", 3));
-            RequestRemoveResponse response = GetResponse(request);
+            RequestChestRemove request = MakeMessage(3, Helper.CreateItem("my item B", 3));
+            RequestChestRemoveResponse response = GetResponse(request);
 
             TestResponse(response, false, 0);
             Assert.False(response.hasSwitched);
@@ -100,8 +100,8 @@ namespace UnitTests {
         public void RPC_RequestItemRemoveSameItemToInventoryCanStack() {
             container.CreateItem("my item A", 5, 2, 2);
 
-            RequestRemove request = MakeMessage(5, Helper.CreateItem("my item A", 5));
-            RequestRemoveResponse response = GetResponse(request);
+            RequestChestRemove request = MakeMessage(5, Helper.CreateItem("my item A", 5));
+            RequestChestRemoveResponse response = GetResponse(request);
 
             TestResponse(response, true, 5);
             Assert.False(response.hasSwitched);
@@ -112,8 +112,8 @@ namespace UnitTests {
         public void RPC_RequestItemRemoveSameItemNotAllToInventoryCanStack() {
             container.CreateItem("my item A", 5, 2, 2);
 
-            RequestRemove request = MakeMessage(3, Helper.CreateItem("my item A", 5));
-            RequestRemoveResponse response = GetResponse(request);
+            RequestChestRemove request = MakeMessage(3, Helper.CreateItem("my item A", 5));
+            RequestChestRemoveResponse response = GetResponse(request);
 
             TestResponse(response, true, 3);
             Assert.False(response.hasSwitched);
@@ -124,8 +124,8 @@ namespace UnitTests {
         public void RPC_RequestItemRemoveSameItemToInventoryCanStackNotAll() {
             container.CreateItem("my item A", 5, 2, 2);
 
-            RequestRemove request = MakeMessage(5, Helper.CreateItem("my item A", 19));
-            RequestRemoveResponse response = GetResponse(request);
+            RequestChestRemove request = MakeMessage(5, Helper.CreateItem("my item A", 19));
+            RequestChestRemoveResponse response = GetResponse(request);
 
             TestResponse(response, true, 1);
             Assert.False(response.hasSwitched);
@@ -136,8 +136,8 @@ namespace UnitTests {
         public void RPC_RequestItemRemoveGetItemDataBack() {
             container.CreateItem("my item A", 5, 2, 2);
 
-            RequestRemove request = MakeMessage(5);
-            RequestRemoveResponse response = GetResponse(request);
+            RequestChestRemove request = MakeMessage(5);
+            RequestChestRemoveResponse response = GetResponse(request);
 
             TestResponse(response, true, 5);
             Assert.False(response.hasSwitched);
@@ -149,8 +149,8 @@ namespace UnitTests {
         public void RPC_RequestItemRemoveOddSplitEvenContainer() {
             container.CreateItem("my item A", 5, 2, 2);
 
-            RequestRemove request = MakeMessage(3);
-            RequestRemoveResponse response = GetResponse(request);
+            RequestChestRemove request = MakeMessage(3);
+            RequestChestRemoveResponse response = GetResponse(request);
 
             TestResponse(response, true, 3);
             Assert.False(response.hasSwitched);
@@ -162,8 +162,8 @@ namespace UnitTests {
         public void RPC_RequestItemRemoveOddSplitOddContainer() {
             container.CreateItem("my item A", 5, 2, 2);
 
-            RequestRemove request = MakeMessage(2);
-            RequestRemoveResponse response = GetResponse(request);
+            RequestChestRemove request = MakeMessage(2);
+            RequestChestRemoveResponse response = GetResponse(request);
 
             TestResponse(response, true, 2);
             Assert.False(response.hasSwitched);
