@@ -185,8 +185,7 @@ namespace MultiUserChest {
             GameObject target = ZNetScene.instance.FindInstance(targetId);
 
             if (target.TryGetComponent(out Player player)) {
-                if (player.GetInventory().IsType("ExtendedInventory") && player.GetInventory().HasField("_inventories")) {
-                    List<Inventory> inventories = Player.m_localPlayer.GetInventory().GetField<List<Inventory>>("_inventories");
+                if (player.GetInventory().IsExtendedInventory(out List<Inventory> inventories)) {
                     return inventories.FirstOrDefault(i => i.m_name.GetStableHashCode() == hash) ?? player.GetInventory();
                 }
 

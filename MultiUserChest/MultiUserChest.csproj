@@ -74,6 +74,7 @@
     </ItemGroup>
     <ItemGroup>
         <Compile Include="CodeMatcherExtensions.cs" />
+        <Compile Include="Compatibility.cs" />
         <Compile Include="ContainerExtend.cs" />
         <Compile Include="ContainerHandler.cs" />
         <Compile Include="ContainerRPCHandler.cs" />

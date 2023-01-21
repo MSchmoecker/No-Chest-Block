@@ -28,6 +28,14 @@ namespace MultiUserChest {
 
             return null;
         }
+
+        public string GetDescription() {
+            if (!IsValid()) {
+                return "-";
+            }
+
+            return Inventory.GetName() + ", owner: " + ZNetView.IsOwner();
+        }
     }
 
     public class ContainerInventoryOwner : InventoryOwner {
@@ -43,12 +51,14 @@ namespace MultiUserChest {
 
     public class HumanoidInventoryOwner : InventoryOwner {
         public Humanoid Humanoid { get; }
+        private readonly Inventory inventory;
 
-        public HumanoidInventoryOwner(Humanoid humanoid) {
+        public HumanoidInventoryOwner(Humanoid humanoid, Inventory inventory) {
             Humanoid = humanoid;
+            this.inventory = inventory;
         }
 
         public override ZNetView ZNetView => Humanoid.m_nview;
-        public override Inventory Inventory => Humanoid.GetInventory();
+        public override Inventory Inventory => inventory;
     }
 }

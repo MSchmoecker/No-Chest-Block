@@ -82,7 +82,6 @@
         </Reference>
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="CanAddItemTest.cs" />
         <Compile Include="ConsumeTest.cs" />
         <Compile Include="ContainerAddItemToChestTest.cs" />
         <Compile Include="ContainerDropTest.cs" />

@@ -40,7 +40,13 @@ namespace MultiUserChest.Patches {
 
         [HarmonyPatch(typeof(Inventory), nameof(Inventory.Changed)), HarmonyPostfix]
         public static void AddItemPostfix(Inventory __instance) {
-            AssignItemsOfInventory(__instance);
+            if (__instance.IsExtendedInventory(out List<Inventory> inventories)) {
+                foreach (Inventory inventory in inventories) {
+                    AssignItemsOfInventory(inventory);
+                }
+            } else {
+                AssignItemsOfInventory(__instance);
+            }
         }
 
         private static void AssignItemsOfInventory(Inventory inventory) {
@@ -53,6 +59,10 @@ namespace MultiUserChest.Patches {
         private static bool InterceptAddItem(Inventory inventory, ItemDrop.ItemData item, int amount, Vector2i pos, out bool successfulAdded) {
             InventoryOwner from = InventoryOwner.GetInventoryObjectOfItem(item);
             InventoryOwner to = InventoryOwner.GetInventoryObject(inventory);
+
+#if FULL_DEBUG
+            Log.LogDebug($"From: {from?.GetDescription() ?? "null"}, To: {to?.GetDescription() ?? "null"}");
+#endif
 
             if (from == null || !from.IsValid() || to == null || !to.IsValid()) {
                 successfulAdded = false;
