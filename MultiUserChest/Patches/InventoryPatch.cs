@@ -33,6 +33,13 @@ namespace MultiUserChest.Patches {
             return true;
         }
 
+        [HarmonyPatch(typeof(Inventory), nameof(Inventory.Changed)), HarmonyPostfix]
+        public static void AddItemPostfix(Inventory __instance) {
+            foreach (ItemDrop.ItemData item in __instance.GetAllItems()) {
+                InventoryOfItem[item] = __instance;
+            }
+        }
+
         private static bool InterceptAddItem(Inventory inventory, ItemDrop.ItemData item, int amount, Vector2i pos, out bool successfulAdded) {
             InventoryOwner from = InventoryOwner.GetInventoryObjectOfItem(item);
             InventoryOwner to = InventoryOwner.GetInventoryObject(inventory);
@@ -44,7 +51,7 @@ namespace MultiUserChest.Patches {
 
             if (from.ZNetView.IsOwner() && !to.ZNetView.IsOwner()) {
                 if (to is ContainerInventoryOwner toContainer) {
-                    RequestAdd requestAdd =  toContainer.Container.AddItemToChest(item, from.Inventory, pos, from.ZNetView.GetZDO().m_uid, amount, true);
+                    RequestAdd requestAdd = toContainer.Container.AddItemToChest(item, from.Inventory, pos, from.ZNetView.GetZDO().m_uid, amount, true);
                     successfulAdded = requestAdd.dragAmount == amount;
                     return true;
                 }
@@ -68,14 +75,6 @@ namespace MultiUserChest.Patches {
 
             successfulAdded = false;
             return false;
-        }
-
-        [HarmonyPatch(typeof(Inventory), nameof(Inventory.Changed))]
-        [HarmonyPostfix]
-        public static void AddItemPostfix(Inventory __instance) {
-            foreach (ItemDrop.ItemData item in __instance.GetAllItems()) {
-                InventoryOfItem[item] = __instance;
-            }
         }
     }
 }
