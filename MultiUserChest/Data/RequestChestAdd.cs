@@ -1,26 +1,29 @@
 using System.Diagnostics;
+using UnityEngine;
 
 namespace MultiUserChest {
     public class RequestChestAdd : IPackage {
         public readonly Vector2i toPos;
-        public readonly int dragAmount;
         public readonly ItemDrop.ItemData dragItem;
         public readonly int fromInventoryHash;
         public readonly ZDOID sender;
         public readonly bool allowSwitch;
 
-        public RequestChestAdd(Vector2i toPos, int dragAmount, ItemDrop.ItemData dragItem, string inventoryName, bool allowSwitch, ZDOID sender) {
+        public RequestChestAdd(Vector2i toPos, int dragAmount, ItemDrop.ItemData dragItem, string inventoryName, ZDOID sender) {
             this.toPos = toPos;
-            this.dragAmount = dragAmount;
-            this.dragItem = dragItem?.Clone();
+
+            if (dragItem != null) {
+                this.dragItem = dragItem.Clone();
+                this.dragItem.m_stack = Mathf.Min(dragAmount, this.dragItem.m_stack);
+                allowSwitch = dragAmount == dragItem.m_stack;
+            }
+
             fromInventoryHash = inventoryName.GetStableHashCode();
-            this.allowSwitch = allowSwitch;
             this.sender = sender;
         }
 
         public RequestChestAdd(ZPackage package) {
             toPos = package.ReadVector2i();
-            dragAmount = package.ReadInt();
             fromInventoryHash = package.ReadInt();
             dragItem = InventoryHelper.LoadItemFromPackage(package);
             allowSwitch = package.ReadBool();
@@ -31,7 +34,6 @@ namespace MultiUserChest {
             ZPackage package = new ZPackage();
 
             package.Write(toPos);
-            package.Write(dragAmount);
             package.Write(fromInventoryHash);
             InventoryHelper.WriteItemToPackage(dragItem, package);
             package.Write(allowSwitch);
@@ -44,7 +46,6 @@ namespace MultiUserChest {
 #if FULL_DEBUG
             Log.LogDebug($"RequestItemAdd:");
             Log.LogDebug($"  toContainer: {toPos}");
-            Log.LogDebug($"  dragAmount: {dragAmount}");
             Log.LogDebug($"  inventoryHashFrom: {fromInventoryHash}");
             Log.LogDebug($"  allowSwitch: {allowSwitch}");
             Log.LogDebug($"  dragItem: {dragItem != null}");

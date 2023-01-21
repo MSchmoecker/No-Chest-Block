@@ -34,14 +34,13 @@ namespace UnitTests {
 
         [Test]
         public void RequestAdd_PackageReadWrite() {
-            RequestChestAdd requestChestAdd = new RequestChestAdd(posA, 4, item, "inv", true, zdoid);
+            RequestChestAdd requestChestAdd = new RequestChestAdd(posA, 4, item, "inv", zdoid);
             RequestChestAdd fromPackage = GetFromZPackage(requestChestAdd, package => new RequestChestAdd(package));
 
             Assert.AreEqual(fromPackage.toPos, posA);
-            Assert.AreEqual(fromPackage.dragAmount, 4);
             TestForItem(fromPackage.dragItem, new TestItem("my item", 3, Vector2i.zero));
             Assert.AreEqual(fromPackage.fromInventoryHash, "inv".GetStableHashCode());
-            Assert.True(fromPackage.allowSwitch);
+            Assert.False(fromPackage.allowSwitch);
             Assert.AreEqual(fromPackage.sender, zdoid);
         }
 

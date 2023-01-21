@@ -24,13 +24,14 @@ namespace MultiUserChest {
         }
 
         public static RequestChestAdd AddItemToChest(this Container container, ItemDrop.ItemData item, Inventory targetInventory, Vector2i to, ZDOID sender, int dragAmount = -1, bool allowSwitch = false) {
+            // TODO remove allowSwitch
             dragAmount = PossibleDragAmount(container.GetInventory(), item, to, dragAmount);
 
             if (dragAmount <= 0) {
-                return new RequestChestAdd(Vector2i.zero, 0, null, "", false, ZDOID.None);
+                return new RequestChestAdd(Vector2i.zero, 0, null, "", ZDOID.None);
             }
 
-            RequestChestAdd request = new RequestChestAdd(to, dragAmount, item, targetInventory.m_name, allowSwitch, sender);
+            RequestChestAdd request = new RequestChestAdd(to, dragAmount, item, targetInventory.m_name, sender);
             InventoryBlock.Get(targetInventory).BlockSlot(item.m_gridPos);
 
             targetInventory.RemoveItem(item, dragAmount);

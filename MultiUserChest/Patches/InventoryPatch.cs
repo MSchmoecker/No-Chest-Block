@@ -72,7 +72,7 @@ namespace MultiUserChest.Patches {
             if (from.ZNetView.IsOwner() && !to.ZNetView.IsOwner()) {
                 if (to is ContainerInventoryOwner toContainer) {
                     RequestChestAdd requestChestAdd = toContainer.Container.AddItemToChest(item, from.Inventory, pos, from.ZNetView.GetZDO().m_uid, amount, true);
-                    successfulAdded = requestChestAdd.dragAmount == amount;
+                    successfulAdded = requestChestAdd.dragItem.m_stack == amount;
                     return true;
                 }
             }

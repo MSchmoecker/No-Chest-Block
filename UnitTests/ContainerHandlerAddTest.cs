@@ -16,15 +16,17 @@ namespace UnitTests {
         }
 
         private static RequestChestAdd MakeRequest(bool allowSwitch, int itemAmount = 5, int dragAmount = 5) {
+            // TODO remove allowSwitch
             ItemDrop.ItemData item = Helper.CreateItem("my item", itemAmount);
             item.m_gridPos = new Vector2i(2, 2);
-            return new RequestChestAdd(new Vector2i(3, 3), dragAmount, item, "inv", allowSwitch, ZDOID.None);
+            return new RequestChestAdd(new Vector2i(3, 3), dragAmount, item, "inv", ZDOID.None);
         }
 
         private static RequestChestAdd MakeRequest(bool allowSwitch, Vector2i target, int itemAmount = 5) {
+            // TODO remove allowSwitch
             ItemDrop.ItemData item = Helper.CreateItem("my item", itemAmount);
             item.m_gridPos = new Vector2i(2, 2);
-            return new RequestChestAdd(target, itemAmount, item, "inv", allowSwitch, ZDOID.None);
+            return new RequestChestAdd(target, itemAmount, item, "inv", ZDOID.None);
         }
 
         [Test]
@@ -53,7 +55,7 @@ namespace UnitTests {
             RequestChestAddResponse response = GetResponse(request);
 
             TestResponse(response, true, 3);
-            TestForItem(response.switchItem, new TestItem("my item", 2, new Vector2i(2, 2)));
+            TestForItem(response.switchItem, null);
             TestForItems(container, new TestItem("my item", 3, new Vector2i(3, 3)));
         }
 
@@ -80,7 +82,7 @@ namespace UnitTests {
         }
 
         [Test]
-        public void RPC_RequestItemAddToDifferentItemSlotDragTooFew() {
+        public void RPC_RequestItemAdd_ToDifferentItemSlot_DragTooFew() {
             container.CreateItem("my item A", 5, 3, 3);
 
             RequestChestAdd request = MakeRequest(true, 5, 3);
@@ -92,7 +94,7 @@ namespace UnitTests {
         }
 
         [Test]
-        public void RPC_RequestItemAddToDifferentItemNotAllowSwitch() {
+        public void RPC_RequestItemAdd_ToDifferentItem_NotAllowSwitch() {
             container.CreateItem("my item A", 5, 3, 3);
 
             RequestChestAdd request = MakeRequest(false, 6);

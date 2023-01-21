@@ -66,66 +66,60 @@ namespace MultiUserChest {
         }
 
         private static RequestChestAddResponse AddToSlot(Inventory inventory, RequestChestAdd request) {
-            int dragAmount = request.dragAmount;
-            ItemDrop.ItemData dragItem = request.dragItem;
-
-            int amount = Mathf.Min(dragAmount, dragItem.m_stack);
-            bool canStack = CanStack(inventory, request, ref amount, out ItemDrop.ItemData switched);
+            bool canStack = CanStack(inventory, request, out int stackSpace, out ItemDrop.ItemData switched);
 
             if (!canStack) {
-                dragItem.m_stack = dragAmount;
-                return new RequestChestAddResponse(false, dragItem.m_gridPos, 0, request.fromInventoryHash, dragItem, request.sender);
+                return new RequestChestAddResponse(false, request.dragItem.m_gridPos, 0, request.fromInventoryHash, request.dragItem, request.sender);
             }
 
-            bool added = inventory.AddItemToInventory(dragItem, amount, request.toPos);
+            bool added = inventory.AddItemToInventory(request.dragItem, stackSpace, request.toPos);
 
-            if (!added || amount != dragAmount) {
-                switched = dragItem;
-                switched.m_stack = dragAmount - amount;
+            if (!added || stackSpace != request.dragItem.m_stack) {
+                switched = request.dragItem;
+                switched.m_stack = request.dragItem.m_stack - stackSpace;
             }
 
             if (switched != null) {
                 switched.m_gridPos = request.dragItem.m_gridPos;
             }
 
-            return new RequestChestAddResponse(added, request.dragItem.m_gridPos, amount, request.fromInventoryHash, switched, request.sender);
+            return new RequestChestAddResponse(added, request.dragItem.m_gridPos, stackSpace, request.fromInventoryHash, switched, request.sender);
         }
 
-        private static bool CanStack(Inventory inventory, RequestChestAdd request, ref int amount, out ItemDrop.ItemData removedItem) {
+        private static bool CanStack(Inventory inventory, RequestChestAdd request, out int stackSpace, out ItemDrop.ItemData removedItem) {
             ItemDrop.ItemData prevItem = inventory.GetItemAt(request.toPos.x, request.toPos.y);
             removedItem = null;
 
             if (prevItem == null) {
+                stackSpace = request.dragItem.m_stack;
                 return true;
             }
 
             if (InventoryHelper.IsSameItem(prevItem, request.dragItem)) {
-                amount = Mathf.Min(prevItem.m_shared.m_maxStackSize - prevItem.m_stack, request.dragAmount);
+                stackSpace = Mathf.Min(prevItem.m_shared.m_maxStackSize - prevItem.m_stack, request.dragItem.m_stack);
                 return true;
-            }
-
-            if (request.dragItem.m_stack != request.dragAmount) {
-                return false;
             }
 
             if (request.allowSwitch) {
                 inventory.RemoveItem(prevItem, prevItem.m_stack);
                 removedItem = prevItem;
+                stackSpace = request.dragItem.m_stack;
                 return true;
             }
 
+            stackSpace = 0;
             return false;
         }
 
         private static RequestChestAddResponse AddToAnySlot(Inventory inventory, RequestChestAdd request) {
             Inventory tmp = new Inventory("tmp", null, 1, 1);
-            tmp.AddItem(request.dragItem.Clone(), request.dragAmount, 0, 0);
+            tmp.AddItem(request.dragItem.Clone(), request.dragItem.m_stack, 0, 0);
             inventory.MoveItemToThis(tmp, tmp.GetItemAt(0, 0));
 
             ItemDrop.ItemData now = tmp.GetItemAt(0, 0);
 
             if (now == null) {
-                return new RequestChestAddResponse(true, request.dragItem.m_gridPos, request.dragAmount, request.fromInventoryHash, null, request.sender);
+                return new RequestChestAddResponse(true, request.dragItem.m_gridPos, request.dragItem.m_stack, request.fromInventoryHash, null, request.sender);
             }
 
             ItemDrop.ItemData back = request.dragItem.Clone();
