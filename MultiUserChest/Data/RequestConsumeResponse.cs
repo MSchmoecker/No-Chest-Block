@@ -33,8 +33,9 @@
         public void PrintDebug() {
 #if FULL_DEBUG
             Log.LogDebug($"RequestConsumeResponse:");
-            Log.LogDebug($"  item: {item != null}");
-            InventoryHelper.PrintItem(item);
+            Log.LogDebug($"Success: {Success}");
+            Log.LogDebug($"Amount: {Amount}");
+            InventoryHelper.PrintItem(nameof(item), item);
 #endif
         }
     }

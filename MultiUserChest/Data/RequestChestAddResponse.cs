@@ -53,9 +53,8 @@ namespace MultiUserChest {
             Log.LogDebug($"  success: {Success}");
             Log.LogDebug($"  amount: {Amount}");
             Log.LogDebug($"  inventoryHash: {inventoryHash}");
-            Log.LogDebug($"  switchItem: {switchItem != null}");
             Log.LogDebug($"  sender: {sender}");
-            InventoryHelper.PrintItem(switchItem);
+            InventoryHelper.PrintItem(nameof(switchItem), switchItem);
 #endif
         }
     }

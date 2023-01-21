@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using UnityEngine;
 
 namespace MultiUserChest {
@@ -48,10 +47,8 @@ namespace MultiUserChest {
             Log.LogDebug($"  toContainer: {toPos}");
             Log.LogDebug($"  inventoryHashFrom: {fromInventoryHash}");
             Log.LogDebug($"  allowSwitch: {allowSwitch}");
-            Log.LogDebug($"  dragItem: {dragItem != null}");
             Log.LogDebug($"  sender: {sender}");
-            InventoryHelper.PrintItem(dragItem);
-            Log.LogDebug(new StackTrace().ToString());
+            InventoryHelper.PrintItem(nameof(dragItem), dragItem);
 #endif
         }
     }

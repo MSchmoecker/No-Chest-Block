@@ -32,6 +32,7 @@
             Log.LogDebug($"RequestDrop:");
             Log.LogDebug($"  targetContainerSlot: {targetContainerSlot}");
             Log.LogDebug($"  amount: {amount}");
+            Log.LogDebug($"  sender: {sender}");
 #endif
         }
     }

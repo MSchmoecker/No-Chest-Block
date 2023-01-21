@@ -60,9 +60,8 @@ namespace MultiUserChest {
             Log.LogDebug($"  hasSwitched: {hasSwitched}");
             Log.LogDebug($"  inventoryPos: {inventoryPos}");
             Log.LogDebug($"  inventoryName: {inventoryHash}");
-            Log.LogDebug($"  responseItem: {responseItem != null}");
             Log.LogDebug($"  sender: {sender}");
-            InventoryHelper.PrintItem(responseItem);
+            InventoryHelper.PrintItem(nameof(responseItem), responseItem);
 #endif
         }
     }

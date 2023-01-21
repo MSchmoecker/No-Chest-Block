@@ -1,5 +1,3 @@
-using System.Diagnostics;
-
 namespace MultiUserChest {
     public class RequestChestRemove : IPackage {
         public readonly Vector2i fromPos;
@@ -47,10 +45,8 @@ namespace MultiUserChest {
             Log.LogDebug($"  toInventory: {toPos}");
             Log.LogDebug($"  dragAmount: {dragAmount}");
             Log.LogDebug($"  inventoryHashFrom: {fromInventoryHash}");
-            Log.LogDebug($"  switchItem: {switchItem != null}");
             Log.LogDebug($"  sender: {sender}");
-            InventoryHelper.PrintItem(switchItem);
-            Log.LogDebug(new StackTrace().ToString());
+            InventoryHelper.PrintItem(nameof(switchItem), switchItem);
 #endif
         }
     }

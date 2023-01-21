@@ -189,12 +189,14 @@ namespace MultiUserChest {
             return target.AddItem(clone, amount, pos.x, pos.y);
         }
 
-        public static void PrintItem(ItemDrop.ItemData itemData) {
+        public static void PrintItem(string title, ItemDrop.ItemData itemData) {
 #if FULL_DEBUG
             if (itemData == null) {
+                Log.LogDebug($"  {title}: false");
                 return;
             }
 
+            Log.LogDebug($"  {title}: true");
             Log.LogDebug($"    drop name: {(itemData.m_dropPrefab != null ? itemData.m_dropPrefab.name : "null!!!")}");
             Log.LogDebug($"    shared name: {itemData.m_shared.m_name}");
             Log.LogDebug($"    stack: {itemData.m_stack}");
