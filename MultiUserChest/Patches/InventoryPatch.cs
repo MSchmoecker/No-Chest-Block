@@ -9,29 +9,33 @@ namespace MultiUserChest.Patches {
         public static readonly ConditionalWeakTable<ItemDrop.ItemData, Inventory> InventoryOfItem = new ConditionalWeakTable<ItemDrop.ItemData, Inventory>();
 
         [HarmonyPatch(typeof(Inventory), nameof(Inventory.AddItem), typeof(ItemDrop.ItemData), typeof(int), typeof(int), typeof(int))]
-        [HarmonyPrefix]
-        public static bool AddItem1Prefix(Inventory __instance, ItemDrop.ItemData item, int amount, int x, int y, ref bool __result) {
+        [HarmonyPrefix, HarmonyPriority(Priority.VeryLow)]
+        public static void AddItem1Prefix(Inventory __instance, ref bool __runOriginal, ItemDrop.ItemData item, int amount, int x, int y, ref bool __result) {
+            if (!__runOriginal) {
+                return;
+            }
+
             bool intercepted = InterceptAddItem(__instance, item, amount, new Vector2i(x, y), out bool successfulAdded);
 
             if (intercepted) {
                 __result = successfulAdded;
-                return false;
+                __runOriginal = false;
             }
-
-            return true;
         }
 
         [HarmonyPatch(typeof(Inventory), nameof(Inventory.AddItem), typeof(ItemDrop.ItemData))]
-        [HarmonyPrefix]
-        public static bool AddItem2Prefix(Inventory __instance, ItemDrop.ItemData item, ref bool __result) {
+        [HarmonyPrefix, HarmonyPriority(Priority.VeryLow)]
+        public static void AddItem2Prefix(Inventory __instance, ref bool __runOriginal, ItemDrop.ItemData item, ref bool __result) {
+            if (!__runOriginal) {
+                return;
+            }
+
             bool intercepted = InterceptAddItem(__instance, item, item.m_stack, new Vector2i(-1, -1), out bool successfulAdded);
 
             if (intercepted) {
                 __result = successfulAdded;
-                return false;
+                __runOriginal = false;
             }
-
-            return true;
         }
 
         [HarmonyPatch(typeof(Inventory), nameof(Inventory.Changed)), HarmonyPostfix]
