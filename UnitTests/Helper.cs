@@ -16,12 +16,11 @@ namespace UnitTests {
             inventory.AddItem(CreateItem(itemName, amount), amount, x, y);
         }
 
-        public static Container CreateContainer() {
+        public static Container CreateContainer(Inventory containerInventory = null) {
             // cannot instantiate a GameObject correctly, do it the dirty way
             Container container = new Container();
-            container.m_inventory = new Inventory("inventory", null, 4, 5);
+            container.m_inventory = containerInventory ?? new Inventory("inventory", null, 4, 5);
             container.m_nview = new ZNetView();
-            // container.m_nview.
             return container;
         }
     }

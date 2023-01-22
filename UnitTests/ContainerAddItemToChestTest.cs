@@ -3,7 +3,7 @@ using NUnit.Framework;
 
 namespace UnitTests {
     [TestFixture]
-    public class ContainerAddItemToChestTest {
+    public class ContainerAddItemToChestTest : ItemTestBase {
         private Inventory player;
         private Inventory container;
 
@@ -101,6 +101,15 @@ namespace UnitTests {
 
             int amount = ContainerHandler.PossibleDragAmount(container, player.GetItemAt(0, 0), new Vector2i(-1, -1), 15);
             Assert.AreEqual(10, amount);
+        }
+
+        [Test]
+        public void NoSwitchPossible() {
+            player.CreateItem("itemA", 4, 0, 0);
+            container.CreateItem("itemB", 4, 1, 0);
+
+            RequestChestAdd addRequest = Helper.CreateContainer(container).AddItemToChest(player.GetItemAt(0, 0), player, new Vector2i(1, 0), ZDOID.None, 2);
+            TestForItem(addRequest.dragItem, null);
         }
     }
 }

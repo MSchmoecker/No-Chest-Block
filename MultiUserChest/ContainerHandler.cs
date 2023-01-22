@@ -25,8 +25,10 @@ namespace MultiUserChest {
 
         public static RequestChestAdd AddItemToChest(this Container container, ItemDrop.ItemData item, Inventory targetInventory, Vector2i to, ZDOID sender, int dragAmount = -1) {
             dragAmount = PossibleDragAmount(container.GetInventory(), item, to, dragAmount);
+            ItemDrop.ItemData itemAtChest = container.GetInventory().GetItemAt(to.x, to.y);
+            bool cannotStack = itemAtChest != null && dragAmount != item.m_stack && !InventoryHelper.IsSameItem(itemAtChest, item);
 
-            if (dragAmount <= 0) {
+            if (dragAmount <= 0 || cannotStack) {
                 return new RequestChestAdd(Vector2i.zero, 0, null, "", ZDOID.None);
             }
 
