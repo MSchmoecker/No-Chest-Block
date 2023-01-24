@@ -179,7 +179,7 @@ namespace MultiUserChest {
             return new RequestConsumeResponse(returnItem, true, 1);
         }
 
-        private static bool RequestItemMove(this Inventory inventory, RequestMove request) {
+        public static bool RequestItemMove(this Inventory inventory, RequestMove request) {
             Vector2i fromPos = request.fromPos;
             Vector2i toPos = request.toPos;
             int dragAmount = request.dragAmount;
