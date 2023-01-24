@@ -34,7 +34,7 @@ namespace MultiUserChest {
                 return "-";
             }
 
-            return Inventory.GetName() + ", owner: " + ZNetView.IsOwner();
+            return $"{Inventory.GetName()} ({GetType().Name}), is owner: { ZNetView.IsOwner()}";
         }
     }
 

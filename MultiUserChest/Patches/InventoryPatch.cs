@@ -15,6 +15,7 @@ namespace MultiUserChest.Patches {
                 return;
             }
 
+            // intercept movement if the item was added from/to an inventory not owned by the local instance
             bool intercepted = InterceptAddItem(__instance, item, amount, new Vector2i(x, y), out bool successfulAdded);
 
             if (intercepted) {
@@ -30,10 +31,27 @@ namespace MultiUserChest.Patches {
                 return;
             }
 
+            // intercept movement if the item was added from/to an inventory not owned by the local instance
             bool intercepted = InterceptAddItem(__instance, item, item.m_stack, new Vector2i(-1, -1), out bool successfulAdded);
 
             if (intercepted) {
                 __result = successfulAdded;
+                __runOriginal = false;
+            }
+        }
+
+        [HarmonyPatch(typeof(Inventory), nameof(Inventory.RemoveItem), typeof(ItemDrop.ItemData))]
+        [HarmonyPrefix, HarmonyPriority(Priority.VeryLow)]
+        public static void RemoveItemPrefix(Inventory __instance, ref bool __runOriginal, ref bool __result) {
+            if (!__runOriginal) {
+                return;
+            }
+
+            InventoryOwner owner = InventoryOwner.GetInventoryObject(__instance);
+
+            // forbid removing items from inventories not owned by the local instance
+            if (owner != null && owner.IsValid() && !owner.ZNetView.IsOwner()) {
+                __result = false;
                 __runOriginal = false;
             }
         }
