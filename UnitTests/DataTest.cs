@@ -102,11 +102,13 @@ namespace UnitTests {
 
         [Test]
         public void RequestMove_PackageReadWrite() {
-            RequestMove requestAdd = new RequestMove(posA, posB, 3);
+            item.m_gridPos = posA;
+            RequestMove requestAdd = new RequestMove(item, posB, 3);
             RequestMove fromPackage = GetFromZPackage(requestAdd, package => new RequestMove(package));
 
             Assert.AreEqual(fromPackage.fromPos, posA);
             Assert.AreEqual(fromPackage.toPos, posB);
+            Assert.AreEqual(fromPackage.itemHash, "my item".GetStableHashCode());
             Assert.AreEqual(fromPackage.dragAmount, 3);
         }
 

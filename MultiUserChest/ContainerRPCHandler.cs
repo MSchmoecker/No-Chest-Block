@@ -190,6 +190,10 @@ namespace MultiUserChest {
                 return false;
             }
 
+            if (from.PrefabName().GetStableHashCode() != request.itemHash) {
+                return false;
+            }
+
             return InventoryHelper.MoveItem(inventory, from, dragAmount, toPos);
         }
 

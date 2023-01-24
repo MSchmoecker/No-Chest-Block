@@ -15,7 +15,7 @@ namespace UnitTests {
         public void MoveItem_EmptySlot() {
             container.CreateItem("item A", 10, 2, 3);
 
-            RequestMove request = new RequestMove(new Vector2i(2, 3), new Vector2i(3, 3), 10);
+            RequestMove request = new RequestMove(container.GetItemAt(2, 3), new Vector2i(3, 3), 10);
             bool response = container.RequestItemMove(request);
 
             Assert.True(response);
@@ -26,7 +26,7 @@ namespace UnitTests {
         public void MoveItem_SameSlot() {
             container.CreateItem("item A", 10, 2, 3);
 
-            RequestMove request = new RequestMove(new Vector2i(2, 3), new Vector2i(2, 3), 10);
+            RequestMove request = new RequestMove(container.GetItemAt(2, 3), new Vector2i(2, 3), 10);
             bool response = container.RequestItemMove(request);
 
             Assert.True(response);
@@ -38,7 +38,7 @@ namespace UnitTests {
             container.CreateItem("item A", 10, 2, 3);
             container.CreateItem("item A", 10, 3, 3);
 
-            RequestMove request = new RequestMove(new Vector2i(2, 3), new Vector2i(3, 3), 10);
+            RequestMove request = new RequestMove(container.GetItemAt(2, 3), new Vector2i(3, 3), 10);
             bool response = container.RequestItemMove(request);
 
             Assert.True(response);
@@ -50,7 +50,7 @@ namespace UnitTests {
             container.CreateItem("item A", 10, 2, 3);
             container.CreateItem("item A", 15, 3, 3);
 
-            RequestMove request = new RequestMove(new Vector2i(2, 3), new Vector2i(3, 3), 10);
+            RequestMove request = new RequestMove(container.GetItemAt(2, 3), new Vector2i(3, 3), 10);
             bool response = container.RequestItemMove(request);
 
             Assert.True(response);
@@ -62,7 +62,7 @@ namespace UnitTests {
 
         [Test]
         public void MoveItem_NoItem() {
-            RequestMove request = new RequestMove(new Vector2i(2, 3), new Vector2i(3, 3), 10);
+            RequestMove request = new RequestMove(container.GetItemAt(2, 3), new Vector2i(3, 3), 10);
             bool response = container.RequestItemMove(request);
 
             Assert.False(response);
@@ -74,7 +74,7 @@ namespace UnitTests {
             container.CreateItem("item A", 10, 2, 3);
             container.CreateItem("item B", 10, 3, 3);
 
-            RequestMove request = new RequestMove(new Vector2i(2, 3), new Vector2i(3, 3), 10);
+            RequestMove request = new RequestMove(container.GetItemAt(2, 3), new Vector2i(3, 3), 10);
             bool response = container.RequestItemMove(request);
 
             Assert.True(response);
@@ -89,13 +89,42 @@ namespace UnitTests {
             container.CreateItem("item A", 10, 2, 3);
             container.CreateItem("item B", 10, 3, 3);
 
-            RequestMove request = new RequestMove(new Vector2i(2, 3), new Vector2i(3, 3), 5);
+            RequestMove request = new RequestMove(container.GetItemAt(2, 3), new Vector2i(3, 3), 5);
             bool response = container.RequestItemMove(request);
 
             Assert.False(response);
             TestForItems(container, new TestItem[] {
                 new TestItem("item A", 10, new Vector2i(2, 3)),
                 new TestItem("item B", 10, new Vector2i(3, 3))
+            });
+        }
+
+        [Test]
+        public void MoveItem_ItemNoLongerExists() {
+            container.CreateItem("item A", 10, 2, 3);
+
+            RequestMove request = new RequestMove(container.GetItemAt(2, 3), new Vector2i(3, 3), 10);
+            container.RemoveItem(container.GetItemAt(2, 3));
+            bool response = container.RequestItemMove(request);
+
+            Assert.False(response);
+            TestForItems(container);
+        }
+
+        [Test]
+        public void MoveItem_ItemWasAlreadySwitched() {
+            ItemDrop.ItemData itemA = container.CreateItem("item A", 10, 2, 3);
+            ItemDrop.ItemData itemB = container.CreateItem("item B", 10, 3, 3);
+
+            RequestMove request = new RequestMove(container.GetItemAt(2, 3), new Vector2i(3, 3), 10);
+            itemA.m_gridPos = new Vector2i(3, 3);
+            itemB.m_gridPos = new Vector2i(2, 3);
+            bool response = container.RequestItemMove(request);
+
+            Assert.False(response);
+            TestForItems(container, new TestItem[] {
+                new TestItem("item A", 10, new Vector2i(3, 3)),
+                new TestItem("item B", 10, new Vector2i(2, 3))
             });
         }
     }

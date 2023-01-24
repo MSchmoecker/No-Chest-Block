@@ -49,13 +49,7 @@ namespace MultiUserChest {
                 return;
             }
 
-            if (itemData.m_dropPrefab == null) {
-                Log.LogWarning("Item missing prefab " + itemData.m_shared.m_name);
-                pkg.Write(itemData.m_shared.m_name);
-            } else {
-                pkg.Write(itemData.m_dropPrefab.name);
-            }
-
+            pkg.Write(itemData.PrefabName());
             pkg.Write(itemData.m_stack);
             pkg.Write(itemData.m_durability);
             pkg.Write(itemData.m_gridPos);
@@ -69,6 +63,15 @@ namespace MultiUserChest {
                 pkg.Write(pair.Key);
                 pkg.Write(pair.Value);
             }
+        }
+
+        public static string PrefabName(this ItemDrop.ItemData item) {
+            if (item.m_dropPrefab != null) {
+                return item.m_dropPrefab.name;
+            }
+
+            Log.LogWarning("Item missing prefab " + item.m_shared.m_name);
+            return item.m_shared.m_name;
         }
 
         public static bool MoveItem(Inventory inventory, ItemDrop.ItemData item, int amount, Vector2i toPos) {

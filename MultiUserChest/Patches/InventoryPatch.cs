@@ -87,7 +87,7 @@ namespace MultiUserChest.Patches {
 
             if (!from.ZNetView.IsOwner() && !to.ZNetView.IsOwner()) {
                 if (from is ContainerInventoryOwner fromContainer && to is ContainerInventoryOwner toContainer && fromContainer.Container == toContainer.Container) {
-                    fromContainer.Container.MoveItemInChest(item.m_gridPos, pos, amount);
+                    fromContainer.Container.MoveItemInChest(item, pos, amount);
                     successfulAdded = true;
                     return true;
                 }

@@ -12,8 +12,9 @@ namespace UnitTests {
             };
         }
 
-        public static void CreateItem(this Inventory inventory, string itemName, int amount, int x, int y) {
+        public static ItemDrop.ItemData CreateItem(this Inventory inventory, string itemName, int amount, int x, int y) {
             inventory.AddItem(CreateItem(itemName, amount), amount, x, y);
+            return inventory.GetItemAt(x, y);
         }
 
         public static Container CreateContainer(Inventory containerInventory = null) {
