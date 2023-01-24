@@ -24,7 +24,7 @@ namespace MultiUserChest {
         }
 
         public static void LogDebug(string data) {
-#if FULL_DEBUG
+#if DEBUG
             logSource.LogDebug(data);
 #endif
         }

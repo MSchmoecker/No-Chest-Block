@@ -38,8 +38,8 @@ namespace MultiUserChest {
             return package;
         }
 
+#if DEBUG
         public void PrintDebug() {
-#if FULL_DEBUG
             Log.LogDebug($"RequestItemRemove:");
             Log.LogDebug($"  fromContainer: {fromPos}");
             Log.LogDebug($"  toInventory: {toPos}");
@@ -47,7 +47,7 @@ namespace MultiUserChest {
             Log.LogDebug($"  inventoryHashFrom: {fromInventoryHash}");
             Log.LogDebug($"  sender: {sender}");
             InventoryHelper.PrintItem(nameof(switchItem), switchItem);
-#endif
         }
+#endif
     }
 }

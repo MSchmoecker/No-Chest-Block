@@ -193,7 +193,7 @@ namespace MultiUserChest {
         }
 
         public static void PrintItem(string title, ItemDrop.ItemData itemData) {
-#if FULL_DEBUG
+#if DEBUG
             if (itemData == null) {
                 Log.LogDebug($"  {title}: false");
                 return;

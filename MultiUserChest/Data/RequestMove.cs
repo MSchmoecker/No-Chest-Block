@@ -39,13 +39,13 @@ namespace MultiUserChest {
             return package;
         }
 
+#if DEBUG
         public void PrintDebug() {
-#if FULL_DEBUG
             Log.LogDebug($"RequestMove:");
             Log.LogDebug($"  fromPos: {fromPos}");
             Log.LogDebug($"  toPos: {toPos}");
             Log.LogDebug($"  dragAmount: {dragAmount}");
-#endif
         }
+#endif
     }
 }

@@ -41,15 +41,15 @@ namespace MultiUserChest {
             return package;
         }
 
+#if DEBUG
         public void PrintDebug() {
-#if FULL_DEBUG
             Log.LogDebug($"RequestItemAdd:");
             Log.LogDebug($"  toContainer: {toPos}");
             Log.LogDebug($"  inventoryHashFrom: {fromInventoryHash}");
             Log.LogDebug($"  allowSwitch: {allowSwitch}");
             Log.LogDebug($"  sender: {sender}");
             InventoryHelper.PrintItem(nameof(dragItem), dragItem);
-#endif
         }
+#endif
     }
 }

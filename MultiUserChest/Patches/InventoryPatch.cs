@@ -78,7 +78,7 @@ namespace MultiUserChest.Patches {
             InventoryOwner from = InventoryOwner.GetInventoryObjectOfItem(item);
             InventoryOwner to = InventoryOwner.GetInventoryObject(inventory);
 
-#if FULL_DEBUG
+#if DEBUG
             Log.LogDebug($"From: {from?.GetDescription() ?? "null"}, To: {to?.GetDescription() ?? "null"}");
 #endif
 

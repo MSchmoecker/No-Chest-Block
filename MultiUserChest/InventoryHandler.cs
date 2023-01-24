@@ -26,8 +26,8 @@ namespace MultiUserChest {
         }
 
         public static void RPC_RequestItemMoveResponse(long sender, bool success) {
+#if DEBUG
             Timer.Stop(nameof(RPC_RequestItemMoveResponse));
-#if FULL_DEBUG
             Log.LogDebug($"RequestItemMoveResponse:");
             Log.LogDebug($"\tsuccess: {success}");
 #endif
@@ -47,8 +47,11 @@ namespace MultiUserChest {
         }
 
         private static void CallRPC(string timerName, IPackage package, Action action) {
+#if DEBUG
             Timer.Stop(timerName);
             package.PrintDebug();
+#endif
+
             action?.Invoke();
         }
 

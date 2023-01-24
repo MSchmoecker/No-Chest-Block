@@ -46,8 +46,9 @@ namespace MultiUserChest {
             return package;
         }
 
+#if DEBUG
         public void PrintDebug() {
-#if FULL_DEBUG
+
             Log.LogDebug($"RequestAddResponse:");
             Log.LogDebug($"  inventoryPos: {inventoryPos}");
             Log.LogDebug($"  success: {Success}");
@@ -55,7 +56,7 @@ namespace MultiUserChest {
             Log.LogDebug($"  inventoryHash: {inventoryHash}");
             Log.LogDebug($"  sender: {sender}");
             InventoryHelper.PrintItem(nameof(switchItem), switchItem);
-#endif
         }
+#endif
     }
 }

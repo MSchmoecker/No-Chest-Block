@@ -26,14 +26,14 @@
             return package;
         }
 
+#if DEBUG
         public void PrintDebug() {
-#if FULL_DEBUG
 
             Log.LogDebug($"RequestDrop:");
             Log.LogDebug($"  targetContainerSlot: {targetContainerSlot}");
             Log.LogDebug($"  amount: {amount}");
             Log.LogDebug($"  sender: {sender}");
-#endif
         }
+#endif
     }
 }

@@ -31,8 +31,8 @@ namespace MultiUserChest {
             return package;
         }
 
+#if DEBUG
         public void PrintDebug() {
-#if FULL_DEBUG
             Log.LogDebug($"TakeAll:");
             Log.LogDebug($"  items: {items.Count}");
 
@@ -46,7 +46,7 @@ namespace MultiUserChest {
                     Log.LogDebug($"    {i} {item.m_stack}");
                 }
             }
-#endif
         }
+#endif
     }
 }

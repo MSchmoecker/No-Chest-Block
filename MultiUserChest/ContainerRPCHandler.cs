@@ -18,7 +18,7 @@ namespace MultiUserChest {
         }
 
         public static void RPC_RequestItemMove(Container container, long sender, ZPackage package) {
-#if FULL_DEBUG
+#if DEBUG
             Log.LogDebug(nameof(RPC_RequestItemMove));
 #endif
             HandleRPC(container, sender, ContainerPatch.ItemMoveResponseRPC, RequestItemMove, () => new RequestMove(package));
@@ -40,16 +40,19 @@ namespace MultiUserChest {
             }
 
             TInput inputPackage = input();
+
+#if DEBUG
             inputPackage.PrintDebug();
+#endif
 
             container.m_nview.InvokeRPC(target, rpcInvoke, Unpack(message(container.m_inventory, inputPackage)));
         }
 
-        private static object Unpack(object input, bool debugPrint = true) {
+        private static object Unpack(object input) {
             if (input is IPackage package) {
-                if (debugPrint) {
-                    package.PrintDebug();
-                }
+#if DEBUG
+                package.PrintDebug();
+#endif
 
                 return package.WriteToPackage();
             }

@@ -11,8 +11,9 @@ namespace MultiUserChest {
             InventoryBlock.Get(playerInventory).BlockAllSlots(true);
 
             RequestTakeAll request = new RequestTakeAll(wanted);
+#if DEBUG
             Timer.Start(request);
-
+#endif
             if (container != null && container.m_nview) {
                 container.m_nview.InvokeRPC(ContainerPatch.ItemsTakeAllRPC, request.WriteToPackage());
             }
@@ -44,7 +45,9 @@ namespace MultiUserChest {
                     return null;
                 }
 
+#if DEBUG
                 Timer.Start(request);
+#endif
                 container.m_nview.InvokeRPC(ContainerPatch.ItemAddRPC, request.WriteToPackage());
             }
 
@@ -112,7 +115,9 @@ namespace MultiUserChest {
                     return null;
                 }
 
+#if DEBUG
                 Timer.Start(request);
+#endif
                 container.m_nview.InvokeRPC(ContainerPatch.ItemRemoveRPC, request.WriteToPackage());
             }
 
@@ -121,8 +126,9 @@ namespace MultiUserChest {
 
         public static void MoveItemInChest(this Container container, ItemDrop.ItemData item, Vector2i toPos, int dragAmount) {
             RequestMove request = new RequestMove(item, toPos, dragAmount);
+#if DEBUG
             Timer.Start(request);
-
+#endif
             container.m_nview.InvokeRPC(ContainerPatch.ItemMoveRPC, request.WriteToPackage());
         }
     }

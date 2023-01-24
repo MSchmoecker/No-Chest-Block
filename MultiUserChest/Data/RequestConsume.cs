@@ -20,12 +20,12 @@
             return package;
         }
 
+#if DEBUG
         public void PrintDebug() {
-#if FULL_DEBUG
             Log.LogDebug($"RequestConsume:");
             Log.LogDebug($"  itemPosX: {itemPosX}");
             Log.LogDebug($"  itemPosY: {itemPosY}");
-#endif
         }
+#endif
     }
 }

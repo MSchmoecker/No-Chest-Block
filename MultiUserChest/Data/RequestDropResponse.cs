@@ -34,14 +34,14 @@
             return package;
         }
 
+#if DEBUG
         public void PrintDebug() {
-#if FULL_DEBUG
             Log.LogDebug($"RequestDropResponse:");
             Log.LogDebug($"  Success: {Success}");
             Log.LogDebug($"  Amount: {Amount}");
             Log.LogDebug($"  sender: {sender}");
             InventoryHelper.PrintItem(nameof(responseItem), responseItem);
-#endif
         }
+#endif
     }
 }
