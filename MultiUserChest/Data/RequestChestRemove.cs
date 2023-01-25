@@ -1,5 +1,7 @@
+using System;
+
 namespace MultiUserChest {
-    public class RequestChestRemove : IPackage {
+    public class RequestChestRemove : RequestRemove, IPackage {
         public readonly Vector2i fromPos;
         public readonly Vector2i toPos;
         public readonly int dragAmount;
@@ -49,5 +51,9 @@ namespace MultiUserChest {
             InventoryHelper.PrintItem(nameof(switchItem), switchItem);
         }
 #endif
+    }
+
+    [Obsolete]
+    public class RequestRemove {
     }
 }

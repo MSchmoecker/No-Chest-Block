@@ -1,7 +1,8 @@
+using System;
 using UnityEngine;
 
 namespace MultiUserChest {
-    public class RequestChestAdd : IPackage {
+    public class RequestChestAdd : RequestAdd, IPackage {
         public readonly Vector2i toPos;
         public readonly ItemDrop.ItemData dragItem;
         public readonly int fromInventoryHash;
@@ -51,5 +52,9 @@ namespace MultiUserChest {
             InventoryHelper.PrintItem(nameof(dragItem), dragItem);
         }
 #endif
+    }
+
+    [Obsolete]
+    public class RequestAdd {
     }
 }
