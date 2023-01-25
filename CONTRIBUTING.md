@@ -12,9 +12,12 @@ If you use r2modman/Tunderstore Mod Manager you can set the path too, but this i
     <PropertyGroup>
         <!-- Needs to be your path to the base Valheim folder -->
         <VALHEIM_INSTALL>E:\Programme\Steam\steamapps\common\Valheim</VALHEIM_INSTALL>
-        <!-- Optional, needs to be the path to a r2modmanPlus profile folder -->
+
+        <!-- Optional, must to be the path to a r2modmanPlus/TMM profile folder -->
         <R2MODMAN_INSTALL>C:\Users\[user]\AppData\Roaming\r2modmanPlus-local\Valheim\profiles\Develop</R2MODMAN_INSTALL>
-        <USE_R2MODMAN_AS_DEPLOY_FOLDER>false</USE_R2MODMAN_AS_DEPLOY_FOLDER>
+
+        <!-- Optional, deployment destination folder (this base folder must already exists) -->
+        <DEPLOY_FOLDER>C:/Users/[user]/AppData/Roaming/r2modmanPlus-local/Valheim/profiles/Develop</DEPLOY_FOLDER>
     </PropertyGroup>
 </Project>
 ```

@@ -26,42 +26,52 @@
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
         <PlatformTarget>AnyCPU</PlatformTarget>
-        <DebugType>pdbonly</DebugType>
+        <DebugType>full</DebugType>
         <Optimize>true</Optimize>
         <OutputPath>bin\Release\</OutputPath>
         <DefineConstants>TRACE</DefineConstants>
         <ErrorReport>prompt</ErrorReport>
         <WarningLevel>4</WarningLevel>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <DebugSymbols>true</DebugSymbols>
     </PropertyGroup>
     <ItemGroup>
         <Reference Include="0Harmony, Version=2.9.0.0, Culture=neutral, processorArchitecture=MSIL">
           <HintPath>..\packages\HarmonyX.2.9.0\lib\net45\0Harmony.dll</HintPath>
+          <Private>false</Private>
         </Reference>
         <Reference Include="Jotunn, Version=2.7.2.0, Culture=neutral, processorArchitecture=MSIL">
           <HintPath>..\packages\JotunnLib.2.7.2\lib\net462\Jotunn.dll</HintPath>
+          <Private>false</Private>
         </Reference>
         <Reference Include="Microsoft.CSharp" />
         <Reference Include="Mono.Cecil, Version=0.11.4.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e, processorArchitecture=MSIL">
           <HintPath>..\packages\Mono.Cecil.0.11.4\lib\net40\Mono.Cecil.dll</HintPath>
+          <Private>false</Private>
         </Reference>
         <Reference Include="Mono.Cecil.Mdb, Version=0.11.4.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e, processorArchitecture=MSIL">
           <HintPath>..\packages\Mono.Cecil.0.11.4\lib\net40\Mono.Cecil.Mdb.dll</HintPath>
+          <Private>false</Private>
         </Reference>
         <Reference Include="Mono.Cecil.Pdb, Version=0.11.4.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e, processorArchitecture=MSIL">
           <HintPath>..\packages\Mono.Cecil.0.11.4\lib\net40\Mono.Cecil.Pdb.dll</HintPath>
+          <Private>false</Private>
         </Reference>
         <Reference Include="Mono.Cecil.Rocks, Version=0.11.4.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e, processorArchitecture=MSIL">
           <HintPath>..\packages\Mono.Cecil.0.11.4\lib\net40\Mono.Cecil.Rocks.dll</HintPath>
+          <Private>false</Private>
         </Reference>
         <Reference Include="MonoMod, Version=21.9.19.1, Culture=neutral, processorArchitecture=MSIL">
           <HintPath>..\packages\MonoMod.21.9.19.1\lib\net40\MonoMod.exe</HintPath>
+          <Private>false</Private>
         </Reference>
         <Reference Include="MonoMod.RuntimeDetour, Version=22.1.29.1, Culture=neutral, processorArchitecture=MSIL">
           <HintPath>..\packages\MonoMod.RuntimeDetour.22.1.29.1\lib\net452\MonoMod.RuntimeDetour.dll</HintPath>
+          <Private>false</Private>
         </Reference>
         <Reference Include="MonoMod.Utils, Version=22.1.29.1, Culture=neutral, processorArchitecture=MSIL">
           <HintPath>..\packages\MonoMod.Utils.22.1.29.1\lib\net452\MonoMod.Utils.dll</HintPath>
+          <Private>false</Private>
         </Reference>
         <Reference Include="System.Configuration" />
         <Reference Include="System.Data.DataSetExtensions" />
@@ -124,13 +134,39 @@
          Other similar extension points exist, see Microsoft.Common.targets.
     <Target Name="BeforeBuild">
     </Target>
-    <Target Name="AfterBuild">
-    </Target>
     -->
     <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
       <PropertyGroup>
         <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105.The missing file is {0}.</ErrorText>
       </PropertyGroup>
       <Error Condition="!Exists('..\packages\JotunnLib.2.7.2\build\JotunnLib.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\JotunnLib.2.7.2\build\JotunnLib.props'))" />
+    </Target>
+    <PropertyGroup>
+      <FULL_DEPLOY_FOLDER>$(DEPLOY_FOLDER)/BepInEx/plugins/MultiUserChest</FULL_DEPLOY_FOLDER>
+      <TMP_DEPLOY_FOLDER>$(TargetDir)/tmp</TMP_DEPLOY_FOLDER>
+    </PropertyGroup>
+    <Target Name="AfterBuild" Condition="Exists('$(DEPLOY_FOLDER)')">
+      <!--Prepare deployment-->
+      <Message Text="Deploing into: $(FULL_DEPLOY_FOLDER)" Importance="high" />
+      <MakeDir Directories="$(FULL_DEPLOY_FOLDER)" />
+      <Exec Command="$(SolutionDir)Libs/pdb2mdb.exe $(TargetPath)" />
+
+      <!--Create Thunderstore Zip-->
+      <RemoveDir Directories="$(TMP_DEPLOY_FOLDER)" />
+      <Copy SourceFiles="$(TargetDir)$(TargetName).dll" DestinationFolder="$(TMP_DEPLOY_FOLDER)" />
+      <Copy SourceFiles="$(TargetDir)$(TargetName).dll.mdb" DestinationFolder="$(TMP_DEPLOY_FOLDER)" />
+      <Copy SourceFiles="$(SolutionDir)icon.png" DestinationFolder="$(TMP_DEPLOY_FOLDER)" />
+      <Copy SourceFiles="$(SolutionDir)README.md" DestinationFolder="$(TMP_DEPLOY_FOLDER)" />
+      <Copy SourceFiles="$(SolutionDir)manifest.json" DestinationFolder="$(TMP_DEPLOY_FOLDER)" />
+      <ZipDirectory SourceDirectory="$(TMP_DEPLOY_FOLDER)" DestinationFile="$(FULL_DEPLOY_FOLDER)/MultiUserChest.zip" Overwrite="true" />
+
+      <!--Create Nexus Zip-->
+      <RemoveDir Directories="$(TMP_DEPLOY_FOLDER)" />
+      <Copy SourceFiles="$(TargetDir)$(TargetName).dll" DestinationFolder="$(TMP_DEPLOY_FOLDER)/plugins/MultiUserChest" />
+      <Copy SourceFiles="$(TargetDir)$(TargetName).dll.mdb" DestinationFolder="$(TMP_DEPLOY_FOLDER)/plugins/MultiUserChest" />
+      <ZipDirectory SourceDirectory="$(TMP_DEPLOY_FOLDER)" DestinationFile="$(FULL_DEPLOY_FOLDER)/MultiUserChest-Nexus.zip" Overwrite="true" />
+
+      <!--Unpack to deploy folder-->
+      <Unzip SourceFiles="$(FULL_DEPLOY_FOLDER)/MultiUserChest.zip" DestinationFolder="$(FULL_DEPLOY_FOLDER)" />
     </Target>
 </Project>
