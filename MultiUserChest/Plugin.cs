@@ -1,4 +1,5 @@
 ﻿using BepInEx;
+using BepInEx.Bootstrap;
 using HarmonyLib;
 using Jotunn.Utils;
 
@@ -14,12 +15,13 @@ namespace MultiUserChest {
         public const string ModVersion = "0.3.1";
 
         public static Plugin Instance { get; private set; }
+        private static Harmony harmony = new Harmony(ModGuid);
 
         private void Awake() {
             Instance = this;
             Log.Init(Logger);
 
-            new Harmony(ModGuid).PatchAll();
+            harmony.PatchAll();
 
             InvokeRepeating(nameof(UpdateAccessedContainer), 0, 0.1f);
         }
@@ -29,6 +31,9 @@ namespace MultiUserChest {
         }
 
         public static void ApplyModPatches() {
+            if (Chainloader.PluginInfos.ContainsKey("org.bepinex.plugins.valheim.quick_stack")) {
+                harmony.PatchAll(typeof(QuickStackPatch));
+            }
         }
 
         private void UpdateAccessedContainer() {

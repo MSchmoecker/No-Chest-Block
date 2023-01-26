@@ -48,7 +48,7 @@ namespace MultiUserChest {
             return codeMatcher;
         }
 
-        public static bool IsVirtCall(CodeInstruction i, string declaringType, string name) {
+        public static bool IsVirtCall(this CodeInstruction i, string declaringType, string name) {
             return i.opcode == OpCodes.Callvirt && i.operand is MethodInfo methodInfo && methodInfo.DeclaringType?.Name == declaringType && methodInfo.Name == name;
         }
     }
