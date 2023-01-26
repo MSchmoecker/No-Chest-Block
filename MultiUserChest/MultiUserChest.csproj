@@ -113,7 +113,6 @@
         <Compile Include="Patches\InventoryGuiPatch.cs" />
         <Compile Include="Patches\InventoryPatch.cs" />
         <Compile Include="Patches\PickupPatch.cs" />
-        <Compile Include="Patches\TombStonePatch.cs" />
         <Compile Include="Plugin.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
     </ItemGroup>
