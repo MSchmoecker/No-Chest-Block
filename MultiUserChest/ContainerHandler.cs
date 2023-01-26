@@ -8,9 +8,7 @@ namespace MultiUserChest {
     public static class ContainerHandler {
         public static void TakeAll(Container container, Inventory playerInventory) {
             List<ItemDrop.ItemData> wanted = InventoryHelper.GetAllMoveableItems(container.GetInventory(), playerInventory);
-
             InventoryBlock.Get(playerInventory).BlockAllSlots = true;
-
             RequestTakeAll request = new RequestTakeAll(wanted);
 #if DEBUG
             Timer.Start(request);
@@ -98,7 +96,6 @@ namespace MultiUserChest {
             }
 
             RequestChestRemove request = new RequestChestRemove(item.m_gridPos, to, dragAmount, targetInventory.m_name, switchItem, sender);
-            InventoryBlock.Get(targetInventory).BlockSlot(request.toPos);
 
             if (switchItem != null) {
                 if (!InventoryHelper.IsSameItem(item, switchItem)) {
@@ -109,6 +106,8 @@ namespace MultiUserChest {
                     targetInventory.RemoveItem(switchItem);
                 }
             }
+
+            InventoryBlock.Get(targetInventory).BlockSlot(request.toPos);
 
             if (container != null && container.m_nview) {
                 if (container.m_nview.IsOwner()) {
