@@ -2,13 +2,14 @@ using UnityEngine;
 
 namespace UnitTests {
     public static class Helper {
-        public static ItemDrop.ItemData CreateItem(string name, int amount) {
+        public static ItemDrop.ItemData CreateItem(string name, int amount, int x = 0, int y = 0) {
             return new ItemDrop.ItemData {
                 m_shared = new ItemDrop.ItemData.SharedData {
                     m_name = name,
-                    m_maxStackSize = 20
+                    m_maxStackSize = 20,
                 },
-                m_stack = amount
+                m_stack = amount,
+                m_gridPos = new Vector2i(x, y),
             };
         }
 

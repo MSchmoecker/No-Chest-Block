@@ -87,6 +87,7 @@
         <Compile Include="ContainerDropTest.cs" />
         <Compile Include="ContainerHandlerAddTest.cs" />
         <Compile Include="ContainerHandlerRemoveTest.cs" />
+        <Compile Include="ContainerHandlerTakeAll.cs" />
         <Compile Include="DataTest.cs" />
         <Compile Include="GetAllMoveableItemsTest.cs" />
         <Compile Include="Helper.cs" />

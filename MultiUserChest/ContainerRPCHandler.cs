@@ -200,19 +200,24 @@ namespace MultiUserChest {
             return InventoryHelper.MoveItem(inventory, from, dragAmount, toPos);
         }
 
-        private static RequestTakeAll RequestTakeAllItems(this Inventory inventory, RequestTakeAll request) {
-            List<ItemDrop.ItemData> moved = new List<ItemDrop.ItemData>();
+        public static RequestTakeAll RequestTakeAllItems(this Inventory inventory, RequestTakeAll request) {
+            List<ItemDrop.ItemData> movedItems = new List<ItemDrop.ItemData>();
 
             foreach (ItemDrop.ItemData item in request.items) {
                 ItemDrop.ItemData existing = inventory.GetItemAt(item.m_gridPos.x, item.m_gridPos.y);
 
                 if (existing != null) {
-                    moved.Add(existing.Clone());
-                    inventory.RemoveItem(existing, item.m_stack);
+                    int amount = Mathf.Min(existing.m_stack, item.m_stack);
+
+                    if (inventory.RemoveItem(existing, amount)) {
+                        ItemDrop.ItemData moved = existing.Clone();
+                        moved.m_stack = amount;
+                        movedItems.Add(moved);
+                    }
                 }
             }
 
-            return new RequestTakeAll(moved);
+            return new RequestTakeAll(movedItems);
         }
 
         public static RequestDropResponse RequestDrop(this Inventory inventory, RequestDrop request) {
