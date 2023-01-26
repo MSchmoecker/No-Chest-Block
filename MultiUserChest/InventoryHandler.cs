@@ -141,7 +141,7 @@ namespace MultiUserChest {
 
         public static void RPC_RequestItemConsumeResponse(RequestConsumeResponse response) {
             Player player = Player.m_localPlayer;
-            InventoryBlock.Get(player.GetInventory()).BlockConsume(false);
+            InventoryBlock.Get(player.GetInventory()).BlockConsume = false;
 
             if (response.item == null) {
                 return;
@@ -161,7 +161,7 @@ namespace MultiUserChest {
         }
 
         private static void RPC_RequestTakeAllItemsResponse(Inventory inventory, Container container, RequestTakeAll response) {
-            InventoryBlock.Get(inventory).BlockAllSlots(false);
+            InventoryBlock.Get(inventory).BlockAllSlots = false;
 
             if (response.items.Count == 0) {
                 return;

@@ -44,12 +44,12 @@ namespace MultiUserChest.Patches {
                 return true;
             }
 
-            if (InventoryBlock.Get(player.GetInventory()).IsConsumeBlocked()) {
+            if (InventoryBlock.Get(player.GetInventory()).BlockConsume) {
                 return false;
             }
 
             if (player.CanConsumeItem(item)) {
-                InventoryBlock.Get(player.GetInventory()).BlockConsume(true);
+                InventoryBlock.Get(player.GetInventory()).BlockConsume = true;
                 RequestConsume request = new RequestConsume(item);
 #if DEBUG
                 Timer.Start(request);

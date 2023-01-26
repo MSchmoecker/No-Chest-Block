@@ -9,7 +9,7 @@ namespace MultiUserChest {
         public static void TakeAll(Container container, Inventory playerInventory) {
             List<ItemDrop.ItemData> wanted = InventoryHelper.GetAllMoveableItems(container.GetInventory(), playerInventory);
 
-            InventoryBlock.Get(playerInventory).BlockAllSlots(true);
+            InventoryBlock.Get(playerInventory).BlockAllSlots = true;
 
             RequestTakeAll request = new RequestTakeAll(wanted);
 #if DEBUG

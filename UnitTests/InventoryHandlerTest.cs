@@ -10,6 +10,7 @@ namespace UnitTests {
         [SetUp]
         public void SetUp() {
             inventory = new Inventory("inventory", null, 4, 5);
+            InventoryBlock.Get(inventory).ReleaseBlockedSlots();
         }
 
         [Test]
@@ -59,6 +60,13 @@ namespace UnitTests {
         }
 
         [Test]
+        public void AllSlotsBlock_SpecificSlot() {
+            Assert.False(InventoryBlock.Get(inventory).IsSlotBlocked(new Vector2i(2, 4)));
+            InventoryBlock.Get(inventory).BlockAllSlots = true;
+            Assert.True(InventoryBlock.Get(inventory).IsSlotBlocked(new Vector2i(2, 4)));
+        }
+
+        [Test]
         public void SlotIsReleased() {
             Assert.False(InventoryBlock.Get(inventory).IsSlotBlocked(new Vector2i(2, 4)));
             InventoryBlock.Get(inventory).BlockSlot(new Vector2i(2, 4));
@@ -77,6 +85,37 @@ namespace UnitTests {
             Assert.True(InventoryBlock.Get(inventory).IsSlotBlocked(new Vector2i(2, 4)));
             InventoryBlock.Get(inventory).ReleaseSlot(new Vector2i(2, 4));
             Assert.False(InventoryBlock.Get(inventory).IsSlotBlocked(new Vector2i(2, 4)));
+        }
+
+        [Test]
+        public void FastMove_DoNotBlock() {
+            Assert.False(InventoryBlock.Get(inventory).IsSlotBlocked(new Vector2i(-1, -1)));
+            InventoryBlock.Get(inventory).BlockSlot(new Vector2i(-1, -1));
+            Assert.False(InventoryBlock.Get(inventory).IsSlotBlocked(new Vector2i(-1, -1)));
+        }
+
+        [Test]
+        public void ReleaseBlock_Slots() {
+            InventoryBlock.Get(inventory).BlockSlot(new Vector2i(2, 4));
+            Assert.True(InventoryBlock.Get(inventory).IsAnySlotBlocked());
+            InventoryBlock.Get(inventory).ReleaseBlockedSlots();
+            Assert.False(InventoryBlock.Get(inventory).IsAnySlotBlocked());
+        }
+
+        [Test]
+        public void ReleaseBlock_AllSlots() {
+            InventoryBlock.Get(inventory).BlockAllSlots = true;
+            Assert.True(InventoryBlock.Get(inventory).IsAnySlotBlocked());
+            InventoryBlock.Get(inventory).ReleaseBlockedSlots();
+            Assert.False(InventoryBlock.Get(inventory).IsAnySlotBlocked());
+        }
+
+        [Test]
+        public void ReleaseBlock_Consume() {
+            InventoryBlock.Get(inventory).BlockConsume = true;
+            Assert.True(InventoryBlock.Get(inventory).IsAnySlotBlocked());
+            InventoryBlock.Get(inventory).ReleaseBlockedSlots();
+            Assert.False(InventoryBlock.Get(inventory).IsAnySlotBlocked());
         }
     }
 }
