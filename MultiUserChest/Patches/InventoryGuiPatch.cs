@@ -81,7 +81,13 @@ namespace MultiUserChest.Patches {
             }
 
             bool isOwnerOfContainer = __instance.m_currentContainer && __instance.m_currentContainer.IsOwner();
-            bool isPlayerInventory = __instance.m_dragInventory == player.GetInventory();
+            bool isPlayerInventory;
+
+            if (player.GetInventory().IsExtendedInventory(out List<Inventory> inventories)) {
+                isPlayerInventory = inventories.Contains(__instance.m_dragInventory);
+            } else {
+                isPlayerInventory = __instance.m_dragInventory == player.GetInventory();
+            }
 
             if (isOwnerOfContainer || isPlayerInventory) {
                 Log.LogDebug("Drop item from own inventory");
