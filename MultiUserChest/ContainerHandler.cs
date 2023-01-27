@@ -63,8 +63,12 @@ namespace MultiUserChest {
             if (to.x >= 0 && to.y >= 0) {
                 ItemDrop.ItemData targetItem = inventoryTo.GetItemAt(to.x, to.y);
 
-                if (targetItem != null) {
-                    return Mathf.Min(dragAmount, targetItem.m_shared.m_maxStackSize - targetItem.m_stack);
+                if (targetItem != null && dragAmount < dragItem.m_stack) {
+                    if (InventoryHelper.IsSameItem(targetItem, dragItem)) {
+                        return Mathf.Min(dragAmount, targetItem.m_shared.m_maxStackSize - targetItem.m_stack);
+                    }
+
+                    return 0;
                 }
             } else {
                 bool hasEmptySlot = inventoryTo.HaveEmptySlot();

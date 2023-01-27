@@ -63,6 +63,26 @@ namespace UnitTests {
         }
 
         [Test]
+        public void Possible_DragAmount_SpecificSlot_Switch_All() {
+            player.CreateItem("my item A", 20, 0, 0);
+            container.CreateItem("my item B", 15, 0, 0);
+
+            int amount = ContainerHandler.PossibleDragAmount(container, player.GetItemAt(0, 0), new Vector2i(0, 0), 20);
+
+            Assert.AreEqual(20, amount);
+        }
+
+        [Test]
+        public void Possible_DragAmount_SpecificSlot_Switch_NotAll() {
+            player.CreateItem("my item A", 20, 0, 0);
+            container.CreateItem("my item B", 15, 0, 0);
+
+            int amount = ContainerHandler.PossibleDragAmount(container, player.GetItemAt(0, 0), new Vector2i(0, 0), 10);
+
+            Assert.AreEqual(0, amount);
+        }
+
+        [Test]
         public void Possible_DragAmount_SpecificSlot_NoMovePossible() {
             player.CreateItem("my item", 20, 0, 0);
             container.CreateItem("my item", 20, 0, 0);
