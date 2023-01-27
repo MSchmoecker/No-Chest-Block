@@ -61,6 +61,10 @@ namespace MultiUserChest {
         }
 
         public static RequestChestAddResponse RequestItemAdd(this Inventory inventory, RequestChestAdd request) {
+            if (request.dragItem == null) {
+                return new RequestChestAddResponse(false, Vector2i.zero, 0, request.fromInventoryHash, request.dragItem, request.sender);
+            }
+
             if (request.toPos.x < 0 || request.toPos.y < 0) {
                 return AddToAnySlot(inventory, request);
             }

@@ -403,5 +403,18 @@ namespace UnitTests {
             TestForItems(container, new TestItem("itemA", 4, new Vector2i(2, 2)));
             TestForItems(ground);
         }
+
+        [Test]
+        public void AddItemToChest_NotItemOfInventory() {
+            ItemDrop.ItemData item = Helper.CreateItem("item", 4, 2, 2);
+            container.CreateItem("item", 4, 2, 2);
+
+            RequestChestAdd request = Helper.CreateContainer().AddItemToChest(item, player, new Vector2i(2, 2), ZDOID.None, 4);
+            RequestChestAddResponse response = GetAddResponse(request);
+            InventoryHandler.RPC_RequestItemAddResponse(player, response);
+
+            TestForItems(player);
+            TestForItems(container, new TestItem("item", 4, new Vector2i(2, 2)));
+        }
     }
 }

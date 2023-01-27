@@ -28,7 +28,7 @@ namespace MultiUserChest {
             ItemDrop.ItemData itemAtChest = container.GetInventory().GetItemAt(to.x, to.y);
             bool cannotStack = itemAtChest != null && dragAmount != item.m_stack && !InventoryHelper.IsSameItem(itemAtChest, item);
 
-            if (dragAmount <= 0 || cannotStack) {
+            if (dragAmount <= 0 || cannotStack || !targetInventory.ContainsItem(item)) {
                 return new RequestChestAdd(Vector2i.zero, 0, null, "", ZDOID.None);
             }
 
