@@ -9,7 +9,7 @@ namespace MultiUserChest {
             return ZNetView && Inventory != null;
         }
 
-        public static InventoryOwner GetInventoryObject(Inventory inventory) {
+        public static InventoryOwner GetOwner(Inventory inventory) {
             if (HumanoidExtend.GetHumanoid(inventory, out HumanoidInventoryOwner fromHumanoid)) {
                 return fromHumanoid;
             }
@@ -21,9 +21,9 @@ namespace MultiUserChest {
             return null;
         }
 
-        public static InventoryOwner GetInventoryObjectOfItem(ItemDrop.ItemData item) {
+        public static InventoryOwner GetOwner(ItemDrop.ItemData item) {
             if (InventoryPatch.InventoryOfItem.TryGetValue(item, out Inventory fromInventory)) {
-                return GetInventoryObject(fromInventory);
+                return GetOwner(fromInventory);
             }
 
             return null;

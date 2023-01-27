@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using BepInEx;
 using HarmonyLib;
@@ -7,6 +8,7 @@ namespace MultiUserChest.Patches {
     [HarmonyPatch]
     public static class InventoryPatch {
         public static readonly ConditionalWeakTable<ItemDrop.ItemData, Inventory> InventoryOfItem = new ConditionalWeakTable<ItemDrop.ItemData, Inventory>();
+        private static readonly WeakReference<ItemDrop.ItemData> LastRemovedItem = new WeakReference<ItemDrop.ItemData>(null);
 
         [HarmonyPatch(typeof(Inventory), nameof(Inventory.AddItem), typeof(ItemDrop.ItemData), typeof(int), typeof(int), typeof(int))]
         [HarmonyPrefix, HarmonyPriority(Priority.VeryLow)]
@@ -47,12 +49,22 @@ namespace MultiUserChest.Patches {
                 return;
             }
 
-            InventoryOwner owner = InventoryOwner.GetInventoryObject(__instance);
+            InventoryOwner owner = InventoryOwner.GetOwner(__instance);
 
             // forbid removing items from inventories not owned by the local instance
             if (owner != null && owner.IsValid() && !owner.ZNetView.IsOwner()) {
                 __result = false;
                 __runOriginal = false;
+            }
+        }
+
+        [HarmonyPatch(typeof(Inventory), nameof(Inventory.RemoveItem), typeof(ItemDrop.ItemData))]
+        [HarmonyPostfix]
+        public static void RemoveItemPostfix(Inventory __instance, ItemDrop.ItemData item, ref bool __result) {
+            if (__result) {
+                LastRemovedItem.SetTarget(item);
+            } else {
+                LastRemovedItem.SetTarget(null);
             }
         }
 
@@ -75,11 +87,11 @@ namespace MultiUserChest.Patches {
         }
 
         private static bool InterceptAddItem(Inventory inventory, ItemDrop.ItemData item, int amount, Vector2i pos, out bool successfulAdded) {
-            InventoryOwner from = InventoryOwner.GetInventoryObjectOfItem(item);
-            InventoryOwner to = InventoryOwner.GetInventoryObject(inventory);
+            InventoryOwner from = InventoryOwner.GetOwner(item);
+            InventoryOwner to = InventoryOwner.GetOwner(inventory);
 
 #if DEBUG
-            Log.LogDebug($"From: {from?.GetDescription() ?? "null"}, To: {to?.GetDescription() ?? "null"}");
+            Log.LogDebug($"Try InterceptAddItem: {item.m_shared.m_name}; from: {from?.GetDescription() ?? "null"}, to: {to?.GetDescription() ?? "null"}");
 #endif
 
             if (from == null || !from.IsValid() || to == null || !to.IsValid()) {
@@ -97,7 +109,13 @@ namespace MultiUserChest.Patches {
 
             if (!from.ZNetView.IsOwner() && to.ZNetView.IsOwner()) {
                 if (from is ContainerInventoryOwner fromContainer) {
-                    RequestChestRemove requestChestRemove = fromContainer.Container.RemoveItemFromChest(item, to.Inventory, pos, to.ZNetView.GetZDO().m_uid, amount, to.Inventory.GetItemAt(pos.x, pos.y));
+                    ItemDrop.ItemData switchItem = to.Inventory.GetItemAt(pos.x, pos.y);
+
+                    if (switchItem == null && LastRemovedItem.TryGetTarget(out ItemDrop.ItemData lastItem) && InventoryOwner.GetOwner(lastItem) == to && lastItem.m_gridPos == pos) {
+                        switchItem = lastItem;
+                    }
+
+                    RequestChestRemove requestChestRemove = fromContainer.Container.RemoveItemFromChest(item, to.Inventory, pos, to.ZNetView.GetZDO().m_uid, amount, switchItem);
                     successfulAdded = requestChestRemove?.dragAmount == amount;
                     return true;
                 }
