@@ -30,6 +30,7 @@ Please report all errors and desyncs if they occur.
   - Depends on the mod, see [Incompatible Mods](#confirmed-incompatible-mods) and [Compatible Mods](#compatible-mods). If it not listed there, assume it doesn't work.
   - Recommended is [Quick Stack Store Sort Trash Restock](https://valheim.thunderstore.io/package/Goldenrevolver/Quick_Stack_Store_Sort_Trash_Restock) by Goldenrevolver, as it unifies many quick stack features and provides explicit compatibility with Multi User Chest.
 
+
 ## Confirmed Incompatible Mods
 These mods cause desync with Multi User Chest and will not startup together
 - [QuickStore](https://www.nexusmods.com/valheim/mods/1595)
@@ -40,7 +41,7 @@ These mods cause desync with Multi User Chest and will not startup together
 ## Compatible Mods
 Here are some quick stack mods listed that are compatible with Multi User Chest.
 The version number indicates the tested version of the other mod, a different one may also work but isn't confirmed.
-- [Quick Stack Store Sort Trash Restock](https://valheim.thunderstore.io/package/Goldenrevolver/Quick_Stack_Store_Sort_Trash_Restock) 1.3.1 (recommended)
+- [Quick Stack Store Sort Trash Restock](https://valheim.thunderstore.io/package/Goldenrevolver/Quick_Stack_Store_Sort_Trash_Restock) 1.3.1 (recommended quick stack mod, a higher version very likely works too)
 - [SmartContainers](https://www.nexusmods.com/valheim/mods/332) 1.6.4
 - [QuickDeposit](https://valheim.thunderstore.io/package/MaGic/Quick_Deposit) 1.0.1
 - [QuickStack](https://valheim.thunderstore.io/package/damnsneaker/QuickStack) 0.6.6
@@ -60,6 +61,9 @@ See [contributing](https://github.com/MSchmoecker/No-Chest-Block/blob/master/CON
 
 
 ## Changelog
+0.4.1
+- Fixed an error when a player tries to place a chest
+
 0.4.0
 - Big internal rework for compatibility with other mods: instead of patching GUI methods, mainly inventory methods are patched and movement is intercepted when needed. This fixes desyncs with other mods greatly and removes a lot of specific compatibility code. While this doesn't make all quick stack mods compatible, it simplifies compatibility for the most ones.
 - Added compatibility with [Quick Stack Store Sort Trash Restock](https://valheim.thunderstore.io/package/Goldenrevolver/Quick_Stack_Store_Sort_Trash_Restock) by Goldenrevolver
