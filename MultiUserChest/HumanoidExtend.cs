@@ -5,7 +5,7 @@ using UnityEngine;
 namespace MultiUserChest {
     public class HumanoidExtend : MonoBehaviour {
         private static readonly ConditionalWeakTable<Inventory, HumanoidInventoryOwner> Humanoids = new ConditionalWeakTable<Inventory, HumanoidInventoryOwner>();
-        private Humanoid humanoid;
+        private Inventory inventory;
 
         private void Awake() {
             UpdateInventory();
@@ -16,21 +16,37 @@ namespace MultiUserChest {
         }
 
         private void UpdateInventory() {
-            humanoid = GetComponent<Humanoid>();
+            if (!TryGetComponent(out Humanoid humanoid)) {
+                return;
+            }
 
-            if (humanoid.GetInventory().IsExtendedInventory(out List<Inventory> inventories)) {
-                foreach (Inventory inventory in inventories) {
-                    Humanoids.Remove(inventory);
-                    Humanoids.Add(inventory, new HumanoidInventoryOwner(humanoid, inventory));
+            inventory = humanoid.GetInventory();
+
+            if (inventory == null) {
+                return;
+            }
+
+            if (inventory.IsExtendedInventory(out List<Inventory> inventories)) {
+                foreach (Inventory subInventory in inventories) {
+                    Humanoids.TryAdd(subInventory, i => new HumanoidInventoryOwner(humanoid, i));
                 }
             } else {
-                Humanoids.Remove(humanoid.GetInventory());
-                Humanoids.Add(humanoid.GetInventory(), new HumanoidInventoryOwner(humanoid, humanoid.GetInventory()));
+                Humanoids.TryAdd(inventory, i => new HumanoidInventoryOwner(humanoid, i));
             }
         }
 
         private void OnDestroy() {
-            Humanoids.Remove(humanoid.GetInventory());
+            if (inventory == null) {
+                return;
+            }
+
+            if (inventory.IsExtendedInventory(out List<Inventory> inventories)) {
+                foreach (Inventory subInventory in inventories) {
+                    Humanoids.Remove(subInventory);
+                }
+            } else {
+                Humanoids.Remove(inventory);
+            }
         }
 
         public static bool GetHumanoid(Inventory inventory, out HumanoidInventoryOwner humanoid) {
