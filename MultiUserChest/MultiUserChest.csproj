@@ -42,7 +42,7 @@
         </Reference>
         <Reference Include="Jotunn, Version=2.7.2.0, Culture=neutral, processorArchitecture=MSIL">
           <HintPath>..\packages\JotunnLib.2.7.2\lib\net462\Jotunn.dll</HintPath>
-          <Private>false</Private>
+          <Private>true</Private>
         </Reference>
         <Reference Include="Microsoft.CSharp" />
         <Reference Include="Mono.Cecil, Version=0.11.4.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e, processorArchitecture=MSIL">
@@ -169,5 +169,23 @@
 
       <!--Unpack to deploy folder-->
       <Unzip SourceFiles="$(FULL_DEPLOY_FOLDER)/MultiUserChest.zip" DestinationFolder="$(FULL_DEPLOY_FOLDER)" />
+    </Target>
+    <Target Name="AfterBuild">
+      <Copy SourceFiles="$(VALHEIM_INSTALL)/BepInEx/core/BepInEx.dll" DestinationFolder="$(SolutionDir)MultiUserChestUnity/Assets/Assemblies" />
+      <Copy SourceFiles="$(VALHEIM_INSTALL)/BepInEx/core/0Harmony.dll" DestinationFolder="$(SolutionDir)MultiUserChestUnity/Assets/Assemblies" />
+      <Copy SourceFiles="$(VALHEIM_INSTALL)/BepInEx/core/Mono.Cecil.dll" DestinationFolder="$(SolutionDir)MultiUserChestUnity/Assets/Assemblies" />
+      <Copy SourceFiles="$(VALHEIM_INSTALL)/BepInEx/core/MonoMod.Utils.dll" DestinationFolder="$(SolutionDir)MultiUserChestUnity/Assets/Assemblies" />
+      <Copy SourceFiles="$(VALHEIM_INSTALL)/BepInEx/core/MonoMod.RuntimeDetour.dll" DestinationFolder="$(SolutionDir)MultiUserChestUnity/Assets/Assemblies" />
+      <Copy SourceFiles="$(TargetDir)Jotunn.dll" DestinationFolder="$(SolutionDir)MultiUserChestUnity/Assets/Assemblies" />
+      <Copy SourceFiles="$(TargetDir)$(TargetName).dll" DestinationFolder="$(SolutionDir)MultiUserChestUnity/Assets/Assemblies" />
+      <Copy SourceFiles="$(VALHEIM_INSTALL)/valheim_Data/Managed/assembly_valheim.dll" DestinationFolder="$(SolutionDir)MultiUserChestUnity/Assets/Assemblies" />
+      <Copy SourceFiles="$(VALHEIM_INSTALL)/valheim_Data/Managed/assembly_utils.dll" DestinationFolder="$(SolutionDir)MultiUserChestUnity/Assets/Assemblies" />
+      <Copy SourceFiles="$(VALHEIM_INSTALL)/valheim_Data/Managed/assembly_postprocessing.dll" DestinationFolder="$(SolutionDir)MultiUserChestUnity/Assets/Assemblies" />
+      <Copy SourceFiles="$(VALHEIM_INSTALL)/valheim_Data/Managed/assembly_sunshafts.dll" DestinationFolder="$(SolutionDir)MultiUserChestUnity/Assets/Assemblies" />
+      <Copy SourceFiles="$(VALHEIM_INSTALL)/valheim_Data/Managed/assembly_guiutils.dll" DestinationFolder="$(SolutionDir)MultiUserChestUnity/Assets/Assemblies" />
+      <Copy SourceFiles="$(VALHEIM_INSTALL)/valheim_Data/Managed/assembly_steamworks.dll" DestinationFolder="$(SolutionDir)MultiUserChestUnity/Assets/Assemblies" />
+      <Copy SourceFiles="$(VALHEIM_INSTALL)/valheim_Data/Managed/assembly_googleanalytics.dll" DestinationFolder="$(SolutionDir)MultiUserChestUnity/Assets/Assemblies" />
+      <Copy SourceFiles="$(VALHEIM_INSTALL)/valheim_Data/Managed/PlayFab.dll" DestinationFolder="$(SolutionDir)MultiUserChestUnity/Assets/Assemblies" />
+      <Copy SourceFiles="$(VALHEIM_INSTALL)/valheim_Data/Managed/PlayFabParty.dll" DestinationFolder="$(SolutionDir)MultiUserChestUnity/Assets/Assemblies" />
     </Target>
 </Project>
