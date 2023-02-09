@@ -4,417 +4,396 @@ using NUnit.Framework;
 namespace UnitTests {
     [TestFixture]
     public class FullMoveTest : ItemTestBase {
-        private Inventory player;
-        private Inventory container;
-        private Inventory ground;
+        private Inventory playerInv;
+        private Inventory containerInv;
+        private Inventory groundInv;
+
+        private Container container;
+        private ZDOID playerId;
 
         [SetUp]
         public void Setup() {
-            player = new Inventory("player", null, 5, 5);
-            container = new Inventory("container", null, 5, 5);
-            ground = new Inventory("ground", null, 5, 5);
+            playerInv = new Inventory("player", null, 5, 5);
+            containerInv = new Inventory("container", null, 5, 5);
+            groundInv = new Inventory("ground", null, 5, 5);
+
+            container = Helper.CreateContainer(containerInv);
+            playerId = Helper.CreatePlayerIdToInventory(playerInv);
+
             Patches.DropPatch.OnDrop += AddItemToGround;
-            InventoryBlock.Get(player).ReleaseBlockedSlots();
-            InventoryBlock.Get(container).ReleaseBlockedSlots();
+            InventoryBlock.Get(playerInv).ReleaseBlockedSlots();
+            InventoryBlock.Get(containerInv).ReleaseBlockedSlots();
         }
 
         [TearDown]
         public void TearDown() {
             Patches.DropPatch.OnDrop -= AddItemToGround;
+            Helper.inventories.Clear();
+            ZNetSimulate.routedRpcs.Clear();
         }
 
         private void AddItemToGround(ItemDrop.ItemData item, int amount) {
             if (item != null) {
                 ItemDrop.ItemData clone = item.Clone();
                 clone.m_stack = amount;
-                ground.AddItem(clone);
+                groundInv.AddItem(clone);
             }
         }
 
         private RequestChestAddResponse GetAddResponse(RequestChestAdd request) {
-            return container.RequestItemAdd(request);
+            return containerInv.RequestItemAdd(request);
         }
 
         private RequestChestRemoveResponse GetRemoveResponse(RequestChestRemove request) {
-            return container.RequestItemRemove(request);
+            return containerInv.RequestItemRemove(request);
         }
 
         [Test]
         public void AddToChest_SlotOccupied_DifferentItem_SplitMove() {
-            player.CreateItem("itemA", 5, 2, 2);
-            container.CreateItem("itemB", 5, 2, 2);
+            playerInv.CreateItem("itemA", 5, 2, 2);
+            containerInv.CreateItem("itemB", 5, 2, 2);
 
-            RequestChestAdd request = Helper.CreateContainer().AddItemToChest(player.GetItemAt(2, 2), player, new Vector2i(2, 2), ZDOID.None, 3);
-            RequestChestAddResponse response = GetAddResponse(request);
-            InventoryHandler.RPC_RequestItemAddResponse(player, response);
+            container.AddItemToChest(playerInv.GetItemAt(2, 2), playerInv, new Vector2i(2, 2), playerId, 3);
+            ZNetSimulate.HandleAllRoutedRpcs();
 
-            TestForItems(player, new TestItem("itemA", 5, new Vector2i(2, 2)));
-            TestForItems(container, new TestItem("itemB", 5, new Vector2i(2, 2)));
-            TestForItems(ground);
+            TestForItems(playerInv, new TestItem("itemA", 5, new Vector2i(2, 2)));
+            TestForItems(containerInv, new TestItem("itemB", 5, new Vector2i(2, 2)));
+            TestForItems(groundInv);
         }
 
         [Test]
         public void AddToChest_SlotOccupied_DifferentItem_FullMove() {
-            player.CreateItem("itemA", 5, 2, 2);
-            container.CreateItem("itemB", 5, 2, 2);
+            playerInv.CreateItem("itemA", 5, 2, 2);
+            containerInv.CreateItem("itemB", 5, 2, 2);
 
-            RequestChestAdd request = Helper.CreateContainer().AddItemToChest(player.GetItemAt(2, 2), player, new Vector2i(2, 2), ZDOID.None, 5);
-            RequestChestAddResponse response = GetAddResponse(request);
-            InventoryHandler.RPC_RequestItemAddResponse(player, response);
+            container.AddItemToChest(playerInv.GetItemAt(2, 2), playerInv, new Vector2i(2, 2), playerId, 5);
+            ZNetSimulate.HandleAllRoutedRpcs();
 
-            TestForItems(player, new TestItem("itemB", 5, new Vector2i(2, 2)));
-            TestForItems(container, new TestItem("itemA", 5, new Vector2i(2, 2)));
-            TestForItems(ground);
+            TestForItems(playerInv, new TestItem("itemB", 5, new Vector2i(2, 2)));
+            TestForItems(containerInv, new TestItem("itemA", 5, new Vector2i(2, 2)));
+            TestForItems(groundInv);
         }
 
         [Test]
         public void AddToChest_Full_FastMove() {
-            container = new Inventory("container", null, 1, 1);
-            player.CreateItem("itemA", 5, 2, 2);
-            container.CreateItem("itemB", 5, 0, 0);
+            containerInv = new Inventory("container", null, 1, 1);
+            container = Helper.CreateContainer(containerInv);
+            playerInv.CreateItem("itemA", 5, 2, 2);
+            containerInv.CreateItem("itemB", 5, 0, 0);
 
-            RequestChestAdd request = Helper.CreateContainer().AddItemToChest(player.GetItemAt(2, 2), player, new Vector2i(-1, -1), ZDOID.None, 5);
-            RequestChestAddResponse response = GetAddResponse(request);
-            InventoryHandler.RPC_RequestItemAddResponse(player, response);
+            container.AddItemToChest(playerInv.GetItemAt(2, 2), playerInv, new Vector2i(-1, -1), playerId, 5);
+            ZNetSimulate.HandleAllRoutedRpcs();
 
-            TestForItems(player, new TestItem("itemA", 5, new Vector2i(2, 2)));
-            TestForItems(container, new TestItem("itemB", 5, new Vector2i(0, 0)));
-            TestForItems(ground);
+            TestForItems(playerInv, new TestItem("itemA", 5, new Vector2i(2, 2)));
+            TestForItems(containerInv, new TestItem("itemB", 5, new Vector2i(0, 0)));
+            TestForItems(groundInv);
         }
 
         [Test]
         public void AddToChest_SplitStack_EnoughSpaceAtFirstSlot_FastMove() {
             // 25 itemA
-            player.CreateItem("itemA", 10, 3, 3);
-            container.CreateItem("itemA", 15, 2, 2);
+            playerInv.CreateItem("itemA", 10, 3, 3);
+            containerInv.CreateItem("itemA", 15, 2, 2);
 
-            RequestChestAdd request = Helper.CreateContainer().AddItemToChest(player.GetItemAt(3, 3), player, new Vector2i(-1, -1), ZDOID.None, 5);
-            RequestChestAddResponse response = GetAddResponse(request);
-            InventoryHandler.RPC_RequestItemAddResponse(player, response);
+            container.AddItemToChest(playerInv.GetItemAt(3, 3), playerInv, new Vector2i(-1, -1), playerId, 5);
+            ZNetSimulate.HandleAllRoutedRpcs();
 
             // 25 itemA
-            TestForItems(player, new TestItem("itemA", 5, new Vector2i(3, 3)));
-            TestForItems(container, new TestItem("itemA", 20, new Vector2i(2, 2)));
-            TestForItems(ground);
+            TestForItems(playerInv, new TestItem("itemA", 5, new Vector2i(3, 3)));
+            TestForItems(containerInv, new TestItem("itemA", 20, new Vector2i(2, 2)));
+            TestForItems(groundInv);
         }
 
         [Test]
         public void AddToChest_SplitStack_NotEnoughSpaceAtFirstSlot_All_FastMove() {
             // 25 itemA
-            player.CreateItem("itemA", 10, 3, 3);
-            container.CreateItem("itemA", 15, 0, 0);
+            playerInv.CreateItem("itemA", 10, 3, 3);
+            containerInv.CreateItem("itemA", 15, 0, 0);
 
-            RequestChestAdd request = Helper.CreateContainer().AddItemToChest(player.GetItemAt(3, 3), player, new Vector2i(-1, -1), ZDOID.None, 10);
-            RequestChestAddResponse response = GetAddResponse(request);
-            InventoryHandler.RPC_RequestItemAddResponse(player, response);
+            container.AddItemToChest(playerInv.GetItemAt(3, 3), playerInv, new Vector2i(-1, -1), playerId, 10);
+            ZNetSimulate.HandleAllRoutedRpcs();
 
             // 25 itemA
-            TestForItems(player);
-            TestForItems(container, new[] {
+            TestForItems(playerInv);
+            TestForItems(containerInv, new[] {
                 new TestItem("itemA", 20, new Vector2i(0, 0)),
                 new TestItem("itemA", 5, new Vector2i(1, 0))
             });
-            TestForItems(ground);
+            TestForItems(groundInv);
         }
 
         [Test]
         public void AddToChest_SplitStack_NotEnoughSpaceAtFirstSlot_FastMove() {
             // 25 itemA
-            player.CreateItem("itemA", 10, 3, 3);
-            container.CreateItem("itemA", 15, 0, 0);
+            playerInv.CreateItem("itemA", 10, 3, 3);
+            containerInv.CreateItem("itemA", 15, 0, 0);
 
-            RequestChestAdd request = Helper.CreateContainer().AddItemToChest(player.GetItemAt(3, 3), player, new Vector2i(-1, -1), ZDOID.None, 9);
-            RequestChestAddResponse response = GetAddResponse(request);
-            InventoryHandler.RPC_RequestItemAddResponse(player, response);
+            container.AddItemToChest(playerInv.GetItemAt(3, 3), playerInv, new Vector2i(-1, -1), playerId, 9);
+            ZNetSimulate.HandleAllRoutedRpcs();
 
             // 25 itemA
-            TestForItems(player, new TestItem("itemA", 1, new Vector2i(3, 3)));
-            TestForItems(container, new[] {
+            TestForItems(playerInv, new TestItem("itemA", 1, new Vector2i(3, 3)));
+            TestForItems(containerInv, new[] {
                 new TestItem("itemA", 20, new Vector2i(0, 0)),
                 new TestItem("itemA", 4, new Vector2i(1, 0))
             });
-            TestForItems(ground);
+            TestForItems(groundInv);
         }
 
         [Test]
         public void AddToChest_SlotOccupied_SameItem_CannotStackAll() {
-            player.CreateItem("itemA", 10, 2, 2);
-            container.CreateItem("itemA", 15, 2, 2);
+            playerInv.CreateItem("itemA", 10, 2, 2);
+            containerInv.CreateItem("itemA", 15, 2, 2);
 
-            RequestChestAdd request = Helper.CreateContainer().AddItemToChest(player.GetItemAt(2, 2), player, new Vector2i(2, 2), ZDOID.None, 10);
-            RequestChestAddResponse response = GetAddResponse(request);
-            InventoryHandler.RPC_RequestItemAddResponse(player, response);
+            container.AddItemToChest(playerInv.GetItemAt(2, 2), playerInv, new Vector2i(2, 2), playerId, 10);
+            ZNetSimulate.HandleAllRoutedRpcs();
 
-            TestForItems(player, new TestItem("itemA", 5, new Vector2i(2, 2)));
-            TestForItems(container, new TestItem("itemA", 20, new Vector2i(2, 2)));
-            TestForItems(ground);
+            TestForItems(playerInv, new TestItem("itemA", 5, new Vector2i(2, 2)));
+            TestForItems(containerInv, new TestItem("itemA", 20, new Vector2i(2, 2)));
+            TestForItems(groundInv);
         }
 
         [Test]
         public void RemoveFromChest_SlotOccupied_DifferentItem_SplitMove() {
-            player.CreateItem("itemA", 5, 2, 2);
-            container.CreateItem("itemB", 5, 2, 2);
+            playerInv.CreateItem("itemA", 5, 2, 2);
+            containerInv.CreateItem("itemB", 5, 2, 2);
 
-            RequestChestRemove request = Helper.CreateContainer().RemoveItemFromChest(container.GetItemAt(2, 2), player, new Vector2i(2, 2), ZDOID.None, 3, player.GetItemAt(2, 2));
-            RequestChestRemoveResponse response = GetRemoveResponse(request);
-            InventoryHandler.RPC_RequestItemRemoveResponse(player, response);
+            container.RemoveItemFromChest(containerInv.GetItemAt(2, 2), playerInv, new Vector2i(2, 2), playerId, 3, playerInv.GetItemAt(2, 2));
+            ZNetSimulate.HandleAllRoutedRpcs();
 
-            TestForItems(player, new TestItem("itemA", 5, new Vector2i(2, 2)));
-            TestForItems(container, new TestItem("itemB", 5, new Vector2i(2, 2)));
-            TestForItems(ground);
+            TestForItems(playerInv, new TestItem("itemA", 5, new Vector2i(2, 2)));
+            TestForItems(containerInv, new TestItem("itemB", 5, new Vector2i(2, 2)));
+            TestForItems(groundInv);
         }
 
         [Test]
         public void RemoveFromChest_SlotOccupied_SameItem_SplitMove() {
-            player.CreateItem("itemA", 5, 2, 2);
-            container.CreateItem("itemA", 5, 2, 2);
+            playerInv.CreateItem("itemA", 5, 2, 2);
+            containerInv.CreateItem("itemA", 5, 2, 2);
 
-            RequestChestRemove request = Helper.CreateContainer().RemoveItemFromChest(container.GetItemAt(2, 2), player, new Vector2i(2, 2), ZDOID.None, 3, player.GetItemAt(2, 2));
-            RequestChestRemoveResponse response = GetRemoveResponse(request);
-            InventoryHandler.RPC_RequestItemRemoveResponse(player, response);
+            container.RemoveItemFromChest(containerInv.GetItemAt(2, 2), playerInv, new Vector2i(2, 2), playerId, 3, playerInv.GetItemAt(2, 2));
+            ZNetSimulate.HandleAllRoutedRpcs();
 
-            TestForItems(player, new TestItem("itemA", 8, new Vector2i(2, 2)));
-            TestForItems(container, new TestItem("itemA", 2, new Vector2i(2, 2)));
-            TestForItems(ground);
+            TestForItems(playerInv, new TestItem("itemA", 8, new Vector2i(2, 2)));
+            TestForItems(containerInv, new TestItem("itemA", 2, new Vector2i(2, 2)));
+            TestForItems(groundInv);
         }
 
         [Test]
         public void RemoveFromChest_SlotOccupied_SameItem_SplitMove_Overflow() {
-            player.CreateItem("itemA", 15, 2, 2);
-            container.CreateItem("itemA", 15, 2, 2);
+            playerInv.CreateItem("itemA", 15, 2, 2);
+            containerInv.CreateItem("itemA", 15, 2, 2);
 
-            RequestChestRemove request = Helper.CreateContainer().RemoveItemFromChest(container.GetItemAt(2, 2), player, new Vector2i(2, 2), ZDOID.None, 7, player.GetItemAt(2, 2));
-            RequestChestRemoveResponse response = GetRemoveResponse(request);
-            InventoryHandler.RPC_RequestItemRemoveResponse(player, response);
+            container.RemoveItemFromChest(containerInv.GetItemAt(2, 2), playerInv, new Vector2i(2, 2), playerId, 7, playerInv.GetItemAt(2, 2));
+            ZNetSimulate.HandleAllRoutedRpcs();
 
-            TestForItems(player, new TestItem("itemA", 20, new Vector2i(2, 2)));
-            TestForItems(container, new TestItem("itemA", 10, new Vector2i(2, 2)));
-            TestForItems(ground);
+            TestForItems(playerInv, new TestItem("itemA", 20, new Vector2i(2, 2)));
+            TestForItems(containerInv, new TestItem("itemA", 10, new Vector2i(2, 2)));
+            TestForItems(groundInv);
         }
 
         [Test]
         public void AddToChest_SlotEmpty_FullMove() {
-            player.CreateItem("itemA", 5, 2, 2);
+            playerInv.CreateItem("itemA", 5, 2, 2);
 
-            RequestChestAdd request = Helper.CreateContainer().AddItemToChest(player.GetItemAt(2, 2), player, new Vector2i(2, 2), ZDOID.None, 5);
-            RequestChestAddResponse response = GetAddResponse(request);
-            InventoryHandler.RPC_RequestItemAddResponse(player, response);
+            container.AddItemToChest(playerInv.GetItemAt(2, 2), playerInv, new Vector2i(2, 2), playerId, 5);
+            ZNetSimulate.HandleAllRoutedRpcs();
 
-            TestForItems(player);
-            TestForItems(container, new TestItem("itemA", 5, new Vector2i(2, 2)));
-            TestForItems(ground);
+            TestForItems(playerInv);
+            TestForItems(containerInv, new TestItem("itemA", 5, new Vector2i(2, 2)));
+            TestForItems(groundInv);
         }
 
         [Test]
         public void AddToChest_LastSlot_OverStack_FastMove() {
-            container = new Inventory("inv", null, 1, 1);
-            container.CreateItem("itemA", 15, 0, 0);
-            player.CreateItem("itemA", 10, 2, 2);
+            containerInv = new Inventory("inv", null, 1, 1);
+            containerInv.CreateItem("itemA", 15, 0, 0);
+            playerInv.CreateItem("itemA", 10, 2, 2);
+            container = Helper.CreateContainer(containerInv);
 
-            RequestChestAdd request = Helper.CreateContainer().AddItemToChest(player.GetItemAt(2, 2), player, new Vector2i(-1, -1), ZDOID.None, 10);
-            RequestChestAddResponse response = GetAddResponse(request);
-            InventoryHandler.RPC_RequestItemAddResponse(player, response);
+            container.AddItemToChest(playerInv.GetItemAt(2, 2), playerInv, new Vector2i(-1, -1), playerId, 10);
+            ZNetSimulate.HandleAllRoutedRpcs();
 
-            TestForItems(player, new TestItem("itemA", 5, new Vector2i(2, 2)));
-            TestForItems(container, new TestItem("itemA", 20, new Vector2i(0, 0)));
-            TestForItems(ground);
+            TestForItems(playerInv, new TestItem("itemA", 5, new Vector2i(2, 2)));
+            TestForItems(containerInv, new TestItem("itemA", 20, new Vector2i(0, 0)));
+            TestForItems(groundInv);
         }
 
         [Test]
         public void AddItemToChestHigherDragAmount() {
-            player.CreateItem("my item A", 5, 3, 3);
+            playerInv.CreateItem("my item A", 5, 3, 3);
 
-            RequestChestAdd request = Helper.CreateContainer().AddItemToChest(player.GetItemAt(3, 3), player, new Vector2i(1, 1), ZDOID.None, 7);
-            RequestChestAddResponse response = GetAddResponse(request);
-            InventoryHandler.RPC_RequestItemAddResponse(player, response);
+            container.AddItemToChest(playerInv.GetItemAt(3, 3), playerInv, new Vector2i(1, 1), playerId, 7);
+            ZNetSimulate.HandleAllRoutedRpcs();
 
-            TestForItems(player);
-            TestForItems(container, new TestItem("my item A", 5, new Vector2i(1, 1)));
-            TestForItems(ground);
+            TestForItems(playerInv);
+            TestForItems(containerInv, new TestItem("my item A", 5, new Vector2i(1, 1)));
+            TestForItems(groundInv);
         }
 
         [Test]
         public void AddItemToChestDifferentSlotSameItems() {
-            player.CreateItem("my item A", 10, 2, 2);
-            player.CreateItem("my item A", 10, 3, 2);
+            playerInv.CreateItem("my item A", 10, 2, 2);
+            playerInv.CreateItem("my item A", 10, 3, 2);
 
-            RequestChestAdd request = Helper.CreateContainer().AddItemToChest(player.GetItemAt(3, 2), player, new Vector2i(1, 2), ZDOID.None, 3);
-            RequestChestAddResponse response = GetAddResponse(request);
-            InventoryHandler.RPC_RequestItemAddResponse(player, response);
+            container.AddItemToChest(playerInv.GetItemAt(3, 2), playerInv, new Vector2i(1, 2), playerId, 3);
+            ZNetSimulate.HandleAllRoutedRpcs();
 
-            TestForItems(player, new[] {
+            TestForItems(playerInv, new[] {
                 new TestItem("my item A", 10, new Vector2i(2, 2)),
                 new TestItem("my item A", 7, new Vector2i(3, 2)),
             });
-            TestForItems(container, new[] {
+            TestForItems(containerInv, new[] {
                 new TestItem("my item A", 3, new Vector2i(1, 2)),
             });
-            TestForItems(ground);
+            TestForItems(groundInv);
 
-            request = Helper.CreateContainer().AddItemToChest(player.GetItemAt(2, 2), player, new Vector2i(1, 2), ZDOID.None, 2);
-            response = GetAddResponse(request);
-            InventoryHandler.RPC_RequestItemAddResponse(player, response);
+            container.AddItemToChest(playerInv.GetItemAt(2, 2), playerInv, new Vector2i(1, 2), playerId, 2);
+            ZNetSimulate.HandleAllRoutedRpcs();
 
-            TestForItems(player, new[] {
+            TestForItems(playerInv, new[] {
                 new TestItem("my item A", 8, new Vector2i(2, 2)),
                 new TestItem("my item A", 7, new Vector2i(3, 2)),
             });
-            TestForItems(container, new[] {
+            TestForItems(containerInv, new[] {
                 new TestItem("my item A", 5, new Vector2i(1, 2)),
             });
-            TestForItems(ground);
+            TestForItems(groundInv);
         }
 
         [Test]
         public void RemoveFromChest_SlotOccupied_DifferentItem_FullMove() {
-            player.CreateItem("itemA", 5, 2, 2);
-            container.CreateItem("itemB", 5, 2, 2);
+            playerInv.CreateItem("itemA", 5, 2, 2);
+            containerInv.CreateItem("itemB", 5, 2, 2);
 
-            RequestChestRemove request = Helper.CreateContainer().RemoveItemFromChest(container.GetItemAt(2, 2), player, new Vector2i(2, 2), ZDOID.None, 5, player.GetItemAt(2, 2));
-            RequestChestRemoveResponse response = GetRemoveResponse(request);
-            InventoryHandler.RPC_RequestItemRemoveResponse(player, response);
+            container.RemoveItemFromChest(containerInv.GetItemAt(2, 2), playerInv, new Vector2i(2, 2), playerId, 5, playerInv.GetItemAt(2, 2));
+            ZNetSimulate.HandleAllRoutedRpcs();
 
-            TestForItems(player, new TestItem("itemB", 5, new Vector2i(2, 2)));
-            TestForItems(container, new TestItem("itemA", 5, new Vector2i(2, 2)));
-            TestForItems(ground);
+            TestForItems(playerInv, new TestItem("itemB", 5, new Vector2i(2, 2)));
+            TestForItems(containerInv, new TestItem("itemA", 5, new Vector2i(2, 2)));
+            TestForItems(groundInv);
         }
 
         [Test]
         public void RemoveFromChest_SlotEmpty_FullMove() {
-            container.CreateItem("itemB", 5, 2, 2);
+            containerInv.CreateItem("itemB", 5, 2, 2);
 
-            RequestChestRemove request = Helper.CreateContainer().RemoveItemFromChest(container.GetItemAt(2, 2), player, new Vector2i(2, 2), ZDOID.None, 5, player.GetItemAt(2, 2));
-            RequestChestRemoveResponse response = GetRemoveResponse(request);
-            InventoryHandler.RPC_RequestItemRemoveResponse(player, response);
+            container.RemoveItemFromChest(containerInv.GetItemAt(2, 2), playerInv, new Vector2i(2, 2), playerId, 5, playerInv.GetItemAt(2, 2));
+            ZNetSimulate.HandleAllRoutedRpcs();
 
-            TestForItems(player, new TestItem("itemB", 5, new Vector2i(2, 2)));
-            TestForItems(container);
-            TestForItems(ground);
+            TestForItems(playerInv, new TestItem("itemB", 5, new Vector2i(2, 2)));
+            TestForItems(containerInv);
+            TestForItems(groundInv);
         }
 
         [Test]
         public void RemoveFromChest_SlotEmpty_SplitMove() {
-            container.CreateItem("itemB", 5, 2, 2);
+            containerInv.CreateItem("itemB", 5, 2, 2);
 
-            RequestChestRemove request = Helper.CreateContainer().RemoveItemFromChest(container.GetItemAt(2, 2), player, new Vector2i(2, 2), ZDOID.None, 3, player.GetItemAt(2, 2));
-            RequestChestRemoveResponse response = GetRemoveResponse(request);
-            InventoryHandler.RPC_RequestItemRemoveResponse(player, response);
+            container.RemoveItemFromChest(containerInv.GetItemAt(2, 2), playerInv, new Vector2i(2, 2), playerId, 3, playerInv.GetItemAt(2, 2));
+            ZNetSimulate.HandleAllRoutedRpcs();
 
-            TestForItems(player, new TestItem("itemB", 3, new Vector2i(2, 2)));
-            TestForItems(container, new TestItem("itemB", 2, new Vector2i(2, 2)));
-            TestForItems(ground);
+            TestForItems(playerInv, new TestItem("itemB", 3, new Vector2i(2, 2)));
+            TestForItems(containerInv, new TestItem("itemB", 2, new Vector2i(2, 2)));
+            TestForItems(groundInv);
         }
 
         [Test]
         public void RemoveFromChest_ItemRemovedBetweenRequests() {
-            player.CreateItem("itemA", 4, 2, 2);
-            container.CreateItem("itemB", 5, 2, 2);
+            playerInv.CreateItem("itemA", 4, 2, 2);
+            containerInv.CreateItem("itemB", 5, 2, 2);
 
-            RequestChestRemove request = Helper.CreateContainer().RemoveItemFromChest(container.GetItemAt(2, 2), player, new Vector2i(2, 2), ZDOID.None, 5, player.GetItemAt(2, 2));
+            container.RemoveItemFromChest(containerInv.GetItemAt(2, 2), playerInv, new Vector2i(2, 2), playerId, 5, playerInv.GetItemAt(2, 2));
 
-            TestForItems(player);
+            TestForItems(playerInv);
 
-            RequestChestRemoveResponse response = GetRemoveResponse(request);
-            InventoryHandler.RPC_RequestItemRemoveResponse(player, response);
+            ZNetSimulate.HandleAllRoutedRpcs();
 
-            TestForItems(player, new TestItem("itemB", 5, new Vector2i(2, 2)));
-            TestForItems(container, new TestItem("itemA", 4, new Vector2i(2, 2)));
-            TestForItems(ground);
+            TestForItems(playerInv, new TestItem("itemB", 5, new Vector2i(2, 2)));
+            TestForItems(containerInv, new TestItem("itemA", 4, new Vector2i(2, 2)));
+            TestForItems(groundInv);
         }
 
         [Test]
         public void RemoveFromChest_ItemAddedBetweenRequest_DifferentItem() {
-            container.CreateItem("itemB", 5, 2, 2);
+            containerInv.CreateItem("itemB", 5, 2, 2);
 
-            RequestChestRemove request = Helper.CreateContainer().RemoveItemFromChest(container.GetItemAt(2, 2), player, new Vector2i(2, 2), ZDOID.None, 5);
-            RequestChestRemoveResponse response = GetRemoveResponse(request);
+            container.RemoveItemFromChest(containerInv.GetItemAt(2, 2), playerInv, new Vector2i(2, 2), playerId, 5);
+            ZNetSimulate.HandleRoutedRpcs(1);
 
-            player.CreateItem("itemA", 5, 2, 2);
+            playerInv.CreateItem("itemA", 5, 2, 2);
+            ZNetSimulate.HandleRoutedRpcs(1);
 
-            InventoryHandler.RPC_RequestItemRemoveResponse(player, response);
-
-            TestForItems(player, new TestItem("itemA", 5, new Vector2i(2, 2)));
-            TestForItems(container);
-            TestForItems(ground, new TestItem("itemB", 5, new Vector2i(0, 0)));
+            TestForItems(playerInv, new TestItem("itemA", 5, new Vector2i(2, 2)));
+            TestForItems(containerInv);
+            TestForItems(groundInv, new TestItem("itemB", 5, new Vector2i(0, 0)));
         }
 
         [Test]
         public void RemoveFromChest_ItemAddedBetweenRequest_SameItem() {
-            container.CreateItem("itemA", 5, 2, 2);
+            containerInv.CreateItem("itemA", 5, 2, 2);
 
-            RequestChestRemove request = Helper.CreateContainer().RemoveItemFromChest(container.GetItemAt(2, 2), player, new Vector2i(2, 2), ZDOID.None, 5);
-            RequestChestRemoveResponse response = GetRemoveResponse(request);
+            container.RemoveItemFromChest(containerInv.GetItemAt(2, 2), playerInv, new Vector2i(2, 2), playerId, 5);
+            ZNetSimulate.HandleRoutedRpcs(1);
 
-            player.CreateItem("itemA", 5, 2, 2);
+            playerInv.CreateItem("itemA", 5, 2, 2);
+            ZNetSimulate.HandleRoutedRpcs(1);
 
-            InventoryHandler.RPC_RequestItemRemoveResponse(player, response);
-
-            TestForItems(player, new TestItem("itemA", 10, new Vector2i(2, 2)));
-            TestForItems(container);
-            TestForItems(ground);
+            TestForItems(playerInv, new TestItem("itemA", 10, new Vector2i(2, 2)));
+            TestForItems(containerInv);
+            TestForItems(groundInv);
         }
 
         [Test]
         public void RemoveFromChest_ItemAddedBetweenRequest_SameItem_Overflow() {
-            container.CreateItem("itemA", 5, 2, 2);
+            containerInv.CreateItem("itemA", 5, 2, 2);
 
-            RequestChestRemove request = Helper.CreateContainer().RemoveItemFromChest(container.GetItemAt(2, 2), player, new Vector2i(2, 2), ZDOID.None, 5);
-            RequestChestRemoveResponse response = GetRemoveResponse(request);
+            container.RemoveItemFromChest(containerInv.GetItemAt(2, 2), playerInv, new Vector2i(2, 2), playerId, 5);
+            playerInv.CreateItem("itemA", 19, 2, 2);
+            ZNetSimulate.HandleAllRoutedRpcs();
 
-            player.CreateItem("itemA", 19, 2, 2);
-
-            InventoryHandler.RPC_RequestItemRemoveResponse(player, response);
-
-            TestForItems(player, new TestItem("itemA", 20, new Vector2i(2, 2)));
-            TestForItems(container);
-            TestForItems(ground, new TestItem("itemA", 4, new Vector2i(0, 0)));
+            TestForItems(playerInv, new TestItem("itemA", 20, new Vector2i(2, 2)));
+            TestForItems(containerInv);
+            TestForItems(groundInv, new TestItem("itemA", 4, new Vector2i(0, 0)));
         }
 
         [Test]
         public void AddToChest_InventoryChangedAfterRequestConstructed() {
-            player.CreateItem("itemA", 5, 2, 2);
+            playerInv.CreateItem("itemA", 5, 2, 2);
 
-            RequestChestAdd request = Helper.CreateContainer().AddItemToChest(player.GetItemAt(2, 2), player, new Vector2i(2, 2), ZDOID.None, 5);
-            container.CreateItem("itemB", 5, 2, 2);
+            container.AddItemToChest(playerInv.GetItemAt(2, 2), playerInv, new Vector2i(2, 2), playerId, 5);
+            containerInv.CreateItem("itemB", 5, 2, 2);
+            ZNetSimulate.HandleAllRoutedRpcs();
 
-            RequestChestAddResponse response = GetAddResponse(request);
-            InventoryHandler.RPC_RequestItemAddResponse(player, response);
-
-            TestForItems(player, new TestItem("itemB", 5, new Vector2i(2, 2)));
-            TestForItems(container, new TestItem("itemA", 5, new Vector2i(2, 2)));
-            TestForItems(ground);
+            TestForItems(playerInv, new TestItem("itemB", 5, new Vector2i(2, 2)));
+            TestForItems(containerInv, new TestItem("itemA", 5, new Vector2i(2, 2)));
+            TestForItems(groundInv);
         }
 
         [Test]
         public void AddAndRemove_Switch() {
-            player.CreateItem("itemA", 4, 2, 2);
-            container.CreateItem("itemB", 4, 2, 2);
+            playerInv.CreateItem("itemA", 4, 2, 2);
+            containerInv.CreateItem("itemB", 4, 2, 2);
 
-            RequestChestAdd addRequest = Helper.CreateContainer().AddItemToChest(player.GetItemAt(2, 2), player, new Vector2i(2, 2), ZDOID.None, 4);
-            RequestChestRemove removeRequest = Helper.CreateContainer().RemoveItemFromChest(container.GetItemAt(2, 2), player, new Vector2i(2, 2), ZDOID.None, 4);
+            container.AddItemToChest(playerInv.GetItemAt(2, 2), playerInv, new Vector2i(2, 2), playerId, 4);
+            container.RemoveItemFromChest(containerInv.GetItemAt(2, 2), playerInv, new Vector2i(2, 2), playerId, 4);
+            ZNetSimulate.HandleAllRoutedRpcs();
 
-            RequestChestAddResponse addResponse = GetAddResponse(addRequest);
-            RequestChestRemoveResponse removeResponse = GetRemoveResponse(removeRequest);
-
-            InventoryHandler.RPC_RequestItemAddResponse(player, addResponse);
-            InventoryHandler.RPC_RequestItemRemoveResponse(player, removeResponse);
-
-            TestForItems(player, new TestItem("itemB", 4, new Vector2i(2, 2)));
-            TestForItems(container, new TestItem("itemA", 4, new Vector2i(2, 2)));
-            TestForItems(ground);
+            TestForItems(playerInv, new TestItem("itemB", 4, new Vector2i(2, 2)));
+            TestForItems(containerInv, new TestItem("itemA", 4, new Vector2i(2, 2)));
+            TestForItems(groundInv);
         }
 
         [Test]
         public void AddItemToChest_NotItemOfInventory() {
             ItemDrop.ItemData item = Helper.CreateItem("item", 4, 2, 2);
-            container.CreateItem("item", 4, 2, 2);
+            containerInv.CreateItem("item", 4, 2, 2);
 
-            RequestChestAdd request = Helper.CreateContainer().AddItemToChest(item, player, new Vector2i(2, 2), ZDOID.None, 4);
-            RequestChestAddResponse response = GetAddResponse(request);
-            InventoryHandler.RPC_RequestItemAddResponse(player, response);
+            container.AddItemToChest(item, playerInv, new Vector2i(2, 2), playerId, 4);
+            ZNetSimulate.HandleAllRoutedRpcs();
 
-            TestForItems(player);
-            TestForItems(container, new TestItem("item", 4, new Vector2i(2, 2)));
+            TestForItems(playerInv);
+            TestForItems(containerInv, new TestItem("item", 4, new Vector2i(2, 2)));
         }
     }
 }

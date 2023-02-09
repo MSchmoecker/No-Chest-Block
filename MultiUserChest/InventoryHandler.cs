@@ -184,7 +184,7 @@ namespace MultiUserChest {
             container.m_onTakeAllSuccess?.Invoke();
         }
 
-        private static Inventory GetInventory(ZDOID targetId, int hash) {
+        internal static Inventory GetInventory(ZDOID targetId, int hash) {
             GameObject target = ZNetScene.instance.FindInstance(targetId);
 
             if (target.TryGetComponent(out Player player)) {

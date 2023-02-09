@@ -37,19 +37,16 @@ namespace MultiUserChest {
 
             targetInventory.RemoveItem(item, dragAmount);
 
-            if (container != null && container.m_nview) {
-                if (container.m_nview.IsOwner()) {
-                    RequestChestAddResponse response = container.GetInventory().RequestItemAdd(request);
-                    InventoryHandler.RPC_RequestItemAddResponse(targetInventory, response);
-                    return null;
-                }
-
-#if DEBUG
-                Timer.Start(request);
-#endif
-                container.m_nview.InvokeRPC(ContainerPatch.ItemAddRPC, request.WriteToPackage());
+            if (container && container.m_nview && container.m_nview.IsOwner()) {
+                RequestChestAddResponse response = container.GetInventory().RequestItemAdd(request);
+                InventoryHandler.RPC_RequestItemAddResponse(targetInventory, response);
+                return null;
             }
 
+#if DEBUG
+            Timer.Start(request);
+#endif
+            container.m_nview.InvokeRPC(ContainerPatch.ItemAddRPC, request.WriteToPackage());
             return request;
         }
 
@@ -113,19 +110,17 @@ namespace MultiUserChest {
 
             InventoryBlock.Get(targetInventory).BlockSlot(request.toPos);
 
-            if (container != null && container.m_nview) {
-                if (container.m_nview.IsOwner()) {
-                    RequestChestRemoveResponse response = container.GetInventory().RequestItemRemove(request);
-                    InventoryHandler.RPC_RequestItemRemoveResponse(targetInventory, response);
-                    return null;
-                }
-
-#if DEBUG
-                Timer.Start(request);
-#endif
-                container.m_nview.InvokeRPC(ContainerPatch.ItemRemoveRPC, request.WriteToPackage());
+            if (container && container.m_nview && container.m_nview.IsOwner()) {
+                RequestChestRemoveResponse response = container.GetInventory().RequestItemRemove(request);
+                InventoryHandler.RPC_RequestItemRemoveResponse(targetInventory, response);
+                return null;
             }
 
+#if DEBUG
+            Timer.Start(request);
+#endif
+
+            container.m_nview.InvokeRPC(ContainerPatch.ItemRemoveRPC, request.WriteToPackage());
             return request;
         }
 

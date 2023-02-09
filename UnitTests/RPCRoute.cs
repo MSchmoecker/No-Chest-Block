@@ -31,7 +31,6 @@ namespace UnitTests {
         [SetUp]
         public void SetUp() {
             container = Helper.CreateContainer();
-            container.RegisterRPCs();
         }
 
         [OneTimeSetUp]
