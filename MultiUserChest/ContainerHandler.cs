@@ -23,23 +23,23 @@ namespace MultiUserChest {
             return AddItemToChest(containerTo, item, targetContainer.GetInventory(), to, targetContainer.m_nview.m_zdo.m_uid, dragAmount);
         }
 
-        public static RequestChestAdd AddItemToChest(this Container container, ItemDrop.ItemData item, Inventory targetInventory, Vector2i to, ZDOID sender, int dragAmount = -1) {
+        public static RequestChestAdd AddItemToChest(this Container container, ItemDrop.ItemData item, Inventory sourceInventory, Vector2i to, ZDOID sender, int dragAmount = -1) {
             dragAmount = PossibleDragAmount(container.GetInventory(), item, to, dragAmount);
             ItemDrop.ItemData itemAtChest = container.GetInventory().GetItemAt(to.x, to.y);
             bool cannotStack = itemAtChest != null && dragAmount != item.m_stack && !InventoryHelper.IsSameItem(itemAtChest, item);
 
-            if (dragAmount <= 0 || cannotStack || !targetInventory.ContainsItem(item)) {
+            if (dragAmount <= 0 || cannotStack || !sourceInventory.ContainsItem(item)) {
                 return new RequestChestAdd(Vector2i.zero, 0, null, "", ZDOID.None);
             }
 
-            RequestChestAdd request = new RequestChestAdd(to, dragAmount, item, targetInventory.m_name, sender);
-            InventoryBlock.Get(targetInventory).BlockSlot(item.m_gridPos);
+            RequestChestAdd request = new RequestChestAdd(to, dragAmount, item, sourceInventory.m_name, sender);
+            InventoryBlock.Get(sourceInventory).BlockSlot(item.m_gridPos);
 
-            targetInventory.RemoveItem(item, dragAmount);
+            sourceInventory.RemoveItem(item, dragAmount);
 
             if (container && container.m_nview && container.m_nview.IsOwner()) {
                 RequestChestAddResponse response = container.GetInventory().RequestItemAdd(request);
-                InventoryHandler.RPC_RequestItemAddResponse(targetInventory, response);
+                InventoryHandler.RPC_RequestItemAddResponse(sourceInventory, response);
                 return null;
             }
 
@@ -89,14 +89,14 @@ namespace MultiUserChest {
             return RemoveItemFromChest(container, item, targetPlayer.GetInventory(), to, targetPlayer.GetZDOID(), dragAmount, switchItem);
         }
 
-        public static RequestChestRemove RemoveItemFromChest(this Container container, ItemDrop.ItemData item, Inventory targetInventory, Vector2i to, ZDOID sender, int dragAmount = -1, ItemDrop.ItemData switchItem = null) {
-            dragAmount = PossibleDragAmount(targetInventory, item, to, dragAmount);
+        public static RequestChestRemove RemoveItemFromChest(this Container container, ItemDrop.ItemData item, Inventory destinationInventory, Vector2i to, ZDOID sender, int dragAmount = -1, ItemDrop.ItemData switchItem = null) {
+            dragAmount = PossibleDragAmount(destinationInventory, item, to, dragAmount);
 
-            if (dragAmount <= 0 || InventoryBlock.Get(targetInventory).IsSlotBlocked(to)) {
+            if (dragAmount <= 0 || InventoryBlock.Get(destinationInventory).IsSlotBlocked(to)) {
                 return new RequestChestRemove(Vector2i.zero, Vector2i.zero, 0, "", null, ZDOID.None);
             }
 
-            RequestChestRemove request = new RequestChestRemove(item.m_gridPos, to, dragAmount, targetInventory.m_name, switchItem, sender);
+            RequestChestRemove request = new RequestChestRemove(item.m_gridPos, to, dragAmount, destinationInventory.m_name, switchItem, sender);
 
             if (switchItem != null) {
                 if (!InventoryHelper.IsSameItem(item, switchItem)) {
@@ -104,15 +104,15 @@ namespace MultiUserChest {
                         return new RequestChestRemove(Vector2i.zero, Vector2i.zero, 0, "", null, ZDOID.None);
                     }
 
-                    targetInventory.RemoveItem(switchItem);
+                    destinationInventory.RemoveItem(switchItem);
                 }
             }
 
-            InventoryBlock.Get(targetInventory).BlockSlot(request.toPos);
+            InventoryBlock.Get(destinationInventory).BlockSlot(request.toPos);
 
             if (container && container.m_nview && container.m_nview.IsOwner()) {
                 RequestChestRemoveResponse response = container.GetInventory().RequestItemRemove(request);
-                InventoryHandler.RPC_RequestItemRemoveResponse(targetInventory, response);
+                InventoryHandler.RPC_RequestItemRemoveResponse(destinationInventory, response);
                 return null;
             }
 
