@@ -77,6 +77,10 @@ namespace MultiUserChest.Patches {
             } else {
                 AssignItemsOfInventory(__instance);
             }
+
+            if (LastRemovedItem.TryGetTarget(out ItemDrop.ItemData lastItem) && InventoryOwner.GetOwner(lastItem)?.Inventory == __instance) {
+                LastRemovedItem.SetTarget(null);
+            }
         }
 
         private static void AssignItemsOfInventory(Inventory inventory) {
