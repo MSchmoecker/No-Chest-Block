@@ -146,7 +146,11 @@
       <FULL_DEPLOY_FOLDER>$(DEPLOY_FOLDER)/BepInEx/plugins/MultiUserChest</FULL_DEPLOY_FOLDER>
       <TMP_DEPLOY_FOLDER>$(TargetDir)/tmp</TMP_DEPLOY_FOLDER>
     </PropertyGroup>
-    <Target Name="AfterBuild" Condition="Exists('$(DEPLOY_FOLDER)')">
+    <Target Name="AfterBuild">
+      <CallTarget Condition="Exists('$(DEPLOY_FOLDER)')" Targets="Deploy" />
+      <CallTarget Targets="CopyToUnity" />
+    </Target>
+    <Target Name="Deploy">
       <!--Prepare deployment-->
       <Message Text="Deploing into: $(FULL_DEPLOY_FOLDER)" Importance="high" />
       <MakeDir Directories="$(FULL_DEPLOY_FOLDER)" />
@@ -170,7 +174,8 @@
       <!--Unpack to deploy folder-->
       <Unzip SourceFiles="$(FULL_DEPLOY_FOLDER)/MultiUserChest.zip" DestinationFolder="$(FULL_DEPLOY_FOLDER)" />
     </Target>
-    <Target Name="AfterBuild">
+    <Target Name="CopyToUnity">
+      <Message Text="Copy To Unity" Importance="high" />
       <Copy SourceFiles="$(VALHEIM_INSTALL)/BepInEx/core/BepInEx.dll" DestinationFolder="$(SolutionDir)MultiUserChestUnity/Assets/Assemblies" />
       <Copy SourceFiles="$(VALHEIM_INSTALL)/BepInEx/core/0Harmony.dll" DestinationFolder="$(SolutionDir)MultiUserChestUnity/Assets/Assemblies" />
       <Copy SourceFiles="$(VALHEIM_INSTALL)/BepInEx/core/Mono.Cecil.dll" DestinationFolder="$(SolutionDir)MultiUserChestUnity/Assets/Assemblies" />
