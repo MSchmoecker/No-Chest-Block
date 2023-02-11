@@ -61,6 +61,9 @@ See [contributing](https://github.com/MSchmoecker/No-Chest-Block/blob/master/CON
 
 
 ## Changelog
+0.4.2
+- Fixed an item duplication bug when a player moves a weapon/tool/armor item repeatedly in a shared chest
+
 0.4.1
 - Fixed an error when a player tries to place a chest
 
