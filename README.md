@@ -61,6 +61,9 @@ See [contributing](https://github.com/MSchmoecker/No-Chest-Block/blob/master/CON
 
 
 ## Changelog
+0.4.3
+- Fixed distant containers could cause errors when other mods tried to access them. These containers have no player assigned (owner) responsible for managing their inventory and will be ignored by MUC
+
 0.4.2
 - Fixed an item duplication bug when a player moves a weapon/tool/armor item repeatedly in a shared chest
 
