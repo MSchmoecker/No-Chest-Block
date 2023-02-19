@@ -24,6 +24,10 @@ namespace MultiUserChest {
         }
 
         public static RequestChestAdd AddItemToChest(this Container container, ItemDrop.ItemData item, Inventory targetInventory, Vector2i to, ZDOID sender, int dragAmount = -1) {
+            if (container && container.m_nview && !container.m_nview.HasOwner()) {
+                return new RequestChestAdd(Vector2i.zero, 0, null, "", ZDOID.None);
+            }
+
             dragAmount = PossibleDragAmount(container.GetInventory(), item, to, dragAmount);
             ItemDrop.ItemData itemAtChest = container.GetInventory().GetItemAt(to.x, to.y);
             bool cannotStack = itemAtChest != null && dragAmount != item.m_stack && !InventoryHelper.IsSameItem(itemAtChest, item);
@@ -93,6 +97,10 @@ namespace MultiUserChest {
         }
 
         public static RequestChestRemove RemoveItemFromChest(this Container container, ItemDrop.ItemData item, Inventory targetInventory, Vector2i to, ZDOID sender, int dragAmount = -1, ItemDrop.ItemData switchItem = null) {
+            if (container && container.m_nview && !container.m_nview.HasOwner()) {
+                return new RequestChestRemove(Vector2i.zero, Vector2i.zero, 0, "", null, ZDOID.None);
+            }
+
             dragAmount = PossibleDragAmount(targetInventory, item, to, dragAmount);
 
             if (dragAmount <= 0 || InventoryBlock.Get(targetInventory).IsSlotBlocked(to)) {
