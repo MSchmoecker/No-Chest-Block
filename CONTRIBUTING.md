@@ -16,8 +16,9 @@ If you use r2modman/Tunderstore Mod Manager you can set the path too, but this i
         <!-- Optional, must to be the path to a r2modmanPlus/TMM profile folder -->
         <R2MODMAN_INSTALL>C:\Users\[user]\AppData\Roaming\r2modmanPlus-local\Valheim\profiles\Develop</R2MODMAN_INSTALL>
 
-        <!-- Optional, deployment destination folder (this base folder must already exists) -->
+        <!-- Both optional, deployment destination folder (this base folder must already exists) -->
         <DEPLOY_FOLDER>C:/Users/[user]/AppData/Roaming/r2modmanPlus-local/Valheim/profiles/Develop</DEPLOY_FOLDER>
+        <DEPLOY_FOLDER_XBOX>C:\Program Files\WindowsApps\CoffeeStainStudios.Valheim_0.213.40.0_x64__496a1srhmar9w</DEPLOY_FOLDER_XBOX>
     </PropertyGroup>
 </Project>
 ```

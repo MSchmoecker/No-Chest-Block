@@ -6,7 +6,7 @@ namespace MultiUserChest {
         public abstract Inventory Inventory { get; }
 
         public virtual bool IsValid() {
-            return ZNetView && Inventory != null;
+            return ZNetView && ZNetView.HasOwner() && Inventory != null;
         }
 
         public static InventoryOwner GetOwner(Inventory inventory) {

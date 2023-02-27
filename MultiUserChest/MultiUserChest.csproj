@@ -144,6 +144,7 @@
     </Target>
     <PropertyGroup>
       <FULL_DEPLOY_FOLDER>$(DEPLOY_FOLDER)/BepInEx/plugins/MultiUserChest</FULL_DEPLOY_FOLDER>
+      <FULL_DEPLOY_FOLDER_XBOX>$(DEPLOY_FOLDER_XBOX)/BepInEx/plugins/MultiUserChest</FULL_DEPLOY_FOLDER_XBOX>
       <TMP_DEPLOY_FOLDER>$(TargetDir)/tmp</TMP_DEPLOY_FOLDER>
     </PropertyGroup>
     <Target Name="AfterBuild">
@@ -172,7 +173,8 @@
       <ZipDirectory SourceDirectory="$(TMP_DEPLOY_FOLDER)" DestinationFile="$(FULL_DEPLOY_FOLDER)/MultiUserChest-Nexus.zip" Overwrite="true" />
 
       <!--Unpack to deploy folder-->
-      <Unzip SourceFiles="$(FULL_DEPLOY_FOLDER)/MultiUserChest.zip" DestinationFolder="$(FULL_DEPLOY_FOLDER)" />
+      <Unzip Condition="Exists('$(DEPLOY_FOLDER)')" SourceFiles="$(FULL_DEPLOY_FOLDER)/MultiUserChest.zip" DestinationFolder="$(FULL_DEPLOY_FOLDER)" />
+      <Unzip Condition="Exists('$(DEPLOY_FOLDER_XBOX)')" SourceFiles="$(FULL_DEPLOY_FOLDER)/MultiUserChest.zip" DestinationFolder="$(FULL_DEPLOY_FOLDER_XBOX)" />
     </Target>
     <Target Name="CopyToUnity">
       <Message Text="Copy To Unity" Importance="high" />
