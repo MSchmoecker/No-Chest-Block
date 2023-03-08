@@ -1,10 +1,11 @@
 using System.Collections.Generic;
+using MultiUserChest;
 using MultiUserChest.Patches;
 using UnityEngine;
 
 namespace UnitTests {
     public static class Helper {
-        private static ZDOMan zdoMan;
+        private static ZNet zNet;
         public static Dictionary<ZDOID, Inventory> inventories = new Dictionary<ZDOID, Inventory>();
 
         public static ItemDrop.ItemData CreateItem(string name, int amount, int x = 0, int y = 0) {
@@ -24,30 +25,38 @@ namespace UnitTests {
         }
 
         static Helper() {
-            // cannot instantiate a GameObject correctly, do it the dirty way
-            ZNet.m_instance = new ZNet();
-            ZoneSystem.m_instance = new ZoneSystem();
-            ZNetScene.m_instance = new ZNetScene();
+            GameObject zNetParent = new GameObject("ZNet");
+            zNetParent.SetActive(false);
 
-            zdoMan = new ZDOMan(512);
-            zdoMan.m_objectsByID = new Dictionary<ZDOID, ZDO>();
+            zNet = zNetParent.AddComponent<ZNet>();
+            zNetParent.AddComponent<ZoneSystem>();
+            zNetParent.AddComponent<ZNetScene>();
+
+            zNet.m_passwordDialog = (RectTransform)new GameObject("PasswordDialog", typeof(RectTransform)).transform;
+            zNet.m_connectingDialog = (RectTransform)new GameObject("PasswordDialog", typeof(RectTransform)).transform;
+
+            zNetParent.SetActive(true);
         }
 
         public static Container CreateContainer(Inventory containerInventory = null) {
-            // cannot instantiate a GameObject correctly, do it the dirty way
-            Container container = new Container();
+            GameObject containerParent = new GameObject("Container");
+
+            containerParent.AddComponent<ZNetView>();
+
+            Container container = containerParent.AddComponent<Container>();
+            container.m_nview.m_zdo.SetOwner(-1);
             container.m_inventory = containerInventory ?? new Inventory("inventory", null, 4, 5);
-            container.m_nview = new ZNetView();
-            container.m_nview.m_zdo = zdoMan.CreateNewZDO(new Vector3());
+            container.m_inventory.m_onChanged += container.OnContainerChanged;
             container.RegisterRPCs();
 
             inventories.Add(container.m_nview.m_zdo.m_uid, container.m_inventory);
+            Log.LogInfo("Created container with id: " + container.m_nview.m_zdo.m_uid);
 
             return container;
         }
 
         public static ZDOID CreatePlayerIdToInventory(Inventory playerInventory) {
-            ZDO zdo = zdoMan.CreateNewZDO(new Vector3());
+            ZDO zdo = zNet.m_zdoMan.CreateNewZDO(new Vector3());
 
             inventories.Add(zdo.m_uid, playerInventory);
 

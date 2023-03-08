@@ -54,6 +54,8 @@ namespace UnitTests {
             containerInv.CreateItem("itemB", 5, 2, 2);
 
             container.AddItemToChest(playerInv.GetItemAt(2, 2), playerInv, new Vector2i(2, 2), playerId, 3);
+
+            container.m_nview.ClaimOwnership();
             ZNetSimulate.HandleAllRoutedRpcs();
 
             TestForItems(playerInv, new TestItem("itemA", 5, new Vector2i(2, 2)));
@@ -67,6 +69,8 @@ namespace UnitTests {
             containerInv.CreateItem("itemB", 5, 2, 2);
 
             container.AddItemToChest(playerInv.GetItemAt(2, 2), playerInv, new Vector2i(2, 2), playerId, 5);
+
+            container.m_nview.ClaimOwnership();
             ZNetSimulate.HandleAllRoutedRpcs();
 
             TestForItems(playerInv, new TestItem("itemB", 5, new Vector2i(2, 2)));
@@ -82,6 +86,8 @@ namespace UnitTests {
             containerInv.CreateItem("itemB", 5, 0, 0);
 
             container.AddItemToChest(playerInv.GetItemAt(2, 2), playerInv, new Vector2i(-1, -1), playerId, 5);
+
+            container.m_nview.ClaimOwnership();
             ZNetSimulate.HandleAllRoutedRpcs();
 
             TestForItems(playerInv, new TestItem("itemA", 5, new Vector2i(2, 2)));
@@ -96,6 +102,8 @@ namespace UnitTests {
             containerInv.CreateItem("itemA", 15, 2, 2);
 
             container.AddItemToChest(playerInv.GetItemAt(3, 3), playerInv, new Vector2i(-1, -1), playerId, 5);
+
+            container.m_nview.ClaimOwnership();
             ZNetSimulate.HandleAllRoutedRpcs();
 
             // 25 itemA
@@ -111,6 +119,8 @@ namespace UnitTests {
             containerInv.CreateItem("itemA", 15, 0, 0);
 
             container.AddItemToChest(playerInv.GetItemAt(3, 3), playerInv, new Vector2i(-1, -1), playerId, 10);
+
+            container.m_nview.ClaimOwnership();
             ZNetSimulate.HandleAllRoutedRpcs();
 
             // 25 itemA
@@ -129,6 +139,8 @@ namespace UnitTests {
             containerInv.CreateItem("itemA", 15, 0, 0);
 
             container.AddItemToChest(playerInv.GetItemAt(3, 3), playerInv, new Vector2i(-1, -1), playerId, 9);
+
+            container.m_nview.ClaimOwnership();
             ZNetSimulate.HandleAllRoutedRpcs();
 
             // 25 itemA
@@ -146,6 +158,8 @@ namespace UnitTests {
             containerInv.CreateItem("itemA", 15, 2, 2);
 
             container.AddItemToChest(playerInv.GetItemAt(2, 2), playerInv, new Vector2i(2, 2), playerId, 10);
+
+            container.m_nview.ClaimOwnership();
             ZNetSimulate.HandleAllRoutedRpcs();
 
             TestForItems(playerInv, new TestItem("itemA", 5, new Vector2i(2, 2)));
@@ -159,6 +173,8 @@ namespace UnitTests {
             containerInv.CreateItem("itemB", 5, 2, 2);
 
             container.RemoveItemFromChest(containerInv.GetItemAt(2, 2), playerInv, new Vector2i(2, 2), playerId, 3, playerInv.GetItemAt(2, 2));
+
+            container.m_nview.ClaimOwnership();
             ZNetSimulate.HandleAllRoutedRpcs();
 
             TestForItems(playerInv, new TestItem("itemA", 5, new Vector2i(2, 2)));
@@ -172,6 +188,8 @@ namespace UnitTests {
             containerInv.CreateItem("itemA", 5, 2, 2);
 
             container.RemoveItemFromChest(containerInv.GetItemAt(2, 2), playerInv, new Vector2i(2, 2), playerId, 3, playerInv.GetItemAt(2, 2));
+
+            container.m_nview.ClaimOwnership();
             ZNetSimulate.HandleAllRoutedRpcs();
 
             TestForItems(playerInv, new TestItem("itemA", 8, new Vector2i(2, 2)));
@@ -185,6 +203,8 @@ namespace UnitTests {
             containerInv.CreateItem("itemA", 15, 2, 2);
 
             container.RemoveItemFromChest(containerInv.GetItemAt(2, 2), playerInv, new Vector2i(2, 2), playerId, 7, playerInv.GetItemAt(2, 2));
+
+            container.m_nview.ClaimOwnership();
             ZNetSimulate.HandleAllRoutedRpcs();
 
             TestForItems(playerInv, new TestItem("itemA", 20, new Vector2i(2, 2)));
@@ -197,6 +217,8 @@ namespace UnitTests {
             playerInv.CreateItem("itemA", 5, 2, 2);
 
             container.AddItemToChest(playerInv.GetItemAt(2, 2), playerInv, new Vector2i(2, 2), playerId, 5);
+
+            container.m_nview.ClaimOwnership();
             ZNetSimulate.HandleAllRoutedRpcs();
 
             TestForItems(playerInv);
@@ -212,6 +234,8 @@ namespace UnitTests {
             container = Helper.CreateContainer(containerInv);
 
             container.AddItemToChest(playerInv.GetItemAt(2, 2), playerInv, new Vector2i(-1, -1), playerId, 10);
+
+            container.m_nview.ClaimOwnership();
             ZNetSimulate.HandleAllRoutedRpcs();
 
             TestForItems(playerInv, new TestItem("itemA", 5, new Vector2i(2, 2)));
@@ -224,6 +248,8 @@ namespace UnitTests {
             playerInv.CreateItem("my item A", 5, 3, 3);
 
             container.AddItemToChest(playerInv.GetItemAt(3, 3), playerInv, new Vector2i(1, 1), playerId, 7);
+
+            container.m_nview.ClaimOwnership();
             ZNetSimulate.HandleAllRoutedRpcs();
 
             TestForItems(playerInv);
@@ -237,6 +263,8 @@ namespace UnitTests {
             playerInv.CreateItem("my item A", 10, 3, 2);
 
             container.AddItemToChest(playerInv.GetItemAt(3, 2), playerInv, new Vector2i(1, 2), playerId, 3);
+
+            container.m_nview.ClaimOwnership();
             ZNetSimulate.HandleAllRoutedRpcs();
 
             TestForItems(playerInv, new[] {
@@ -248,7 +276,10 @@ namespace UnitTests {
             });
             TestForItems(groundInv);
 
+            container.m_nview.m_zdo.SetOwner(-1);
             container.AddItemToChest(playerInv.GetItemAt(2, 2), playerInv, new Vector2i(1, 2), playerId, 2);
+
+            container.m_nview.ClaimOwnership();
             ZNetSimulate.HandleAllRoutedRpcs();
 
             TestForItems(playerInv, new[] {
@@ -267,6 +298,8 @@ namespace UnitTests {
             containerInv.CreateItem("itemB", 5, 2, 2);
 
             container.RemoveItemFromChest(containerInv.GetItemAt(2, 2), playerInv, new Vector2i(2, 2), playerId, 5, playerInv.GetItemAt(2, 2));
+
+            container.m_nview.ClaimOwnership();
             ZNetSimulate.HandleAllRoutedRpcs();
 
             TestForItems(playerInv, new TestItem("itemB", 5, new Vector2i(2, 2)));
@@ -279,6 +312,8 @@ namespace UnitTests {
             containerInv.CreateItem("itemB", 5, 2, 2);
 
             container.RemoveItemFromChest(containerInv.GetItemAt(2, 2), playerInv, new Vector2i(2, 2), playerId, 5, playerInv.GetItemAt(2, 2));
+
+            container.m_nview.ClaimOwnership();
             ZNetSimulate.HandleAllRoutedRpcs();
 
             TestForItems(playerInv, new TestItem("itemB", 5, new Vector2i(2, 2)));
@@ -291,6 +326,8 @@ namespace UnitTests {
             containerInv.CreateItem("itemB", 5, 2, 2);
 
             container.RemoveItemFromChest(containerInv.GetItemAt(2, 2), playerInv, new Vector2i(2, 2), playerId, 3, playerInv.GetItemAt(2, 2));
+
+            container.m_nview.ClaimOwnership();
             ZNetSimulate.HandleAllRoutedRpcs();
 
             TestForItems(playerInv, new TestItem("itemB", 3, new Vector2i(2, 2)));
@@ -307,6 +344,7 @@ namespace UnitTests {
 
             TestForItems(playerInv);
 
+            container.m_nview.ClaimOwnership();
             ZNetSimulate.HandleAllRoutedRpcs();
 
             TestForItems(playerInv, new TestItem("itemB", 5, new Vector2i(2, 2)));
@@ -319,6 +357,8 @@ namespace UnitTests {
             containerInv.CreateItem("itemB", 5, 2, 2);
 
             container.RemoveItemFromChest(containerInv.GetItemAt(2, 2), playerInv, new Vector2i(2, 2), playerId, 5);
+
+            container.m_nview.ClaimOwnership();
             ZNetSimulate.HandleRoutedRpcs(1);
 
             playerInv.CreateItem("itemA", 5, 2, 2);
@@ -334,6 +374,8 @@ namespace UnitTests {
             containerInv.CreateItem("itemA", 5, 2, 2);
 
             container.RemoveItemFromChest(containerInv.GetItemAt(2, 2), playerInv, new Vector2i(2, 2), playerId, 5);
+
+            container.m_nview.ClaimOwnership();
             ZNetSimulate.HandleRoutedRpcs(1);
 
             playerInv.CreateItem("itemA", 5, 2, 2);
@@ -350,6 +392,8 @@ namespace UnitTests {
 
             container.RemoveItemFromChest(containerInv.GetItemAt(2, 2), playerInv, new Vector2i(2, 2), playerId, 5);
             playerInv.CreateItem("itemA", 19, 2, 2);
+
+            container.m_nview.ClaimOwnership();
             ZNetSimulate.HandleAllRoutedRpcs();
 
             TestForItems(playerInv, new TestItem("itemA", 20, new Vector2i(2, 2)));
@@ -363,6 +407,8 @@ namespace UnitTests {
 
             container.AddItemToChest(playerInv.GetItemAt(2, 2), playerInv, new Vector2i(2, 2), playerId, 5);
             containerInv.CreateItem("itemB", 5, 2, 2);
+
+            container.m_nview.ClaimOwnership();
             ZNetSimulate.HandleAllRoutedRpcs();
 
             TestForItems(playerInv, new TestItem("itemB", 5, new Vector2i(2, 2)));
@@ -377,6 +423,8 @@ namespace UnitTests {
 
             container.AddItemToChest(playerInv.GetItemAt(2, 2), playerInv, new Vector2i(2, 2), playerId, 4);
             container.RemoveItemFromChest(containerInv.GetItemAt(2, 2), playerInv, new Vector2i(2, 2), playerId, 4);
+
+            container.m_nview.ClaimOwnership();
             ZNetSimulate.HandleAllRoutedRpcs();
 
             TestForItems(playerInv, new TestItem("itemB", 4, new Vector2i(2, 2)));
@@ -390,6 +438,8 @@ namespace UnitTests {
             containerInv.CreateItem("item", 4, 2, 2);
 
             container.AddItemToChest(item, playerInv, new Vector2i(2, 2), playerId, 4);
+
+            container.m_nview.ClaimOwnership();
             ZNetSimulate.HandleAllRoutedRpcs();
 
             TestForItems(playerInv);

@@ -1,6 +1,5 @@
-﻿using System;
-using System.IO;
-using BepInEx.Logging;
+﻿using BepInEx.Logging;
+using UnityEngine;
 
 namespace MultiUserChest {
     /// <summary>
@@ -11,38 +10,58 @@ namespace MultiUserChest {
 
         internal static void Init(ManualLogSource manualLogSource) {
             logSource = manualLogSource;
-
-            string logPath = Path.Combine(Path.GetDirectoryName(Plugin.Instance.Info.Location), Plugin.ModName + "-log.txt");
-
-            if (File.Exists(logPath)) {
-                File.Delete(logPath);
-            }
         }
 
         public static void LogCodeInstruction(object data) {
-            logSource.LogDebug(data);
+#if DEBUG
+            if (logSource != null) {
+                logSource.LogDebug(data);
+            } else {
+                Debug.Log(data);
+            }
+#endif
         }
 
         public static void LogDebug(string data) {
 #if DEBUG
-            logSource.LogDebug(data);
+            if (logSource != null) {
+                logSource.LogDebug(data);
+            } else {
+                Debug.Log(data);
+            }
 #endif
         }
 
         public static void LogError(string data) {
-            logSource.LogError(data);
+            if (logSource != null) {
+                logSource.LogError(data);
+            } else {
+                Debug.LogError(data);
+            }
         }
 
         public static void LogFatal(string data) {
-            logSource.LogFatal(data);
+            if (logSource != null) {
+                logSource.LogFatal(data);
+            } else {
+                Debug.LogError(data);
+            }
         }
 
         public static void LogInfo(string data) {
-            logSource.LogInfo(data);
+            if (logSource != null) {
+                logSource.LogInfo(data);
+            } else {
+                Debug.Log(data);
+            }
         }
 
         public static void LogWarning(string data) {
-            logSource.LogWarning(data);
+            if (logSource != null) {
+                logSource.LogWarning(data);
+            } else {
+                Debug.LogWarning(data);
+            }
         }
     }
 }

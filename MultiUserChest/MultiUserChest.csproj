@@ -143,6 +143,9 @@
       <Error Condition="!Exists('..\packages\JotunnLib.2.7.2\build\JotunnLib.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\JotunnLib.2.7.2\build\JotunnLib.props'))" />
     </Target>
     <PropertyGroup>
+      <VALHEIM_MANAGED>$(VALHEIM_INSTALL)/valheim_Data/Managed</VALHEIM_MANAGED>
+    </PropertyGroup>
+    <PropertyGroup>
       <FULL_DEPLOY_FOLDER>$(DEPLOY_FOLDER)/BepInEx/plugins/MultiUserChest</FULL_DEPLOY_FOLDER>
       <FULL_DEPLOY_FOLDER_XBOX>$(DEPLOY_FOLDER_XBOX)/BepInEx/plugins/MultiUserChest</FULL_DEPLOY_FOLDER_XBOX>
       <TMP_DEPLOY_FOLDER>$(TargetDir)/tmp</TMP_DEPLOY_FOLDER>
@@ -185,14 +188,15 @@
       <Copy SourceFiles="$(VALHEIM_INSTALL)/BepInEx/core/MonoMod.RuntimeDetour.dll" DestinationFolder="$(SolutionDir)MultiUserChestUnity/Assets/Assemblies" />
       <Copy SourceFiles="$(TargetDir)Jotunn.dll" DestinationFolder="$(SolutionDir)MultiUserChestUnity/Assets/Assemblies" />
       <Copy SourceFiles="$(TargetDir)$(TargetName).dll" DestinationFolder="$(SolutionDir)MultiUserChestUnity/Assets/Assemblies" />
-      <Copy SourceFiles="$(VALHEIM_INSTALL)/valheim_Data/Managed/assembly_valheim.dll" DestinationFolder="$(SolutionDir)MultiUserChestUnity/Assets/Assemblies" />
-      <Copy SourceFiles="$(VALHEIM_INSTALL)/valheim_Data/Managed/assembly_utils.dll" DestinationFolder="$(SolutionDir)MultiUserChestUnity/Assets/Assemblies" />
-      <Copy SourceFiles="$(VALHEIM_INSTALL)/valheim_Data/Managed/assembly_postprocessing.dll" DestinationFolder="$(SolutionDir)MultiUserChestUnity/Assets/Assemblies" />
-      <Copy SourceFiles="$(VALHEIM_INSTALL)/valheim_Data/Managed/assembly_sunshafts.dll" DestinationFolder="$(SolutionDir)MultiUserChestUnity/Assets/Assemblies" />
-      <Copy SourceFiles="$(VALHEIM_INSTALL)/valheim_Data/Managed/assembly_guiutils.dll" DestinationFolder="$(SolutionDir)MultiUserChestUnity/Assets/Assemblies" />
-      <Copy SourceFiles="$(VALHEIM_INSTALL)/valheim_Data/Managed/assembly_steamworks.dll" DestinationFolder="$(SolutionDir)MultiUserChestUnity/Assets/Assemblies" />
-      <Copy SourceFiles="$(VALHEIM_INSTALL)/valheim_Data/Managed/assembly_googleanalytics.dll" DestinationFolder="$(SolutionDir)MultiUserChestUnity/Assets/Assemblies" />
-      <Copy SourceFiles="$(VALHEIM_INSTALL)/valheim_Data/Managed/PlayFab.dll" DestinationFolder="$(SolutionDir)MultiUserChestUnity/Assets/Assemblies" />
-      <Copy SourceFiles="$(VALHEIM_INSTALL)/valheim_Data/Managed/PlayFabParty.dll" DestinationFolder="$(SolutionDir)MultiUserChestUnity/Assets/Assemblies" />
+      <Copy SourceFiles="$(VALHEIM_MANAGED)/assembly_valheim.dll" DestinationFolder="$(SolutionDir)MultiUserChestUnity/Assets/Assemblies" />
+      <Copy Condition="Exists('$(VALHEIM_MANAGED)/publicized_assemblies/assembly_valheim_publicized.dll')" SourceFiles="$(VALHEIM_MANAGED)/publicized_assemblies/assembly_valheim_publicized.dll" DestinationFiles="$(SolutionDir)MultiUserChestUnity/Assets/Assemblies/assembly_valheim.dll" />
+      <Copy SourceFiles="$(VALHEIM_MANAGED)/assembly_utils.dll" DestinationFolder="$(SolutionDir)MultiUserChestUnity/Assets/Assemblies" />
+      <Copy SourceFiles="$(VALHEIM_MANAGED)/assembly_postprocessing.dll" DestinationFolder="$(SolutionDir)MultiUserChestUnity/Assets/Assemblies" />
+      <Copy SourceFiles="$(VALHEIM_MANAGED)/assembly_sunshafts.dll" DestinationFolder="$(SolutionDir)MultiUserChestUnity/Assets/Assemblies" />
+      <Copy SourceFiles="$(VALHEIM_MANAGED)/assembly_guiutils.dll" DestinationFolder="$(SolutionDir)MultiUserChestUnity/Assets/Assemblies" />
+      <Copy SourceFiles="$(VALHEIM_MANAGED)/assembly_steamworks.dll" DestinationFolder="$(SolutionDir)MultiUserChestUnity/Assets/Assemblies" />
+      <Copy SourceFiles="$(VALHEIM_MANAGED)/assembly_googleanalytics.dll" DestinationFolder="$(SolutionDir)MultiUserChestUnity/Assets/Assemblies" />
+      <Copy SourceFiles="$(VALHEIM_MANAGED)/PlayFab.dll" DestinationFolder="$(SolutionDir)MultiUserChestUnity/Assets/Assemblies" />
+      <Copy SourceFiles="$(VALHEIM_MANAGED)/PlayFabParty.dll" DestinationFolder="$(SolutionDir)MultiUserChestUnity/Assets/Assemblies" />
     </Target>
 </Project>

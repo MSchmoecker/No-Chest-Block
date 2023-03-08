@@ -2,9 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using BepInEx;
+using BepInEx.Logging;
 using MultiUserChest;
 using HarmonyLib;
 using NUnit.Framework;
+using UnityEngine;
+using Logger = BepInEx.Logging.Logger;
 using Random = System.Random;
 
 namespace UnitTests {
@@ -13,34 +16,11 @@ namespace UnitTests {
         [OneTimeSetUp]
         public void GlobalSetup() {
             Harmony harmony = new Harmony("id");
-            harmony.PatchAll(typeof(ZLogPatch));
-            harmony.PatchAll(typeof(LogPatch));
+
             harmony.PatchAll(typeof(InventoryAddItemPatch));
             harmony.PatchAll(typeof(DropPatch));
             harmony.PatchAll(typeof(PathsPatches));
             harmony.PatchAll(typeof(ZNetPatches));
-        }
-
-        private static class ZLogPatch {
-            [HarmonyPatch(typeof(ZLog), nameof(ZLog.Log)), HarmonyPrefix]
-            public static bool NoZLogPatch(object o) {
-                System.Console.WriteLine(o);
-                return false;
-            }
-        }
-
-        private static class LogPatch {
-            [HarmonyPrefix]
-            [HarmonyPatch(typeof(Log), nameof(Log.LogDebug))]
-            [HarmonyPatch(typeof(Log), nameof(Log.LogWarning))]
-            [HarmonyPatch(typeof(Log), nameof(Log.LogInfo))]
-            [HarmonyPatch(typeof(Log), nameof(Log.LogError))]
-            [HarmonyPatch(typeof(Log), nameof(Log.LogFatal))]
-            [HarmonyPatch(typeof(Log), nameof(Log.LogCodeInstruction))]
-            public static bool NoLogPatch(object data) {
-                System.Console.WriteLine(data);
-                return false;
-            }
         }
 
         private static class InventoryAddItemPatch {
@@ -92,25 +72,6 @@ namespace UnitTests {
         }
 
         public static class ZNetPatches {
-            [HarmonyPatch(typeof(ZDOMan), MethodType.Constructor, new[] { typeof(int) }), HarmonyPrefix]
-            public static bool PatchZDOManConstructorPost(ZDOMan __instance, int width) {
-                if (ZRoutedRpc.m_instance == null) {
-                    ZRoutedRpc.m_instance = new ZRoutedRpc(false);
-                }
-
-                ZDOMan.m_instance = __instance;
-
-                __instance.m_myid = new Random().Next();
-                ZRoutedRpc.instance.Register<ZPackage>("DestroyZDO", __instance.RPC_DestroyZDO);
-                ZRoutedRpc.instance.Register<ZDOID>("RequestZDO", __instance.RPC_RequestZDO);
-
-                __instance.m_width = width;
-                __instance.m_halfWidth = __instance.m_width / 2;
-                __instance.m_objectsByOutsideSector = new Dictionary<Vector2i, List<ZDO>>();
-                __instance.ResetSectorArray();
-                return false;
-            }
-
             [HarmonyPrefix]
             [HarmonyPatch(typeof(ZNetView), nameof(ZNetView.InvokeRPC), new[] { typeof(long), typeof(string), typeof(object[]) })]
             [HarmonyPatch(typeof(ZNetView), nameof(ZNetView.InvokeRPC), new[] { typeof(string), typeof(object[]) })]
