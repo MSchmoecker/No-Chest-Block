@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 
 namespace MultiUserChest {
-    public class InventoryHandler {
+    public static class InventoryHandler {
         public static void RPC_RequestItemAddResponse(long sender, ZPackage package) {
             HandleRPC(new RequestChestAddResponse(package), p => GetInventory(p.sender, p.inventoryHash), RPC_RequestItemAddResponse);
         }

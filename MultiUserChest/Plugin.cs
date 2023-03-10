@@ -30,7 +30,7 @@ namespace MultiUserChest {
             ApplyModPatches();
         }
 
-        public static void ApplyModPatches() {
+        internal static void ApplyModPatches() {
             if (Chainloader.PluginInfos.ContainsKey("org.bepinex.plugins.valheim.quick_stack")) {
                 harmony.PatchAll(typeof(QuickStackPatch));
             }

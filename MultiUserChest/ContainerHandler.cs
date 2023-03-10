@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using JetBrains.Annotations;
 using MultiUserChest.Patches;
 using UnityEngine;
 
@@ -24,7 +23,7 @@ namespace MultiUserChest {
         }
 
         public static RequestChestAdd AddItemToChest(this Container container, ItemDrop.ItemData item, Inventory sourceInventory, Vector2i to, ZDOID sender, int dragAmount = -1) {
-            if (container && container.m_nview && !container.m_nview.HasOwner()) {
+            if (!container || !container.m_nview || !container.m_nview.HasOwner()) {
                 return new RequestChestAdd(Vector2i.zero, 0, null, "", ZDOID.None);
             }
 
@@ -41,7 +40,7 @@ namespace MultiUserChest {
 
             sourceInventory.RemoveItem(item, dragAmount);
 
-            if (container && container.m_nview && container.m_nview.IsOwner()) {
+            if (container.m_nview.IsOwner()) {
                 RequestChestAddResponse response = container.GetInventory().RequestItemAdd(request);
                 InventoryHandler.RPC_RequestItemAddResponse(sourceInventory, response);
                 return null;
@@ -94,7 +93,7 @@ namespace MultiUserChest {
         }
 
         public static RequestChestRemove RemoveItemFromChest(this Container container, ItemDrop.ItemData item, Inventory destinationInventory, Vector2i to, ZDOID sender, int dragAmount = -1, ItemDrop.ItemData switchItem = null) {
-            if (container && container.m_nview && !container.m_nview.HasOwner()) {
+            if (!container || !container.m_nview || !container.m_nview.HasOwner()) {
                 return new RequestChestRemove(Vector2i.zero, Vector2i.zero, 0, "", null, ZDOID.None);
             }
 
@@ -118,7 +117,7 @@ namespace MultiUserChest {
 
             InventoryBlock.Get(destinationInventory).BlockSlot(request.toPos);
 
-            if (container && container.m_nview && container.m_nview.IsOwner()) {
+            if (container.m_nview.IsOwner()) {
                 RequestChestRemoveResponse response = container.GetInventory().RequestItemRemove(request);
                 InventoryHandler.RPC_RequestItemRemoveResponse(destinationInventory, response);
                 return null;
