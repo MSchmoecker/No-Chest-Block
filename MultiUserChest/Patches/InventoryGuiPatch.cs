@@ -61,15 +61,25 @@ namespace MultiUserChest.Patches {
         }
 
         [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.UpdateContainer)), HarmonyTranspiler]
-        public static IEnumerable<CodeInstruction> RemoveOwnerCheck(IEnumerable<CodeInstruction> instructions) {
-            // any player can potentially open a container, thus the owner check needs to be removed
+        public static IEnumerable<CodeInstruction> ChangeOwnerCheck(IEnumerable<CodeInstruction> instructions) {
+            // any player can potentially open a container, thus the IsOwner() statement need to be changed
             return new CodeMatcher(instructions)
-                   .MatchForward(false,
+                   .MatchForward(true,
                                  new CodeMatch(OpCodes.Ldarg_0),
                                  new CodeMatch(i => i.opcode == OpCodes.Ldfld && ((FieldInfo)i.operand).Name == "m_currentContainer"),
                                  new CodeMatch(i => i.opcode == OpCodes.Callvirt && ((MethodInfo)i.operand).Name == "IsOwner"))
-                   .RemoveInstructions(4)
+                   .RemoveInstructions(1)
+                   .Insert(new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(InventoryGuiPatch), nameof(CanOpenContainer))))
                    .InstructionEnumeration();
+        }
+
+        public static bool CanOpenContainer(Container container) {
+            if (container.IsOdinShipContainer()) {
+                // do not change behavior for OdinShip containers
+                return container.IsOwner();
+            }
+
+            return true;
         }
 
         [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.OnDropOutside)), HarmonyPrefix]

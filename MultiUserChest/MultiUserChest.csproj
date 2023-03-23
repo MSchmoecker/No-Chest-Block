@@ -109,6 +109,7 @@
         <Compile Include="InventoryBlock.cs" />
         <Compile Include="InventoryHandler.cs" />
         <Compile Include="InventoryOwner.cs" />
+        <Compile Include="Patches\Compatibility\OdinShip.cs" />
         <Compile Include="Patches\Compatibility\QuickStackPatch.cs" />
         <Compile Include="Patches\ContainerPatch.cs" />
         <Compile Include="Patches\HumanoidPatch.cs" />

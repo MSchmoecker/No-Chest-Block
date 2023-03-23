@@ -103,6 +103,16 @@ namespace MultiUserChest.Patches {
                 return false;
             }
 
+            if (OdinShip.IsOdinShipInstalled() && (!from.ZNetView.IsOwner() || !to.ZNetView.IsOwner())) {
+                bool toIsOdinShipContainer = to is ContainerInventoryOwner toContainer && toContainer.Container.IsOdinShipContainer();
+                bool fromIsOdinShipContainer = from is ContainerInventoryOwner fromContainer && fromContainer.Container.IsOdinShipContainer();
+
+                if (toIsOdinShipContainer || fromIsOdinShipContainer) {
+                    successfulAdded = false;
+                    return true;
+                }
+            }
+
             if (from.ZNetView.IsOwner() && !to.ZNetView.IsOwner()) {
                 if (to is ContainerInventoryOwner toContainer) {
                     RequestChestAdd requestChestAdd = toContainer.Container.AddItemToChest(item, from.Inventory, pos, from.ZNetView.GetZDO().m_uid, amount);
