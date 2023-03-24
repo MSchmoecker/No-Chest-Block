@@ -14,20 +14,6 @@ namespace MultiUserChest.Patches {
             }
         }
 
-        [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.OnTakeAll)), HarmonyPrefix]
-        public static bool InventoryGuiTakeAllPatch(InventoryGui __instance) {
-            if (Player.m_localPlayer.IsTeleporting() || !__instance.m_currentContainer) {
-                return true;
-            }
-
-            if (__instance.m_currentContainer.IsOwner()) {
-                return true;
-            }
-
-            ContainerHandler.TakeAll(__instance.m_currentContainer, Player.m_localPlayer.GetInventory());
-            return false;
-        }
-
         [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.OnRightClickItem)), HarmonyPrefix]
         public static bool InventoryGuiOnRightClickItemPatch(InventoryGui __instance, InventoryGrid grid, ItemDrop.ItemData item) {
             Player player = Player.m_localPlayer;

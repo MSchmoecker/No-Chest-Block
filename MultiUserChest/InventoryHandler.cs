@@ -9,10 +9,6 @@ namespace MultiUserChest {
             HandleRPC(new RequestChestAddResponse(package), p => GetInventory(p.sender, p.inventoryHash), RPC_RequestItemAddResponse);
         }
 
-        public static void RPC_RequestTakeAllItemsResponse(Container container, long sender, ZPackage package) {
-            HandleRPC(new RequestTakeAll(package), p => Player.m_localPlayer.GetInventory(), container, RPC_RequestTakeAllItemsResponse);
-        }
-
         public static void RPC_RequestItemRemoveResponse(long sender, ZPackage package) {
             HandleRPC(new RequestChestRemoveResponse(package), p => GetInventory(p.sender, p.inventoryHash), RPC_RequestItemRemoveResponse);
         }
@@ -158,30 +154,6 @@ namespace MultiUserChest {
             if (response.item.m_shared.m_food > 0.0) {
                 player.EatFood(response.item);
             }
-        }
-
-        private static void RPC_RequestTakeAllItemsResponse(Inventory inventory, Container container, RequestTakeAll response) {
-            InventoryBlock.Get(inventory).BlockAllSlots = false;
-
-            if (response.items.Count == 0) {
-                return;
-            }
-
-            int width = response.items.Max(i => i.m_gridPos.x) + 1;
-            int height = response.items.Max(i => i.m_gridPos.y) + 1;
-            Inventory tmp = new Inventory("tmp", null, width, height);
-
-            foreach (ItemDrop.ItemData item in response.items) {
-                tmp.AddItemToInventory(item, item.m_stack, item.m_gridPos);
-            }
-
-            inventory.MoveAll(tmp);
-
-            foreach (ItemDrop.ItemData notMovedItem in tmp.m_inventory) {
-                DropItem(notMovedItem, notMovedItem.m_stack);
-            }
-
-            container.m_onTakeAllSuccess?.Invoke();
         }
 
         private static Inventory GetInventory(ZDOID targetId, int hash) {

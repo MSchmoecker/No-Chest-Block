@@ -22,9 +22,6 @@ namespace UnitTests {
         private const string RequestConsumeRPC = "MUC_RequestItemConsume";
         private const string RequestConsumeResponseRPC = "MUC_RequestItemConsumeResponse";
 
-        private const string RequestTakeAllRPC = "MUC_RequestItemsTakeAll";
-        private const string RequestTakeAllResponseRPC = "MUC_RequestItemsTakeAllResponse";
-
         private const string RequestDropRPC = "MUC_RequestItemDrop";
         private const string RequestDropResponseRPC = "MUC_RequestItemDropResponse";
 
@@ -77,9 +74,6 @@ namespace UnitTests {
             Assert.IsTrue(container.m_nview.m_functions.ContainsKey(RequestConsumeRPC.GetStableHashCode()));
             Assert.IsTrue(container.m_nview.m_functions.ContainsKey(RequestConsumeResponseRPC.GetStableHashCode()));
 
-            Assert.IsTrue(container.m_nview.m_functions.ContainsKey(RequestTakeAllRPC.GetStableHashCode()));
-            Assert.IsTrue(container.m_nview.m_functions.ContainsKey(RequestTakeAllResponseRPC.GetStableHashCode()));
-
             Assert.IsTrue(container.m_nview.m_functions.ContainsKey(RequestDropRPC.GetStableHashCode()));
             Assert.IsTrue(container.m_nview.m_functions.ContainsKey(RequestDropResponseRPC.GetStableHashCode()));
         }
@@ -125,11 +119,6 @@ namespace UnitTests {
         [Test]
         public void RequestConsumeCallsResponse() {
             TestRPCCallsResponse(RequestConsumeRPC, RequestConsumeResponseRPC, NewSendAbleRPC_ZPackage());
-        }
-
-        [Test]
-        public void RequestTakeAllCallsResponse() {
-            TestRPCCallsResponse(RequestTakeAllRPC, RequestTakeAllResponseRPC, NewSendAbleRPC_ZPackage());
         }
 
         [Test]

@@ -24,10 +24,6 @@ namespace MultiUserChest {
             HandleRPC(container, sender, ContainerPatch.ItemMoveResponseRPC, RequestItemMove, () => new RequestMove(package));
         }
 
-        public static void RPC_RequestTakeAllItems(Container container, long sender, ZPackage package) {
-            HandleRPC(container, sender, ContainerPatch.ItemsTakeAllResponseRPC, RequestTakeAllItems, () => new RequestTakeAll(package));
-        }
-
         public static void RPC_RequestDrop(Container container, long sender, ZPackage package) {
             HandleRPC(container, sender, ContainerPatch.ItemDropResponseRPC, RequestDrop, () => new RequestDrop(package));
         }
@@ -202,26 +198,6 @@ namespace MultiUserChest {
             }
 
             return InventoryHelper.MoveItem(inventory, from, dragAmount, toPos);
-        }
-
-        public static RequestTakeAll RequestTakeAllItems(this Inventory inventory, RequestTakeAll request) {
-            List<ItemDrop.ItemData> movedItems = new List<ItemDrop.ItemData>();
-
-            foreach (ItemDrop.ItemData item in request.items) {
-                ItemDrop.ItemData existing = inventory.GetItemAt(item.m_gridPos.x, item.m_gridPos.y);
-
-                if (existing != null) {
-                    int amount = Mathf.Min(existing.m_stack, item.m_stack);
-
-                    if (inventory.RemoveItem(existing, amount)) {
-                        ItemDrop.ItemData moved = existing.Clone();
-                        moved.m_stack = amount;
-                        movedItems.Add(moved);
-                    }
-                }
-            }
-
-            return new RequestTakeAll(movedItems);
         }
 
         public static RequestDropResponse RequestDrop(this Inventory inventory, RequestDrop request) {

@@ -21,9 +21,6 @@ namespace MultiUserChest.Patches {
         public const string ItemDropRPC = "MUC_RequestItemDrop";
         public const string ItemDropResponseRPC = "MUC_RequestItemDropResponse";
 
-        public const string ItemsTakeAllRPC = "MUC_RequestItemsTakeAll";
-        public const string ItemsTakeAllResponseRPC = "MUC_RequestItemsTakeAllResponse";
-
         [HarmonyPatch(typeof(Container), nameof(Container.Awake)), HarmonyPostfix]
         public static void ContainerAwakePatch(Container __instance) {
             __instance.gameObject.AddComponent<ContainerExtend>();
@@ -46,14 +43,12 @@ namespace MultiUserChest.Patches {
             nview.Register<ZPackage>(ItemAddRPC, (l, package) => ContainerRPCHandler.RPC_RequestItemAdd(__instance, l, package));
             nview.Register<ZPackage>(ItemRemoveRPC, (l, package) => ContainerRPCHandler.RPC_RequestItemRemove(__instance, l, package));
             nview.Register<ZPackage>(ItemConsumeRPC, (l, package) => ContainerRPCHandler.RPC_RequestItemConsume(__instance, l, package));
-            nview.Register<ZPackage>(ItemsTakeAllRPC, (l, package) => ContainerRPCHandler.RPC_RequestTakeAllItems(__instance, l, package));
             nview.Register<ZPackage>(ItemDropRPC, (l, package) => ContainerRPCHandler.RPC_RequestDrop(__instance, l, package));
 
             nview.Register<bool>(ItemMoveResponseRPC, InventoryHandler.RPC_RequestItemMoveResponse);
             nview.Register<ZPackage>(ItemAddResponseRPC, InventoryHandler.RPC_RequestItemAddResponse);
             nview.Register<ZPackage>(ItemRemoveResponseRPC, InventoryHandler.RPC_RequestItemRemoveResponse);
             nview.Register<ZPackage>(ItemConsumeResponseRPC, InventoryHandler.RPC_RequestItemConsumeResponse);
-            nview.Register<ZPackage>(ItemsTakeAllResponseRPC, (l, package) => InventoryHandler.RPC_RequestTakeAllItemsResponse(__instance, l, package));
             nview.Register<ZPackage>(ItemDropResponseRPC, InventoryHandler.RPC_RequestDropResponse);
         }
 
@@ -86,34 +81,6 @@ namespace MultiUserChest.Patches {
             __instance.m_nview.GetZDO().SetOwner(uid);
             __instance.m_nview.InvokeRPC(uid, "OpenRespons", true);
 
-            return false;
-        }
-
-        [HarmonyPatch(typeof(Container), nameof(Container.TakeAll)), HarmonyPrefix]
-        public static bool TakeAllPatch(ref bool __result, Container __instance, Humanoid character) {
-            if (__instance.IsOdinShipContainer()) {
-                return true;
-            }
-
-            if (__instance.IsOwner()) {
-                Log.LogDebug("TakeAll self");
-                return true;
-            }
-
-            __result = false;
-
-            if (__instance.m_checkGuardStone && !PrivateArea.CheckAccess(__instance.transform.position)) {
-                return false;
-            }
-
-            long playerID = Game.instance.GetPlayerProfile().GetPlayerID();
-
-            if (!__instance.CheckAccess(playerID)) {
-                character.Message(MessageHud.MessageType.Center, "$msg_cantopen");
-                return false;
-            }
-
-            ContainerHandler.TakeAll(__instance, character.GetInventory());
             return false;
         }
 
