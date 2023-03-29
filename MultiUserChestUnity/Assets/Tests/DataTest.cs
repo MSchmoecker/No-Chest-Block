@@ -140,15 +140,6 @@ namespace UnitTests {
         }
 
         [Test]
-        public void RequestTakeAll_PackageReadWrite() {
-            RequestTakeAll requestAdd = new RequestTakeAll(new List<ItemDrop.ItemData> { item });
-            RequestTakeAll fromPackage = GetFromZPackage(requestAdd, package => new RequestTakeAll(package));
-
-            Assert.AreEqual(fromPackage.items.Count, 1);
-            TestForItem(fromPackage.items[0], new TestItem("my item", 3, Vector2i.zero));
-        }
-
-        [Test]
         public void LoadItemPosition() {
             item.m_gridPos = new Vector2i(0, 0);
             ItemDrop.ItemData fromPackage = GetFromZPackage(item);

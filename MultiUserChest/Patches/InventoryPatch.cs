@@ -9,6 +9,7 @@ namespace MultiUserChest.Patches {
     public static class InventoryPatch {
         public static readonly ConditionalWeakTable<ItemDrop.ItemData, Inventory> InventoryOfItem = new ConditionalWeakTable<ItemDrop.ItemData, Inventory>();
         private static readonly WeakReference<ItemDrop.ItemData> LastRemovedItem = new WeakReference<ItemDrop.ItemData>(null);
+        private static bool allowItemSwap = true;
 
         [HarmonyPatch(typeof(Inventory), nameof(Inventory.AddItem), typeof(ItemDrop.ItemData), typeof(int), typeof(int), typeof(int))]
         [HarmonyPrefix, HarmonyPriority(Priority.VeryLow)]
@@ -68,6 +69,16 @@ namespace MultiUserChest.Patches {
             }
         }
 
+        [HarmonyPatch(typeof(Inventory), nameof(Inventory.MoveAll)), HarmonyPrefix, HarmonyPriority(Priority.First)]
+        public static void MoveAllPrefix() {
+            allowItemSwap = false;
+        }
+
+        [HarmonyPatch(typeof(Inventory), nameof(Inventory.MoveAll)), HarmonyPostfix, HarmonyPriority(Priority.Last)]
+        public static void MoveAllPostfix() {
+            allowItemSwap = true;
+        }
+
         [HarmonyPatch(typeof(Inventory), nameof(Inventory.Changed)), HarmonyPostfix]
         public static void AddItemPostfix(Inventory __instance) {
             if (__instance.IsExtendedInventory(out List<Inventory> inventories)) {
@@ -103,6 +114,16 @@ namespace MultiUserChest.Patches {
                 return false;
             }
 
+            if (OdinShip.IsOdinShipInstalled() && (!from.ZNetView.IsOwner() || !to.ZNetView.IsOwner())) {
+                bool toIsOdinShipContainer = to is ContainerInventoryOwner toContainer && toContainer.Container.IsOdinShipContainer();
+                bool fromIsOdinShipContainer = from is ContainerInventoryOwner fromContainer && fromContainer.Container.IsOdinShipContainer();
+
+                if (toIsOdinShipContainer || fromIsOdinShipContainer) {
+                    successfulAdded = false;
+                    return true;
+                }
+            }
+
             if (from.ZNetView.IsOwner() && !to.ZNetView.IsOwner()) {
                 if (to is ContainerInventoryOwner toContainer) {
                     RequestChestAdd requestChestAdd = toContainer.Container.AddItemToChest(item, from.Inventory, pos, from.ZNetView.GetZDO().m_uid, amount);
@@ -117,6 +138,11 @@ namespace MultiUserChest.Patches {
 
                     if (switchItem == null && LastRemovedItem.TryGetTarget(out ItemDrop.ItemData lastItem) && InventoryOwner.GetOwner(lastItem) == to && lastItem.m_gridPos == pos) {
                         switchItem = lastItem;
+                    }
+
+                    if (!allowItemSwap && switchItem != null) {
+                        successfulAdded = false;
+                        return true;
                     }
 
                     RequestChestRemove requestChestRemove = fromContainer.Container.RemoveItemFromChest(item, to.Inventory, pos, to.ZNetView.GetZDO().m_uid, amount, switchItem);

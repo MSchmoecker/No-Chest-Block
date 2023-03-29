@@ -61,6 +61,10 @@ See [contributing](https://github.com/MSchmoecker/No-Chest-Block/blob/master/CON
 
 
 ## Changelog
+0.4.4
+- Fixed a compatibility issue with OdinShipPlus. Some of the ships have multiple chests on board, these ships are excluded from MUC
+- Fixed a compatibility issue with AdventureBackpacks where the backpack items could be duplicated
+
 0.4.3
 - Fixed distant containers could cause errors when other mods tried to access them. These containers have no player assigned (owner) responsible for managing their inventory and will be ignored by MUC
 

@@ -5,18 +5,6 @@ using UnityEngine;
 
 namespace MultiUserChest {
     public static class ContainerHandler {
-        public static void TakeAll(Container container, Inventory playerInventory) {
-            List<ItemDrop.ItemData> wanted = InventoryHelper.GetAllMoveableItems(container.GetInventory(), playerInventory);
-            InventoryBlock.Get(playerInventory).BlockAllSlots = true;
-            RequestTakeAll request = new RequestTakeAll(wanted);
-#if DEBUG
-            Timer.Start(request);
-#endif
-            if (container != null && container.m_nview) {
-                container.m_nview.InvokeRPC(ContainerPatch.ItemsTakeAllRPC, request.WriteToPackage());
-            }
-        }
-
         [Obsolete]
         public static RequestAdd AddItemToChest(this Container containerTo, ItemDrop.ItemData item, Container targetContainer, Vector2i to, int dragAmount = -1, bool allowSwitch = false) {
             return AddItemToChest(containerTo, item, targetContainer.GetInventory(), to, targetContainer.m_nview.m_zdo.m_uid, dragAmount);
