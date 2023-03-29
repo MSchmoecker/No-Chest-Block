@@ -198,5 +198,7 @@
       <Copy SourceFiles="$(VALHEIM_MANAGED)/assembly_googleanalytics.dll" DestinationFolder="$(SolutionDir)MultiUserChestUnity/Assets/Assemblies" />
       <Copy SourceFiles="$(VALHEIM_MANAGED)/PlayFab.dll" DestinationFolder="$(SolutionDir)MultiUserChestUnity/Assets/Assemblies" />
       <Copy SourceFiles="$(VALHEIM_MANAGED)/PlayFabParty.dll" DestinationFolder="$(SolutionDir)MultiUserChestUnity/Assets/Assemblies" />
+      <Copy SourceFiles="$(VALHEIM_MANAGED)/Fishlabs.Core.dll" DestinationFolder="$(SolutionDir)MultiUserChestUnity/Assets/Assemblies" />
+      <Copy SourceFiles="$(VALHEIM_MANAGED)/Fishlabs.Common.dll" DestinationFolder="$(SolutionDir)MultiUserChestUnity/Assets/Assemblies" />
     </Target>
 </Project>
