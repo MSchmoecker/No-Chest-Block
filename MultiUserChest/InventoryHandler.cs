@@ -89,7 +89,7 @@ namespace MultiUserChest {
         }
 
         private static void RPC_RequestDropResponse(RequestDropResponse response) {
-            DropItem(response.responseItem, response.responseItem.m_stack);
+            DropItem(response.responseItem, response.responseItem?.m_stack ?? 0);
             UpdateGUIAfterPlayerMove(response.sender);
         }
 
@@ -116,7 +116,7 @@ namespace MultiUserChest {
         }
 
         public static void DropItem(ItemDrop.ItemData item, int amount) {
-            if (amount > 0) {
+            if (amount > 0 && item != null) {
                 DropItem(Player.m_localPlayer, item, amount);
             }
         }

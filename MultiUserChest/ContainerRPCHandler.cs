@@ -203,13 +203,21 @@ namespace MultiUserChest {
         public static RequestDropResponse RequestDrop(this Inventory inventory, RequestDrop request) {
             ItemDrop.ItemData from = inventory.GetItemAt(request.targetContainerSlot.x, request.targetContainerSlot.y);
 
+            if (from == null) {
+                return new RequestDropResponse(null, request.sender, false, 0);
+            }
+
             int removedAmount = Mathf.Min(from.m_stack, request.amount);
             inventory.RemoveItem(from, removedAmount);
+
+            if (removedAmount == 0) {
+                return new RequestDropResponse(null, request.sender, false, 0);
+            }
 
             ItemDrop.ItemData responseItem = from.Clone();
             responseItem.m_stack = removedAmount;
 
-            return new RequestDropResponse(responseItem, request.sender, removedAmount != 0, removedAmount);
+            return new RequestDropResponse(responseItem, request.sender, true, removedAmount);
         }
     }
 }
