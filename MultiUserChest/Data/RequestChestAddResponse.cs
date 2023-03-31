@@ -1,60 +1,53 @@
 namespace MultiUserChest {
     public class RequestChestAddResponse : IPackage, IResponse {
+        public int SourceID { get; }
         public bool Success { get; }
         public int Amount { get; }
         public readonly Vector2i inventoryPos;
-        public readonly int inventoryHash;
         public readonly ItemDrop.ItemData switchItem;
-        public readonly ZDOID sender;
 
-        public RequestChestAddResponse(bool success, Vector2i inventoryPos, int amount, int inventoryHash, ItemDrop.ItemData switchItem, ZDOID sender) {
+        public RequestChestAddResponse(int sourceID, bool success, Vector2i inventoryPos, int amount, ItemDrop.ItemData switchItem) {
+            SourceID = sourceID;
             Success = success;
             Amount = amount;
             this.inventoryPos = inventoryPos;
-            this.inventoryHash = inventoryHash;
             this.switchItem = switchItem;
-            this.sender = sender;
         }
 
         public RequestChestAddResponse(ZPackage package) {
+            SourceID = package.ReadInt();
             inventoryPos = package.ReadVector2i();
             Success = package.ReadBool();
             Amount = package.ReadInt();
-            inventoryHash = package.ReadInt();
             switchItem = InventoryHelper.LoadItemFromPackage(package);
-            sender = package.ReadZDOID();
         }
 
         public RequestChestAddResponse() {
+            SourceID = 0;
             Success = false;
             inventoryPos = new Vector2i(-1, -1);
             Amount = 0;
-            inventoryHash = 0;
             switchItem = null;
-            sender = ZDOID.None;
         }
 
         public ZPackage WriteToPackage() {
             ZPackage package = new ZPackage();
+            package.Write(SourceID);
             package.Write(inventoryPos);
             package.Write(Success);
             package.Write(Amount);
-            package.Write(inventoryHash);
             InventoryHelper.WriteItemToPackage(switchItem, package);
-            package.Write(sender);
 
             return package;
         }
 
 #if DEBUG
         public void PrintDebug() {
-
             Log.LogDebug($"RequestAddResponse:");
+            Log.LogDebug($"  id: {SourceID}");
             Log.LogDebug($"  inventoryPos: {inventoryPos}");
             Log.LogDebug($"  success: {Success}");
             Log.LogDebug($"  amount: {Amount}");
-            Log.LogDebug($"  inventoryHash: {inventoryHash}");
-            Log.LogDebug($"  sender: {sender}");
             InventoryHelper.PrintItem(nameof(switchItem), switchItem);
         }
 #endif

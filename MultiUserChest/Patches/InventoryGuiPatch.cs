@@ -125,5 +125,30 @@ namespace MultiUserChest.Patches {
             InventoryGui.instance.m_dragAmount = amount;
             InventoryGui.instance.m_dragItem = newItem;
         }
+
+        [HarmonyPatch(typeof(InventoryGrid), nameof(InventoryGrid.UpdateInventory)), HarmonyPostfix]
+        public static void InventoryGridUpdateInventoryPatch(InventoryGrid __instance) {
+            if (!InventoryPreview.GetChanges(__instance.m_inventory, out Dictionary<Vector2i, SlotPreview> preview)) {
+                return;
+            }
+
+            foreach (InventoryGrid.Element element in __instance.m_elements) {
+                if (!preview.TryGetValue(element.m_pos, out SlotPreview diff)) {
+                    continue;
+                }
+
+                int previousStackSize = __instance.GetInventory().GetItemAt(element.m_pos.x, element.m_pos.y)?.m_stack ?? 0;
+                int stackSize = previousStackSize + diff.amountDiff;
+                int maxStackSize = diff.item.m_shared.m_maxStackSize;
+
+                if (stackSize > 0) {
+                    element.m_icon.enabled = true;
+                    element.m_icon.sprite = diff.item.GetIcon();
+
+                    element.m_amount.enabled = maxStackSize > 1;
+                    element.m_amount.text = $"{stackSize}/{maxStackSize}";
+                }
+            }
+        }
     }
 }

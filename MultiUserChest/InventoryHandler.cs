@@ -6,7 +6,7 @@ using UnityEngine;
 namespace MultiUserChest {
     public static class InventoryHandler {
         public static void RPC_RequestItemAddResponse(long sender, ZPackage package) {
-            HandleRPC(new RequestChestAddResponse(package), p => GetInventory(p.sender, p.inventoryHash), RPC_RequestItemAddResponse);
+            HandleRPC(new RequestChestAddResponse(package), p => GetSourceInventory(p.SourceID), RPC_RequestItemAddResponse);
         }
 
         public static void RPC_RequestItemRemoveResponse(long sender, ZPackage package) {
@@ -99,6 +99,22 @@ namespace MultiUserChest {
             }
         }
 
+        private static void UpdateGUIAfterPlayerMove(Inventory inventory) {
+            if (!InventoryGui.instance || !Player.m_localPlayer) {
+                return;
+            }
+
+            if (Player.m_localPlayer.GetInventory().IsExtendedInventory(out List<Inventory> inventories)) {
+                if (inventories.Contains(inventory)) {
+                    InventoryGui.instance.UpdateCraftingPanel();
+                }
+            } else {
+                if (inventory == Player.m_localPlayer.GetInventory()) {
+                    InventoryGui.instance.UpdateCraftingPanel();
+                }
+            }
+        }
+
         public static void DropItem(ItemDrop.ItemData item, int amount) {
             if (amount > 0) {
                 DropItem(Player.m_localPlayer, item, amount);
@@ -123,6 +139,7 @@ namespace MultiUserChest {
             ItemDrop.ItemData switchItem = response.switchItem;
 
             InventoryBlock.Get(inventory).ReleaseSlot(inventoryPos);
+            InventoryPreview.RemovePackage(response);
 
             if (switchItem != null) {
                 bool added = inventory.AddItemToInventory(switchItem, switchItem.m_stack, inventoryPos);
@@ -132,7 +149,7 @@ namespace MultiUserChest {
                 }
             }
 
-            UpdateGUIAfterPlayerMove(response.sender);
+            UpdateGUIAfterPlayerMove(GetSourceInventory(response.SourceID));
         }
 
         public static void RPC_RequestItemConsumeResponse(RequestConsumeResponse response) {
@@ -169,6 +186,30 @@ namespace MultiUserChest {
 
             if (target.TryGetComponent(out Container container)) {
                 return container.GetInventory();
+            }
+
+            return null;
+        }
+
+        internal static Inventory GetSourceInventory(int id) {
+            if (!PackageHandler.GetPackage(id, out IPackage package)) {
+                return null;
+            }
+
+            if (package is RequestChestAdd packageAdd) {
+                return packageAdd.sourceInventory;
+            }
+
+            return null;
+        }
+
+        internal static Inventory GetTargetInventory(int id) {
+            if (!PackageHandler.GetPackage(id, out IPackage package)) {
+                return null;
+            }
+
+            if (package is RequestChestAdd packageAdd) {
+                return packageAdd.targetInventory;
             }
 
             return null;

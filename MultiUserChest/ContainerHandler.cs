@@ -12,7 +12,7 @@ namespace MultiUserChest {
 
         public static RequestChestAdd AddItemToChest(this Container container, ItemDrop.ItemData item, Inventory sourceInventory, Vector2i to, ZDOID sender, int dragAmount = -1) {
             if (!container || !container.m_nview || !container.m_nview.HasOwner()) {
-                return new RequestChestAdd(Vector2i.zero, 0, null, "", ZDOID.None);
+                return new RequestChestAdd(Vector2i.zero, 0, null, null, null);
             }
 
             dragAmount = PossibleDragAmount(container.GetInventory(), item, to, dragAmount);
@@ -20,11 +20,12 @@ namespace MultiUserChest {
             bool cannotStack = itemAtChest != null && dragAmount != item.m_stack && !InventoryHelper.IsSameItem(itemAtChest, item);
 
             if (dragAmount <= 0 || cannotStack || !sourceInventory.ContainsItem(item)) {
-                return new RequestChestAdd(Vector2i.zero, 0, null, "", ZDOID.None);
+                return new RequestChestAdd(Vector2i.zero, 0, null, null, null);
             }
 
-            RequestChestAdd request = new RequestChestAdd(to, dragAmount, item, sourceInventory.m_name, sender);
+            RequestChestAdd request = new RequestChestAdd(to, dragAmount, item, sourceInventory, container.GetInventory());
             InventoryBlock.Get(sourceInventory).BlockSlot(item.m_gridPos);
+            InventoryPreview.AddPackage(request);
 
             sourceInventory.RemoveItem(item, dragAmount);
 

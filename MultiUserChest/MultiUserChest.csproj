@@ -99,6 +99,7 @@
         <Compile Include="Data\RequestMove.cs" />
         <Compile Include="Data\RequestChestRemove.cs" />
         <Compile Include="Data\RequestChestRemoveResponse.cs" />
+        <Compile Include="Data\SlotPreview.cs" />
         <Compile Include="Helper\ConditionalWeakTableExtension.cs" />
         <Compile Include="Helper\InventoryHelper.cs" />
         <Compile Include="Helper\Log.cs" />
@@ -108,6 +109,7 @@
         <Compile Include="InventoryBlock.cs" />
         <Compile Include="InventoryHandler.cs" />
         <Compile Include="InventoryOwner.cs" />
+        <Compile Include="InventoryPreview.cs" />
         <Compile Include="Patches\Compatibility\OdinShip.cs" />
         <Compile Include="Patches\Compatibility\QuickStackPatch.cs" />
         <Compile Include="Patches\ContainerPatch.cs" />
@@ -117,6 +119,7 @@
         <Compile Include="Patches\PickupPatch.cs" />
         <Compile Include="Plugin.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
+        <Compile Include="PackageHandler.cs" />
     </ItemGroup>
     <ItemGroup>
         <Content Include=".gitignore" />

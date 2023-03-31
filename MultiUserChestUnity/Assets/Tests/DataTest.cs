@@ -34,27 +34,25 @@ namespace UnitTests {
 
         [Test]
         public void RequestAdd_PackageReadWrite() {
-            RequestChestAdd requestChestAdd = new RequestChestAdd(posA, 4, item, "inv", zdoid);
+            RequestChestAdd requestChestAdd = new RequestChestAdd(posA, 4, item, new Inventory("source", null, 1, 1), new Inventory("target", null, 1, 1));
             RequestChestAdd fromPackage = GetFromZPackage(requestChestAdd, package => new RequestChestAdd(package));
 
+            Assert.AreEqual(fromPackage.ID, requestChestAdd.ID);
             Assert.AreEqual(fromPackage.toPos, posA);
             TestForItem(fromPackage.dragItem, new TestItem("my item", 3, Vector2i.zero));
-            Assert.AreEqual(fromPackage.fromInventoryHash, "inv".GetStableHashCode());
             Assert.False(fromPackage.allowSwitch);
-            Assert.AreEqual(fromPackage.sender, zdoid);
         }
 
         [Test]
         public void RequestAddResponse_PackageReadWrite() {
-            RequestChestAddResponse requestChestAdd = new RequestChestAddResponse(true, posA, 4, 5, item, zdoid);
+            RequestChestAddResponse requestChestAdd = new RequestChestAddResponse(42, true, posA, 4, item);
             RequestChestAddResponse fromPackage = GetFromZPackage(requestChestAdd, package => new RequestChestAddResponse(package));
 
+            Assert.AreEqual(fromPackage.SourceID, 42);
             Assert.True(fromPackage.Success);
             Assert.AreEqual(fromPackage.inventoryPos, posA);
             Assert.AreEqual(fromPackage.Amount, 4);
-            Assert.AreEqual(fromPackage.inventoryHash, 5);
             TestForItem(fromPackage.switchItem, new TestItem("my item", 3, Vector2i.zero));
-            Assert.AreEqual(fromPackage.sender, zdoid);
         }
 
         [Test]

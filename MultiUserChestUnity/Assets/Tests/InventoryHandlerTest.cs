@@ -41,7 +41,7 @@ namespace UnitTests {
 
         [Test]
         public void RPC_RequestItemAddResponseNoItemAtResponsePos() {
-            RequestChestAddResponse response = new RequestChestAddResponse(true, new Vector2i(2, 3), 3, "inv".GetStableHashCode(), null, ZDOID.None);
+            RequestChestAddResponse response = new RequestChestAddResponse(42, true, new Vector2i(2, 3), 3, null);
             Assert.DoesNotThrow(() => InventoryHandler.RPC_RequestItemAddResponse(inventory, response));
         }
 

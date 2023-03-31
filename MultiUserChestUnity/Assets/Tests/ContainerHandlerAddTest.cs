@@ -18,13 +18,13 @@ namespace UnitTests {
         private static RequestChestAdd MakeRequest(int itemAmount = 5, int dragAmount = 5) {
             ItemDrop.ItemData item = Helper.CreateItem("my item", itemAmount);
             item.m_gridPos = new Vector2i(2, 2);
-            return new RequestChestAdd(new Vector2i(3, 3), dragAmount, item, "inv", ZDOID.None);
+            return new RequestChestAdd(new Vector2i(3, 3), dragAmount, item, new Inventory("source", null, 1, 1), new Inventory("target", null, 1, 1));
         }
 
         private static RequestChestAdd MakeRequest(Vector2i target, int itemAmount = 5) {
             ItemDrop.ItemData item = Helper.CreateItem("my item", itemAmount);
             item.m_gridPos = new Vector2i(2, 2);
-            return new RequestChestAdd(target, itemAmount, item, "inv", ZDOID.None);
+            return new RequestChestAdd(target, itemAmount, item, new Inventory("source", null, 1, 1), new Inventory("target", null, 1, 1));
         }
 
         [Test]
