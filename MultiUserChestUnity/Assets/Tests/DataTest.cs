@@ -37,7 +37,7 @@ namespace UnitTests {
             RequestChestAdd requestChestAdd = new RequestChestAdd(posA, 4, item, new Inventory("source", null, 1, 1), new Inventory("target", null, 1, 1));
             RequestChestAdd fromPackage = GetFromZPackage(requestChestAdd, package => new RequestChestAdd(package));
 
-            Assert.AreEqual(fromPackage.ID, requestChestAdd.ID);
+            Assert.AreEqual(fromPackage.RequestID, requestChestAdd.RequestID);
             Assert.AreEqual(fromPackage.toPos, posA);
             TestForItem(fromPackage.dragItem, new TestItem("my item", 3, Vector2i.zero));
             Assert.False(fromPackage.allowSwitch);

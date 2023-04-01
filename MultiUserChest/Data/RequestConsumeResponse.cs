@@ -1,5 +1,6 @@
 ﻿namespace MultiUserChest {
     public class RequestConsumeResponse : IPackage, IResponse {
+        public int SourceID { get; }
         public bool Success { get; }
         public int Amount { get; }
         public readonly ItemDrop.ItemData item;

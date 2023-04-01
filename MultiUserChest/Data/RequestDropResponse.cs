@@ -1,5 +1,6 @@
 ﻿namespace MultiUserChest {
     public class RequestDropResponse : IPackage, IResponse {
+        public int SourceID { get; }
         public readonly ItemDrop.ItemData responseItem;
         public readonly ZDOID sender;
         public bool Success { get; }

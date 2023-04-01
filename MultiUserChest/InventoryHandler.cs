@@ -186,8 +186,8 @@ namespace MultiUserChest {
                 return null;
             }
 
-            if (package is RequestChestAdd packageAdd) {
-                return packageAdd.sourceInventory;
+            if (package is IRequest request) {
+                return request.SourceInventory;
             }
 
             return null;
@@ -198,8 +198,8 @@ namespace MultiUserChest {
                 return null;
             }
 
-            if (package is RequestChestAdd packageAdd) {
-                return packageAdd.targetInventory;
+            if (package is IRequest request) {
+                return request.TargetInventory;
             }
 
             return null;
