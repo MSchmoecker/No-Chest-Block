@@ -81,12 +81,8 @@ namespace MultiUserChest.Patches {
 
         [HarmonyPatch(typeof(Inventory), nameof(Inventory.Changed)), HarmonyPostfix]
         public static void AddItemPostfix(Inventory __instance) {
-            if (__instance.IsExtendedInventory(out List<Inventory> inventories)) {
-                foreach (Inventory inventory in inventories) {
-                    AssignItemsOfInventory(inventory);
-                }
-            } else {
-                AssignItemsOfInventory(__instance);
+            foreach (Inventory inventory in __instance.GetInventories()) {
+                AssignItemsOfInventory(inventory);
             }
 
             if (LastRemovedItem.TryGetTarget(out ItemDrop.ItemData lastItem) && InventoryOwner.GetOwner(lastItem)?.Inventory == __instance) {

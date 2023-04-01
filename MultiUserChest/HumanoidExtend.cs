@@ -26,12 +26,8 @@ namespace MultiUserChest {
                 return;
             }
 
-            if (inventory.IsExtendedInventory(out List<Inventory> inventories)) {
-                foreach (Inventory subInventory in inventories) {
-                    Humanoids.TryAdd(subInventory, i => new HumanoidInventoryOwner(humanoid, i));
-                }
-            } else {
-                Humanoids.TryAdd(inventory, i => new HumanoidInventoryOwner(humanoid, i));
+            foreach (Inventory subInventory in inventory.GetInventories()) {
+                Humanoids.TryAdd(subInventory, i => new HumanoidInventoryOwner(humanoid, i));
             }
         }
 
@@ -40,12 +36,8 @@ namespace MultiUserChest {
                 return;
             }
 
-            if (inventory.IsExtendedInventory(out List<Inventory> inventories)) {
-                foreach (Inventory subInventory in inventories) {
-                    Humanoids.Remove(subInventory);
-                }
-            } else {
-                Humanoids.Remove(inventory);
+            foreach (Inventory subInventory in inventory.GetInventories()) {
+                Humanoids.Remove(subInventory);
             }
         }
 

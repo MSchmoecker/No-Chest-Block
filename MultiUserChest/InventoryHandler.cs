@@ -104,14 +104,8 @@ namespace MultiUserChest {
                 return;
             }
 
-            if (Player.m_localPlayer.GetInventory().IsExtendedInventory(out List<Inventory> inventories)) {
-                if (inventories.Contains(inventory)) {
-                    InventoryGui.instance.UpdateCraftingPanel();
-                }
-            } else {
-                if (inventory == Player.m_localPlayer.GetInventory()) {
-                    InventoryGui.instance.UpdateCraftingPanel();
-                }
+            if (Player.m_localPlayer.GetInventory().GetInventories().Contains(inventory)) {
+                InventoryGui.instance.UpdateCraftingPanel();
             }
         }
 
@@ -177,11 +171,7 @@ namespace MultiUserChest {
             GameObject target = ZNetScene.instance.FindInstance(targetId);
 
             if (target.TryGetComponent(out Player player)) {
-                if (player.GetInventory().IsExtendedInventory(out List<Inventory> inventories)) {
-                    return inventories.FirstOrDefault(i => i.m_name.GetStableHashCode() == hash) ?? player.GetInventory();
-                }
-
-                return player.GetInventory();
+                return player.GetInventory().GetInventories().FirstOrDefault(i => i.m_name.GetStableHashCode() == hash) ?? player.GetInventory();
             }
 
             if (target.TryGetComponent(out Container container)) {
