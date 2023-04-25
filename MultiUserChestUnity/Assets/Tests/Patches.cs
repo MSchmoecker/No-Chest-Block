@@ -88,17 +88,6 @@ namespace UnitTests {
 
                 return false;
             }
-
-            [HarmonyPatch(typeof(InventoryHandler), nameof(InventoryHandler.GetInventory)), HarmonyPrefix]
-            public static bool GetInventoryPatch(ZDOID targetId, int hash, ref Inventory __result) {
-                if (Helper.inventories.TryGetValue(targetId, out Inventory inventory)) {
-                    __result = inventory;
-                } else {
-                    Log.LogWarning($"Inventory {targetId} with hash {hash} not found");
-                }
-
-                return false;
-            }
         }
     }
 }

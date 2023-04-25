@@ -133,15 +133,13 @@ namespace MultiUserChest.Patches {
 
                 int previousStackSize = __instance.GetInventory().GetItemAt(element.m_pos.x, element.m_pos.y)?.m_stack ?? 0;
                 int stackSize = previousStackSize + diff.amountDiff;
-                int maxStackSize = diff.item.m_shared.m_maxStackSize;
+                int maxStackSize = diff.item?.m_shared?.m_maxStackSize ?? 0;
 
-                if (stackSize > 0) {
-                    element.m_icon.enabled = true;
-                    element.m_icon.sprite = diff.item.GetIcon();
+                element.m_icon.enabled = stackSize > 0;
+                element.m_icon.sprite = diff.item?.GetIcon();
 
-                    element.m_amount.enabled = maxStackSize > 1;
-                    element.m_amount.text = $"{stackSize}/{maxStackSize}";
-                }
+                element.m_amount.enabled = stackSize > 0 && maxStackSize > 1;
+                element.m_amount.text = $"{stackSize}/{maxStackSize}";
             }
         }
     }

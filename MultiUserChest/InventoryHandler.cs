@@ -10,7 +10,7 @@ namespace MultiUserChest {
         }
 
         public static void RPC_RequestItemRemoveResponse(long sender, ZPackage package) {
-            HandleRPC(new RequestChestRemoveResponse(package), p => GetInventory(p.sender, p.inventoryHash), RPC_RequestItemRemoveResponse);
+            HandleRPC(new RequestChestRemoveResponse(package), p => GetTargetInventory(p.SourceID), RPC_RequestItemRemoveResponse);
         }
 
         public static void RPC_RequestDropResponse(long sender, ZPackage package) {
@@ -52,8 +52,9 @@ namespace MultiUserChest {
         }
 
         public static void RPC_RequestItemRemoveResponse(Inventory inventory, RequestChestRemoveResponse response) {
-            Vector2i inventoryPos = response.inventoryPos;
+            Vector2i inventoryPos = PackageHandler.GetPackage<RequestChestRemove>(response.SourceID).toPos;
             InventoryBlock.Get(inventory).ReleaseSlot(inventoryPos);
+            InventoryPreview.RemovePackage(response);
 
             if (response.Success && inventoryPos.x >= 0 && inventoryPos.y >= 0) {
                 bool added = inventory.AddItemToInventory(response.responseItem, response.Amount, inventoryPos);
@@ -85,7 +86,7 @@ namespace MultiUserChest {
                 }
             }
 
-            UpdateGUIAfterPlayerMove(response.sender);
+            UpdateGUIAfterPlayerMove(GetTargetInventory(response.SourceID));
         }
 
         private static void RPC_RequestDropResponse(RequestDropResponse response) {
@@ -167,42 +168,12 @@ namespace MultiUserChest {
             }
         }
 
-        internal static Inventory GetInventory(ZDOID targetId, int hash) {
-            GameObject target = ZNetScene.instance.FindInstance(targetId);
-
-            if (target.TryGetComponent(out Player player)) {
-                return player.GetInventory().GetInventories().FirstOrDefault(i => i.m_name.GetStableHashCode() == hash) ?? player.GetInventory();
-            }
-
-            if (target.TryGetComponent(out Container container)) {
-                return container.GetInventory();
-            }
-
-            return null;
-        }
-
         internal static Inventory GetSourceInventory(int id) {
-            if (!PackageHandler.GetPackage(id, out IPackage package)) {
-                return null;
-            }
-
-            if (package is IRequest request) {
-                return request.SourceInventory;
-            }
-
-            return null;
+            return PackageHandler.GetPackage<IRequest>(id)?.SourceInventory;
         }
 
         internal static Inventory GetTargetInventory(int id) {
-            if (!PackageHandler.GetPackage(id, out IPackage package)) {
-                return null;
-            }
-
-            if (package is IRequest request) {
-                return request.TargetInventory;
-            }
-
-            return null;
+            return PackageHandler.GetPackage<IRequest>(id)?.TargetInventory;
         }
     }
 }

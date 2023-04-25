@@ -16,13 +16,13 @@ namespace UnitTests {
             return container.RequestItemRemove(request);
         }
 
-        private static RequestChestRemove MakeMessage(int dragAmount, ItemDrop.ItemData switchItem = null) {
+        private RequestChestRemove MakeMessage(int dragAmount, ItemDrop.ItemData switchItem = null) {
             return new RequestChestRemove(new Vector2i(2, 2),
-                                     new Vector2i(4, 4),
-                                     dragAmount,
-                                     "inv",
-                                     switchItem,
-                                     ZDOID.None);
+                                          new Vector2i(4, 4),
+                                          dragAmount,
+                                          switchItem,
+                                          container,
+                                          new Inventory("player", null, 1, 1));
         }
 
         [Test]

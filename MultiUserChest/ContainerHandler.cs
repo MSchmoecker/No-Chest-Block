@@ -83,21 +83,21 @@ namespace MultiUserChest {
 
         public static RequestChestRemove RemoveItemFromChest(this Container container, ItemDrop.ItemData item, Inventory destinationInventory, Vector2i to, ZDOID sender, int dragAmount = -1, ItemDrop.ItemData switchItem = null) {
             if (!container || !container.m_nview || !container.m_nview.HasOwner()) {
-                return new RequestChestRemove(Vector2i.zero, Vector2i.zero, 0, "", null, ZDOID.None);
+                return new RequestChestRemove(Vector2i.zero, Vector2i.zero, 0, null, container.GetInventory(), destinationInventory);
             }
 
             dragAmount = PossibleDragAmount(destinationInventory, item, to, dragAmount);
 
             if (dragAmount <= 0 || InventoryBlock.Get(destinationInventory).IsSlotBlocked(to)) {
-                return new RequestChestRemove(Vector2i.zero, Vector2i.zero, 0, "", null, ZDOID.None);
+                return new RequestChestRemove(Vector2i.zero, Vector2i.zero, 0, null, container.GetInventory(), destinationInventory);
             }
 
-            RequestChestRemove request = new RequestChestRemove(item.m_gridPos, to, dragAmount, destinationInventory.m_name, switchItem, sender);
+            RequestChestRemove request = new RequestChestRemove(item.m_gridPos, to, dragAmount, switchItem, container.GetInventory(), destinationInventory);
 
             if (switchItem != null) {
                 if (!InventoryHelper.IsSameItem(item, switchItem)) {
                     if (dragAmount != item.m_stack) {
-                        return new RequestChestRemove(Vector2i.zero, Vector2i.zero, 0, "", null, ZDOID.None);
+                        return new RequestChestRemove(Vector2i.zero, Vector2i.zero, 0, null, container.GetInventory(), destinationInventory);
                     }
 
                     destinationInventory.RemoveItem(switchItem);
@@ -105,6 +105,7 @@ namespace MultiUserChest {
             }
 
             InventoryBlock.Get(destinationInventory).BlockSlot(request.toPos);
+            InventoryPreview.AddPackage(request);
 
             if (container.m_nview.IsOwner()) {
                 RequestChestRemoveResponse response = container.GetInventory().RequestItemRemove(request);

@@ -135,7 +135,6 @@ namespace MultiUserChest {
 
         public static RequestChestRemoveResponse RequestItemRemove(this Inventory inventory, RequestChestRemove request) {
             Vector2i fromContainer = request.fromPos;
-            Vector2i toInventory = request.toPos;
             int dragAmount = request.dragAmount;
             ItemDrop.ItemData switchItem = request.switchItem;
 
@@ -143,7 +142,7 @@ namespace MultiUserChest {
 
             if (from == null) {
                 Log.LogDebug("from is null");
-                return new RequestChestRemoveResponse(false, 0, false, toInventory, request.fromInventoryHash, null, request.sender);
+                return new RequestChestRemoveResponse(request.RequestID, false, 0, false, null);
             }
 
             int removedAmount = 0;
@@ -166,7 +165,7 @@ namespace MultiUserChest {
 
             ItemDrop.ItemData responseItem = from.Clone();
             responseItem.m_stack = removedAmount;
-            return new RequestChestRemoveResponse(removed, removedAmount, switched, toInventory, request.fromInventoryHash, responseItem, request.sender);
+            return new RequestChestRemoveResponse(request.RequestID, removed, removedAmount, switched, responseItem);
         }
 
         public static RequestConsumeResponse RequestItemConsume(this Inventory inventory, RequestConsume request) {

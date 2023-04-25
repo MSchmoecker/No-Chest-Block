@@ -1,41 +1,43 @@
 using System;
 
 namespace MultiUserChest {
-    public class RequestChestRemove : RequestRemove, IPackage {
+    public class RequestChestRemove : RequestRemove, IRequest {
+        public int RequestID { get; set; }
+        public Inventory SourceInventory { get; }
+        public Inventory TargetInventory { get; }
+
         public readonly Vector2i fromPos;
         public readonly Vector2i toPos;
         public readonly int dragAmount;
         public readonly ItemDrop.ItemData switchItem;
-        public readonly int fromInventoryHash;
-        public readonly ZDOID sender;
+        public readonly ItemDrop.ItemData item;
 
-        public RequestChestRemove(Vector2i fromPos, Vector2i toPos, int dragAmount, string fromInventory, ItemDrop.ItemData switchItem, ZDOID sender) {
+        public RequestChestRemove(Vector2i fromPos, Vector2i toPos, int dragAmount, ItemDrop.ItemData switchItem, Inventory sourceInventory, Inventory targetInventory) {
             this.fromPos = fromPos;
             this.toPos = toPos;
             this.dragAmount = dragAmount;
-            fromInventoryHash = fromInventory.GetStableHashCode();
             this.switchItem = switchItem?.Clone();
-            this.sender = sender;
+            SourceInventory = sourceInventory;
+            TargetInventory = targetInventory;
+            item = sourceInventory.GetItemAt(fromPos.x, fromPos.y)?.Clone();
         }
 
         public RequestChestRemove(ZPackage package) {
+            RequestID = package.ReadInt();
             fromPos = package.ReadVector2i();
             toPos = package.ReadVector2i();
             dragAmount = package.ReadInt();
-            fromInventoryHash = package.ReadInt();
             switchItem = InventoryHelper.LoadItemFromPackage(package);
-            sender = package.ReadZDOID();
         }
 
         public ZPackage WriteToPackage() {
             ZPackage package = new ZPackage();
 
+            package.Write(RequestID);
             package.Write(fromPos);
             package.Write(toPos);
             package.Write(dragAmount);
-            package.Write(fromInventoryHash);
             InventoryHelper.WriteItemToPackage(switchItem, package);
-            package.Write(sender);
 
             return package;
         }
@@ -46,8 +48,6 @@ namespace MultiUserChest {
             Log.LogDebug($"  fromContainer: {fromPos}");
             Log.LogDebug($"  toInventory: {toPos}");
             Log.LogDebug($"  dragAmount: {dragAmount}");
-            Log.LogDebug($"  inventoryHashFrom: {fromInventoryHash}");
-            Log.LogDebug($"  sender: {sender}");
             InventoryHelper.PrintItem(nameof(switchItem), switchItem);
         }
 #endif

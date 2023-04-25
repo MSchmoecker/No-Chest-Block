@@ -22,7 +22,9 @@ namespace UnitTests {
         private static T GetFromZPackage<T>(T request, Func<ZPackage, T> newRequest) where T : IPackage {
             ZPackage package = request.WriteToPackage();
             package.SetPos(0);
-            return newRequest(package);
+            T result = newRequest(package);
+            Assert.False(package.Size() > package.GetPos(), "Package not fully read");
+            return result;
         }
 
         private static ItemDrop.ItemData GetFromZPackage(ItemDrop.ItemData item) {
@@ -112,28 +114,25 @@ namespace UnitTests {
 
         [Test]
         public void RequestRemove_PackageReadWrite() {
-            RequestChestRemove requestChestAdd = new RequestChestRemove(posA, posB, 3, "inv", item, zdoid);
-            RequestChestRemove fromPackage = GetFromZPackage(requestChestAdd, package => new RequestChestRemove(package));
+            RequestChestRemove requestChestRemove = new RequestChestRemove(posA, posB, 3, item, new Inventory("source", null, 1, 1), new Inventory("target", null, 1, 1));
+            RequestChestRemove fromPackage = GetFromZPackage(requestChestRemove, package => new RequestChestRemove(package));
 
+            Assert.AreEqual(fromPackage.RequestID, requestChestRemove.RequestID);
             Assert.AreEqual(fromPackage.fromPos, posA);
             Assert.AreEqual(fromPackage.toPos, posB);
             Assert.AreEqual(fromPackage.dragAmount, 3);
             TestForItem(fromPackage.switchItem, new TestItem("my item", 3, Vector2i.zero));
-            Assert.AreEqual(fromPackage.fromInventoryHash, "inv".GetStableHashCode());
-            Assert.AreEqual(fromPackage.sender, zdoid);
         }
 
         [Test]
         public void RequestRemoveResponse_PackageReadWrite() {
-            RequestChestRemoveResponse requestChestAdd = new RequestChestRemoveResponse(true, 3, false, posA, "inv".GetStableHashCode(), item, zdoid);
-            RequestChestRemoveResponse fromPackage = GetFromZPackage(requestChestAdd, package => new RequestChestRemoveResponse(package));
+            RequestChestRemoveResponse requestChestRemoveResponse = new RequestChestRemoveResponse(42, true, 3, false, item);
+            RequestChestRemoveResponse fromPackage = GetFromZPackage(requestChestRemoveResponse, package => new RequestChestRemoveResponse(package));
 
+            Assert.AreEqual(fromPackage.SourceID, 42);
             Assert.True(fromPackage.Success);
             Assert.AreEqual(fromPackage.Amount, 3);
-            Assert.AreEqual(fromPackage.inventoryPos, posA);
-            Assert.AreEqual(fromPackage.inventoryHash, "inv".GetStableHashCode());
             TestForItem(fromPackage.responseItem, new TestItem("my item", 3, Vector2i.zero));
-            Assert.AreEqual(fromPackage.sender, zdoid);
             Assert.False(fromPackage.hasSwitched);
         }
 
