@@ -122,21 +122,20 @@ namespace MultiUserChest.Patches {
 
         [HarmonyPatch(typeof(InventoryGrid), nameof(InventoryGrid.UpdateInventory)), HarmonyPostfix]
         public static void InventoryGridUpdateInventoryPatch(InventoryGrid __instance) {
-            if (!InventoryPreview.GetChanges(__instance.m_inventory, out Dictionary<Vector2i, SlotPreview> preview)) {
+            if (!InventoryPreview.GetChanges(__instance.m_inventory, out SlotPreview preview)) {
                 return;
             }
 
             foreach (InventoryGrid.Element element in __instance.m_elements) {
-                if (!preview.TryGetValue(element.m_pos, out SlotPreview diff)) {
+                if (!preview.GetSlot(element.m_pos, out ItemDrop.ItemData item)) {
                     continue;
                 }
 
-                int previousStackSize = __instance.GetInventory().GetItemAt(element.m_pos.x, element.m_pos.y)?.m_stack ?? 0;
-                int stackSize = previousStackSize + diff.amountDiff;
-                int maxStackSize = diff.item?.m_shared?.m_maxStackSize ?? 0;
+                int stackSize = item?.m_stack ?? 0;
+                int maxStackSize = item?.m_shared?.m_maxStackSize ?? 0;
 
                 element.m_icon.enabled = stackSize > 0;
-                element.m_icon.sprite = diff.item?.GetIcon();
+                element.m_icon.sprite = item?.GetIcon();
 
                 element.m_amount.enabled = stackSize > 0 && maxStackSize > 1;
                 element.m_amount.text = $"{stackSize}/{maxStackSize}";

@@ -12,8 +12,9 @@ namespace MultiUserChest {
             Log.LogDebug($"InventoryPreview: Added package {package.RequestID}, total packages: {total}");
 
             if (package is RequestChestAdd) {
+                AppendPackage(package.SourceInventory, package);
                 AppendPackage(package.TargetInventory, package);
-                total += 1;
+                total += 2;
             } else if (package is RequestChestRemove) {
                 AppendPackage(package.SourceInventory, package);
                 AppendPackage(package.TargetInventory, package);
@@ -33,7 +34,7 @@ namespace MultiUserChest {
         public static void RemovePackage(IResponse package) {
             RemovePackage(InventoryHandler.GetSourceInventory(package.SourceID), package);
             RemovePackage(InventoryHandler.GetTargetInventory(package.SourceID), package);
-            
+
             PackageHandler.RemovePackage(package.SourceID);
             Log.LogDebug($"InventoryPreview: Removed package {package.SourceID}, total packages: {--total}");
         }
@@ -68,13 +69,13 @@ namespace MultiUserChest {
             }
         }
 
-        public static bool GetChanges(Inventory inventory, out Dictionary<Vector2i, SlotPreview> preview) {
+        public static bool GetChanges(Inventory inventory, out SlotPreview preview) {
             if (inventory == null) {
                 preview = null;
                 return false;
             }
 
-            preview = new Dictionary<Vector2i, SlotPreview>();
+            preview = new SlotPreview(inventory);
 
             if (PackageChanges.TryGetValue(inventory, out List<IRequest> packages)) {
                 foreach (IRequest package in packages) {
@@ -83,39 +84,40 @@ namespace MultiUserChest {
                             continue;
                         }
 
-                        AddPreview(preview, requestChestAdd.toPos, requestChestAdd.dragItem, requestChestAdd.dragItem.m_stack);
+                        ItemDrop.ItemData switchItem = null;
+
+                        if (requestChestAdd.allowSwitch) {
+                            switchItem = package.TargetInventory.GetItemAt(requestChestAdd.toPos.x, requestChestAdd.toPos.y);
+                        }
+
+                        if (inventory == package.SourceInventory) {
+                            preview.Add(requestChestAdd.dragItem.m_gridPos, switchItem);
+                        }
+
+                        if (inventory == package.TargetInventory) {
+                            preview.Add(requestChestAdd.toPos, requestChestAdd.dragItem);
+                            preview.Remove(requestChestAdd.toPos, switchItem);
+                        }
                     } else if (package is RequestChestRemove requestChestRemove) {
                         Vector2i fromPos = requestChestRemove.fromPos;
                         Vector2i toPos = requestChestRemove.toPos;
 
                         if (inventory == package.SourceInventory) {
-                            AddPreview(preview, fromPos, requestChestRemove.item, -requestChestRemove.dragAmount);
-
-                            if (requestChestRemove.switchItem != null) {
-                                AddPreview(preview, toPos, requestChestRemove.switchItem, requestChestRemove.switchItem.m_stack);
-                            }
+                            preview.Remove(fromPos, requestChestRemove.item, requestChestRemove.dragAmount);
+                            preview.Add(fromPos, requestChestRemove.switchItem);
                         }
 
                         if (inventory == package.TargetInventory) {
-                            AddPreview(preview, toPos, requestChestRemove.item, requestChestRemove.dragAmount);
+                            preview.Add(toPos, requestChestRemove.item);
                         }
                     }
                 }
 
-                return true;
+                return preview.HasChanges();
             }
 
             preview = null;
             return false;
-        }
-
-        private static void AddPreview(Dictionary<Vector2i, SlotPreview> preview, Vector2i pos, ItemDrop.ItemData item, int amount) {
-            if (!preview.TryGetValue(pos, out SlotPreview diff)) {
-                diff = new SlotPreview(item, amount);
-                preview.Add(pos, diff);
-            } else {
-                diff.amountDiff += amount;
-            }
         }
     }
 }
