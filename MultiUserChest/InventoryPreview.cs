@@ -51,7 +51,7 @@ namespace MultiUserChest {
                 packageToRemove = packages.Find(p => p.RequestID == package.SourceID);
             }
 
-            if (!owner.IsValid() || packageToRemove == null) {
+            if (owner == null || !owner.IsValid() || packageToRemove == null) {
                 return;
             }
 

@@ -192,6 +192,8 @@
       <Copy SourceFiles="$(VALHEIM_INSTALL)/BepInEx/core/MonoMod.RuntimeDetour.dll" DestinationFolder="$(SolutionDir)MultiUserChestUnity/Assets/Assemblies" />
       <Copy SourceFiles="$(TargetDir)Jotunn.dll" DestinationFolder="$(SolutionDir)MultiUserChestUnity/Assets/Assemblies" />
       <Copy SourceFiles="$(TargetDir)$(TargetName).dll" DestinationFolder="$(SolutionDir)MultiUserChestUnity/Assets/Assemblies" />
+      <Copy SourceFiles="$(TargetDir)$(TargetName).pdb" DestinationFolder="$(SolutionDir)MultiUserChestUnity/Assets/Assemblies" />
+      <Copy SourceFiles="$(TargetDir)$(TargetName).dll.mdb" DestinationFolder="$(SolutionDir)MultiUserChestUnity/Assets/Assemblies" />
       <Copy SourceFiles="$(VALHEIM_MANAGED)/assembly_valheim.dll" DestinationFolder="$(SolutionDir)MultiUserChestUnity/Assets/Assemblies" />
       <Copy Condition="Exists('$(VALHEIM_MANAGED)/publicized_assemblies/assembly_valheim_publicized.dll')" SourceFiles="$(VALHEIM_MANAGED)/publicized_assemblies/assembly_valheim_publicized.dll" DestinationFiles="$(SolutionDir)MultiUserChestUnity/Assets/Assemblies/assembly_valheim.dll" />
       <Copy SourceFiles="$(VALHEIM_MANAGED)/assembly_utils.dll" DestinationFolder="$(SolutionDir)MultiUserChestUnity/Assets/Assemblies" />
