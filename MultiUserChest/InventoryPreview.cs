@@ -108,7 +108,7 @@ namespace MultiUserChest {
                         }
 
                         if (inventory == package.TargetInventory) {
-                            preview.Add(toPos, requestChestRemove.item);
+                            preview.Add(toPos, requestChestRemove.item, requestChestRemove.dragAmount);
                         }
                     }
                 }
