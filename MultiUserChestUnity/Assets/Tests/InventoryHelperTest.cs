@@ -15,22 +15,25 @@ namespace UnitTests {
         public void MoveItemEmptyExceptOneItem() {
             inventory.CreateItem("my item", 5, 3, 3);
 
-            bool success = InventoryHelper.MoveItem(inventory, inventory.GetItemAt(3, 3), 5, new Vector2i(2, 2));
+            bool success = InventoryHelper.MoveItem(inventory, inventory.GetItemAt(3, 3), 5, new Vector2i(2, 2), out int movedAmount);
             Assert.True(success);
+            Assert.AreEqual(5, movedAmount);
         }
 
         [Test]
         public void MoveItemNull() {
-            bool success = InventoryHelper.MoveItem(inventory, null, 5, new Vector2i(2, 2));
+            bool success = InventoryHelper.MoveItem(inventory, null, 5, new Vector2i(2, 2), out int movedAmount);
             Assert.False(success);
+            Assert.AreEqual(0, movedAmount);
         }
 
         [Test]
         public void MoveItemOnEqualSame() {
             inventory.CreateItem("my item", 5, 3, 3);
 
-            bool success = InventoryHelper.MoveItem(inventory, inventory.GetItemAt(3, 3), 5, new Vector2i(3, 3));
+            bool success = InventoryHelper.MoveItem(inventory, inventory.GetItemAt(3, 3), 5, new Vector2i(3, 3), out int movedAmount);
             Assert.True(success);
+            Assert.AreEqual(0, movedAmount);
         }
 
         [Test]
@@ -40,8 +43,9 @@ namespace UnitTests {
 
             ItemDrop.ItemData item = inventory.GetItemAt(3, 3);
 
-            bool success = InventoryHelper.MoveItem(inventory, item, 5, new Vector2i(2, 2));
+            bool success = InventoryHelper.MoveItem(inventory, item, 5, new Vector2i(2, 2), out int movedAmount);
             Assert.True(success);
+            Assert.AreEqual(5, movedAmount);
             TestForItems(inventory, new TestItem("my item", 10, new Vector2i(2, 2)));
         }
 
@@ -52,8 +56,9 @@ namespace UnitTests {
 
             ItemDrop.ItemData item = inventory.GetItemAt(3, 3);
 
-            bool success = InventoryHelper.MoveItem(inventory, item, item.m_stack, new Vector2i(2, 2));
+            bool success = InventoryHelper.MoveItem(inventory, item, item.m_stack, new Vector2i(2, 2), out int movedAmount);
             Assert.True(success);
+            Assert.AreEqual(5, movedAmount);
 
             TestForItems(inventory, new[] {
                 new TestItem("my item", 20, new Vector2i(2, 2)),
@@ -68,8 +73,9 @@ namespace UnitTests {
 
             ItemDrop.ItemData item = inventory.GetItemAt(3, 3);
 
-            bool success = InventoryHelper.MoveItem(inventory, item, item.m_stack, new Vector2i(2, 2));
+            bool success = InventoryHelper.MoveItem(inventory, item, item.m_stack, new Vector2i(2, 2), out int movedAmount);
             Assert.False(success);
+            Assert.AreEqual(0, movedAmount);
 
             TestForItems(inventory, new[] {
                 new TestItem("my item", 20, new Vector2i(2, 2)),
@@ -84,8 +90,9 @@ namespace UnitTests {
 
             ItemDrop.ItemData item = inventory.GetItemAt(3, 3);
 
-            bool success = InventoryHelper.MoveItem(inventory, item, item.m_stack, new Vector2i(2, 2));
+            bool success = InventoryHelper.MoveItem(inventory, item, item.m_stack, new Vector2i(2, 2), out int movedAmount);
             Assert.True(success);
+            Assert.AreEqual(10, movedAmount);
 
             TestForItems(inventory, new[] {
                 new TestItem("my item 1", 12, new Vector2i(3, 3)),
@@ -100,8 +107,9 @@ namespace UnitTests {
 
             ItemDrop.ItemData item = inventory.GetItemAt(3, 3);
 
-            bool success = InventoryHelper.MoveItem(inventory, item, 5, new Vector2i(2, 2));
+            bool success = InventoryHelper.MoveItem(inventory, item, 5, new Vector2i(2, 2), out int movedAmount);
             Assert.False(success);
+            Assert.AreEqual(0, movedAmount);
 
             TestForItems(inventory, new[] {
                 new TestItem("my item 1", 12, new Vector2i(2, 2)),

@@ -1,11 +1,16 @@
 namespace MultiUserChest {
-    public class RequestMove : IPackage {
+    public class RequestMove : IRequest {
+        public int RequestID { get; set; }
+        public Inventory SourceInventory { get; }
+        public Inventory TargetInventory { get; }
+
         public readonly Vector2i fromPos;
         public readonly Vector2i toPos;
         public readonly int itemHash;
         public readonly int dragAmount;
+        public readonly ItemDrop.ItemData item;
 
-        public RequestMove(ItemDrop.ItemData itemToMove, Vector2i toPos, int dragAmount) {
+        public RequestMove(ItemDrop.ItemData itemToMove, Vector2i toPos, int dragAmount, Inventory inventory) {
             if (itemToMove == null) {
                 Log.LogWarning("Item is null");
 
@@ -16,13 +21,17 @@ namespace MultiUserChest {
                 return;
             }
 
+            SourceInventory = inventory;
+            TargetInventory = inventory;
             fromPos = itemToMove.m_gridPos;
             this.toPos = toPos;
             itemHash = itemToMove.PrefabName().GetStableHashCode();
+            item = itemToMove.Clone();
             this.dragAmount = dragAmount;
         }
 
         public RequestMove(ZPackage package) {
+            RequestID = package.ReadInt();
             fromPos = package.ReadVector2i();
             toPos = package.ReadVector2i();
             itemHash = package.ReadInt();
@@ -31,6 +40,8 @@ namespace MultiUserChest {
 
         public ZPackage WriteToPackage() {
             ZPackage package = new ZPackage();
+
+            package.Write(RequestID);
             package.Write(fromPos);
             package.Write(toPos);
             package.Write(itemHash);
@@ -44,6 +55,7 @@ namespace MultiUserChest {
             Log.LogDebug($"RequestMove:");
             Log.LogDebug($"  fromPos: {fromPos}");
             Log.LogDebug($"  toPos: {toPos}");
+            Log.LogDebug($"  itemHash: {itemHash}");
             Log.LogDebug($"  dragAmount: {dragAmount}");
         }
 #endif

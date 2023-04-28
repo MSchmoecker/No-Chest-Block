@@ -100,6 +100,7 @@
         <Compile Include="Data\RequestMove.cs" />
         <Compile Include="Data\RequestChestRemove.cs" />
         <Compile Include="Data\RequestChestRemoveResponse.cs" />
+        <Compile Include="Data\RequestMoveResponse.cs" />
         <Compile Include="Data\SlotPreview.cs" />
         <Compile Include="Helper\ConditionalWeakTableExtension.cs" />
         <Compile Include="Helper\InventoryHelper.cs" />

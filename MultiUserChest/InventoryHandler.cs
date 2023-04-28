@@ -21,12 +21,8 @@ namespace MultiUserChest {
             HandleRPC(new RequestConsumeResponse(package), RPC_RequestItemConsumeResponse);
         }
 
-        public static void RPC_RequestItemMoveResponse(long sender, bool success) {
-#if DEBUG
-            Timer.Stop(nameof(RPC_RequestItemMoveResponse));
-            Log.LogDebug($"RequestItemMoveResponse:");
-            Log.LogDebug($"\tsuccess: {success}");
-#endif
+        public static void RPC_RequestItemMoveResponse(long sender, ZPackage package) {
+            HandleRPC(new RequestMoveResponse(package), RPC_RequestItemMoveResponse);
         }
 
         private static void HandleRPC<T>(T package, Func<T, Inventory> inventory, Container container,
@@ -166,6 +162,10 @@ namespace MultiUserChest {
             if (response.item.m_shared.m_food > 0.0) {
                 player.EatFood(response.item);
             }
+        }
+
+        public static void RPC_RequestItemMoveResponse(RequestMoveResponse response) {
+            InventoryPreview.RemovePackage(response);
         }
 
         internal static Inventory GetSourceInventory(int id) {

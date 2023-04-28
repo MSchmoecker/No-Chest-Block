@@ -74,7 +74,9 @@ namespace MultiUserChest {
             return item.m_shared.m_name;
         }
 
-        public static bool MoveItem(Inventory inventory, ItemDrop.ItemData item, int amount, Vector2i toPos) {
+        public static bool MoveItem(Inventory inventory, ItemDrop.ItemData item, int amount, Vector2i toPos, out int movedAmount) {
+            movedAmount = 0;
+
             if (item == null) {
                 // no item to move
                 return false;
@@ -88,13 +90,14 @@ namespace MultiUserChest {
             }
 
             if (itemAt == null) {
+                movedAmount = amount;
                 return inventory.MoveItemToThis(inventory, item, amount, toPos.x, toPos.y);
             }
 
             if (IsSameItem(itemAt, item)) {
                 // items can be stacked
-                int stackAmount = Mathf.Min(amount, itemAt.m_shared.m_maxStackSize - itemAt.m_stack);
-                return inventory.MoveItemToThis(inventory, item, stackAmount, toPos.x, toPos.y);
+                movedAmount = Mathf.Min(amount, itemAt.m_shared.m_maxStackSize - itemAt.m_stack);
+                return inventory.MoveItemToThis(inventory, item, movedAmount, toPos.x, toPos.y);
             }
 
             if (item.m_stack != amount) {
@@ -105,6 +108,7 @@ namespace MultiUserChest {
             inventory.RemoveItem(item);
             inventory.MoveItemToThis(inventory, itemAt, itemAt.m_stack, item.m_gridPos.x, item.m_gridPos.y);
             inventory.MoveItemToThis(inventory, item, amount, toPos.x, toPos.y);
+            movedAmount = amount;
             return true;
         }
 

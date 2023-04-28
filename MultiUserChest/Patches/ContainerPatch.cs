@@ -45,7 +45,7 @@ namespace MultiUserChest.Patches {
             nview.Register<ZPackage>(ItemConsumeRPC, (l, package) => ContainerRPCHandler.RPC_RequestItemConsume(__instance, l, package));
             nview.Register<ZPackage>(ItemDropRPC, (l, package) => ContainerRPCHandler.RPC_RequestDrop(__instance, l, package));
 
-            nview.Register<bool>(ItemMoveResponseRPC, InventoryHandler.RPC_RequestItemMoveResponse);
+            nview.Register<ZPackage>(ItemMoveResponseRPC, InventoryHandler.RPC_RequestItemMoveResponse);
             nview.Register<ZPackage>(ItemAddResponseRPC, InventoryHandler.RPC_RequestItemAddResponse);
             nview.Register<ZPackage>(ItemRemoveResponseRPC, InventoryHandler.RPC_RequestItemRemoveResponse);
             nview.Register<ZPackage>(ItemConsumeResponseRPC, InventoryHandler.RPC_RequestItemConsumeResponse);

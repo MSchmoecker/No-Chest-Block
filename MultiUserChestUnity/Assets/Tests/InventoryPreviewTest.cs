@@ -163,6 +163,49 @@ namespace UnitTests {
             });
         }
 
+        [Test]
+        public void MoveRequest_EmptySlot() {
+            chest.CreateItem("item A", 5, 0, 1);
+
+            RequestMove request = new RequestMove(chest.GetItemAt(0, 1), new Vector2i(1, 0), 5, chest);
+            InventoryPreview.AddPackage(request);
+
+            bool hasChestChanges = InventoryPreview.GetChanges(chest, out SlotPreview chestPreview);
+
+            Assert.IsTrue(hasChestChanges, "Chest should have changes");
+            TestSlotPreview(chest, chestPreview, new ExpectedSlotPreview {
+                hasChanges = true,
+                pos = new Vector2i(0, 1),
+                item = null
+            }, new ExpectedSlotPreview {
+                hasChanges = true,
+                pos = new Vector2i(1, 0),
+                item = new TestItem("item A", 5, new Vector2i(1, 0))
+            });
+        }
+
+        [Test]
+        public void MoveRequest_Stack() {
+            chest.CreateItem("item A", 5, 0, 1);
+            chest.CreateItem("item A", 5, 1, 0);
+
+            RequestMove request = new RequestMove(chest.GetItemAt(0, 1), new Vector2i(1, 0), 3, chest);
+            InventoryPreview.AddPackage(request);
+
+            bool hasChestChanges = InventoryPreview.GetChanges(chest, out SlotPreview chestPreview);
+
+            Assert.IsTrue(hasChestChanges, "Chest should have changes");
+            TestSlotPreview(chest, chestPreview, new ExpectedSlotPreview {
+                hasChanges = true,
+                pos = new Vector2i(0, 1),
+                item = new TestItem("item A", 2, new Vector2i(0, 1))
+            }, new ExpectedSlotPreview {
+                hasChanges = true,
+                pos = new Vector2i(1, 0),
+                item = new TestItem("item A", 8, new Vector2i(1, 0))
+            });
+        }
+
         private void TestSlotPreview(Inventory inventory, SlotPreview preview, params ExpectedSlotPreview[] expected) {
             for (int x = 0; x < inventory.m_width; x++) {
                 for (int y = 0; y < inventory.m_height; y++) {

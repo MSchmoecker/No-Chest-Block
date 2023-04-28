@@ -18,9 +18,6 @@ namespace MultiUserChest {
         }
 
         public static void RPC_RequestItemMove(Container container, long sender, ZPackage package) {
-#if DEBUG
-            Log.LogDebug(nameof(RPC_RequestItemMove));
-#endif
             HandleRPC(container, sender, ContainerPatch.ItemMoveResponseRPC, RequestItemMove, () => new RequestMove(package));
         }
 
@@ -181,7 +178,7 @@ namespace MultiUserChest {
             return new RequestConsumeResponse(returnItem, true, 1);
         }
 
-        public static bool RequestItemMove(this Inventory inventory, RequestMove request) {
+        public static RequestMoveResponse RequestItemMove(this Inventory inventory, RequestMove request) {
             Vector2i fromPos = request.fromPos;
             Vector2i toPos = request.toPos;
             int dragAmount = request.dragAmount;
@@ -189,14 +186,15 @@ namespace MultiUserChest {
             ItemDrop.ItemData from = inventory.GetItemAt(fromPos.x, fromPos.y);
 
             if (from == null) {
-                return false;
+                return new RequestMoveResponse(request.RequestID, false, 0);
             }
 
             if (from.PrefabName().GetStableHashCode() != request.itemHash) {
-                return false;
+                return new RequestMoveResponse(request.RequestID, false, 0);
             }
 
-            return InventoryHelper.MoveItem(inventory, from, dragAmount, toPos);
+            bool moved = InventoryHelper.MoveItem(inventory, from, dragAmount, toPos, out int movedAmount);
+            return new RequestMoveResponse(request.RequestID, moved, movedAmount);
         }
 
         public static RequestDropResponse RequestDrop(this Inventory inventory, RequestDrop request) {

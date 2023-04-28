@@ -11,20 +11,17 @@ namespace MultiUserChest {
             package.RequestID = PackageHandler.AddPackage(package);
             Log.LogDebug($"InventoryPreview: Added package {package.RequestID}, total packages: {total}");
 
-            if (package is RequestChestAdd) {
-                AppendPackage(package.SourceInventory, package);
-                AppendPackage(package.TargetInventory, package);
-                total += 2;
-            } else if (package is RequestChestRemove) {
-                AppendPackage(package.SourceInventory, package);
-                AppendPackage(package.TargetInventory, package);
-                total += 2;
-            }
+            AppendPackage(package.SourceInventory, package);
+            AppendPackage(package.TargetInventory, package);
+            total += 2;
         }
 
         private static void AppendPackage(Inventory inventory, IRequest package) {
             if (PackageChanges.TryGetValue(inventory, out List<IRequest> packages)) {
-                packages.Add(package);
+                if (!packages.Contains(package)) {
+                    packages.Add(package);
+                }
+
                 Log.LogDebug($"InventoryPreview: Appended package {package.RequestID} to inventory {inventory}, total packages: {packages.Count}");
             } else {
                 PackageChanges.Add(inventory, new List<IRequest> { package });
@@ -110,6 +107,9 @@ namespace MultiUserChest {
                         if (inventory == package.TargetInventory) {
                             preview.Add(toPos, requestChestRemove.item, requestChestRemove.dragAmount);
                         }
+                    } else if (package is RequestMove requestMove) {
+                        preview.Remove(requestMove.fromPos, requestMove.item, requestMove.dragAmount);
+                        preview.Add(requestMove.toPos, requestMove.item, requestMove.dragAmount);
                     }
                 }
 
