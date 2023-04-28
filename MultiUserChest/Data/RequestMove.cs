@@ -53,6 +53,7 @@ namespace MultiUserChest {
 #if DEBUG
         public void PrintDebug() {
             Log.LogDebug($"RequestMove:");
+            Log.LogDebug($"  RequestID: {RequestID}");
             Log.LogDebug($"  fromPos: {fromPos}");
             Log.LogDebug($"  toPos: {toPos}");
             Log.LogDebug($"  itemHash: {itemHash}");

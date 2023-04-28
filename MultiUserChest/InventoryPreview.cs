@@ -5,15 +5,12 @@ namespace MultiUserChest {
     public static class InventoryPreview {
         // private static readonly ConditionalWeakTable<Inventory, List<IRequest>> PackageChanges = new ConditionalWeakTable<Inventory, List<IRequest>>();
         public static readonly Dictionary<Inventory, List<IRequest>> PackageChanges = new Dictionary<Inventory, List<IRequest>>();
-        private static int total;
+        public static readonly Dictionary<Inventory, List<IRequest>> ToRemovePackages = new Dictionary<Inventory, List<IRequest>>();
 
         public static void AddPackage(IRequest package) {
             package.RequestID = PackageHandler.AddPackage(package);
-            Log.LogDebug($"InventoryPreview: Added package {package.RequestID}, total packages: {total}");
-
             AppendPackage(package.SourceInventory, package);
             AppendPackage(package.TargetInventory, package);
-            total += 2;
         }
 
         private static void AppendPackage(Inventory inventory, IRequest package) {
@@ -22,18 +19,19 @@ namespace MultiUserChest {
                     packages.Add(package);
                 }
 
-                Log.LogDebug($"InventoryPreview: Appended package {package.RequestID} to inventory {inventory}, total packages: {packages.Count}");
+                Log.LogDebug($"InventoryPreview: Appended package {package.RequestID} to inventory {inventory.m_name}, total packages: {packages.Count}");
             } else {
                 PackageChanges.Add(inventory, new List<IRequest> { package });
+                inventory.m_onChanged += () => RemoveQueuedPackages(inventory);
+
+                Log.LogDebug($"InventoryPreview: Added package {package.RequestID} to inventory {inventory.m_name}, total packages: 1 (new)");
             }
         }
 
         public static void RemovePackage(IResponse package) {
             RemovePackage(InventoryHandler.GetSourceInventory(package.SourceID), package);
             RemovePackage(InventoryHandler.GetTargetInventory(package.SourceID), package);
-
             PackageHandler.RemovePackage(package.SourceID);
-            Log.LogDebug($"InventoryPreview: Removed package {package.SourceID}, total packages: {--total}");
         }
 
         private static void RemovePackage(Inventory inventory, IResponse package) {
@@ -48,21 +46,31 @@ namespace MultiUserChest {
                 packageToRemove = packages.Find(p => p.RequestID == package.SourceID);
             }
 
-            if (owner == null || !owner.IsValid() || packageToRemove == null) {
+            if (packageToRemove == null) {
                 return;
             }
 
-            if (owner.ZNetView.IsOwner()) {
-                RemoveQueuedPackages(inventory, packageToRemove);
+            if (ToRemovePackages.TryGetValue(inventory, out List<IRequest> toRemovePackages)) {
+                toRemovePackages.Add(packageToRemove);
             } else {
-                inventory.m_onChanged += () => RemoveQueuedPackages(inventory, packageToRemove);
+                ToRemovePackages.Add(inventory, new List<IRequest> { packageToRemove });
+            }
+
+            if (owner != null && owner.IsValid() && owner.ZNetView.IsOwner()) {
+                RemoveQueuedPackages(inventory);
             }
         }
 
-        private static void RemoveQueuedPackages(Inventory inventory, IRequest package) {
-            if (PackageChanges.TryGetValue(inventory, out List<IRequest> packages)) {
-                packages.Remove(package);
-                Log.LogDebug($"InventoryPreview: Removed package {package.RequestID} from inventory {inventory}, total packages: {packages.Count}");
+        private static void RemoveQueuedPackages(Inventory inventory) {
+            if (ToRemovePackages.TryGetValue(inventory, out List<IRequest> packages) && packages.Count > 0) {
+                foreach (IRequest package in new List<IRequest>(packages)) {
+                    if (PackageChanges.TryGetValue(inventory, out List<IRequest> packageChanges)) {
+                        packageChanges.Remove(package);
+                    }
+
+                    packages.Remove(package);
+                    Log.LogDebug($"InventoryPreview: Removed package {package.RequestID} from inventory {inventory.m_name}, total packages: {packages.Count}");
+                }
             }
         }
 

@@ -34,9 +34,9 @@
 
         public void PrintDebug() {
             Log.LogDebug($"RequestMoveResponse:");
+            Log.LogDebug($"  SourceID: {SourceID}");
             Log.LogDebug($"  Success: {Success}");
             Log.LogDebug($"  Amount: {Amount}");
-            Log.LogDebug($"  SourceID: {SourceID}");
         }
     }
 }

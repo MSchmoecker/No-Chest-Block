@@ -45,6 +45,7 @@ namespace MultiUserChest {
 #if DEBUG
         public void PrintDebug() {
             Log.LogDebug($"RequestItemRemove:");
+            Log.LogDebug($"  id: {RequestID}");
             Log.LogDebug($"  fromContainer: {fromPos}");
             Log.LogDebug($"  toInventory: {toPos}");
             Log.LogDebug($"  dragAmount: {dragAmount}");
