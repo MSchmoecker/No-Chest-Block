@@ -34,9 +34,11 @@ namespace UnitTests {
         [Test]
         public void NoPreviewAdded_ItemExists() {
             inventory.CreateItem("item A", 10, 2, 3);
+            preview = new SlotPreview(inventory);
+
             bool changed = preview.GetSlot(new Vector2i(2, 3), out ItemDrop.ItemData item);
 
-            Assert.IsFalse(changed);
+            Assert.IsFalse(changed, "changed");
             TestForItem(item, new TestItem("item A", 10, new Vector2i(2, 3)));
         }
 
@@ -52,6 +54,8 @@ namespace UnitTests {
         [Test]
         public void AddItemOnMergeableSlot() {
             inventory.CreateItem("item A", 10, 2, 3);
+            preview = new SlotPreview(inventory);
+
             preview.Add(new Vector2i(2, 3), Helper.CreateItem("item A", 5));
 
             bool changed = preview.GetSlot(new Vector2i(2, 3), out ItemDrop.ItemData item);
@@ -62,6 +66,8 @@ namespace UnitTests {
         [Test]
         public void RemoveSameItem_Partially() {
             inventory.CreateItem("item A", 10, 2, 3);
+            preview = new SlotPreview(inventory);
+
             preview.Remove(new Vector2i(2, 3), Helper.CreateItem("item A", 5));
 
             bool changed = preview.GetSlot(new Vector2i(2, 3), out ItemDrop.ItemData item);
@@ -72,11 +78,22 @@ namespace UnitTests {
         [Test]
         public void RemoveSameItem_Completely() {
             inventory.CreateItem("item A", 10, 2, 3);
+            preview = new SlotPreview(inventory);
+
             preview.Remove(new Vector2i(2, 3), Helper.CreateItem("item A", 10));
 
             bool changed = preview.GetSlot(new Vector2i(2, 3), out ItemDrop.ItemData item);
             Assert.IsTrue(changed);
             TestForItem(item, null);
+        }
+
+        [Test]
+        public void AddItem_FastMove() {
+            preview.Add(new Vector2i(-1, -1), Helper.CreateItem("item A", 10));
+            bool changed = preview.GetSlot(new Vector2i(0, 0), out ItemDrop.ItemData item);
+
+            Assert.IsTrue(changed, "changed");
+            TestForItem(item, new TestItem("item A", 10, new Vector2i(0, 0)));
         }
     }
 }

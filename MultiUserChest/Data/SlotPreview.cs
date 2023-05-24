@@ -3,11 +3,13 @@ using System.Linq;
 
 namespace MultiUserChest {
     public class SlotPreview {
+        private Inventory originalInventory;
         private Inventory inventory;
-        private Dictionary<Vector2i, List<Slot>> rawSlots = new Dictionary<Vector2i, List<Slot>>();
+        private bool hasChanges;
 
         public SlotPreview(Inventory inventory) {
-            this.inventory = inventory;
+            originalInventory = inventory;
+            this.inventory = InventoryHelper.CopyInventory(inventory);
         }
 
         public void Add(Vector2i pos, ItemDrop.ItemData item, int amount) {
@@ -15,8 +17,16 @@ namespace MultiUserChest {
                 return;
             }
 
-            InitSlot(pos);
-            rawSlots[pos].Add(new Slot(item, amount));
+            ItemDrop.ItemData toAdd = item.Clone();
+            toAdd.m_stack = amount;
+
+            if (pos.x >= 0 && pos.y >= 0) {
+                inventory.AddItem(toAdd, amount, pos.x, pos.y);
+            } else {
+                inventory.AddItem(toAdd);
+            }
+
+            hasChanges = true;
         }
 
         public void Add(Vector2i pos, ItemDrop.ItemData item) {
@@ -24,58 +34,36 @@ namespace MultiUserChest {
         }
 
         public void Remove(Vector2i pos, ItemDrop.ItemData item) {
-            Add(pos, item, -item?.m_stack ?? 0);
+            Remove(pos, item, item?.m_stack ?? 0);
         }
 
         public void Remove(Vector2i pos, ItemDrop.ItemData item, int amount) {
-            Add(pos, item, -amount);
-        }
-
-        public bool GetSlot(Vector2i pos, out ItemDrop.ItemData item) {
-            if (!rawSlots.TryGetValue(pos, out List<Slot> slots)) {
-                item = inventory.GetItemAt(pos.x, pos.y);
-                return false;
-            }
-
-            IGrouping<string, Slot> group = slots.Where(i => i.item != null).GroupBy(i => i.item.PrefabName()).FirstOrDefault(i => i.Sum(s => s.amount) > 0);
-
-            if (group == null) {
-                item = null;
-                return true;
-            }
-
-            item = group.First().item;
-            item.m_stack = group.Sum(s => s.amount);
-            item.m_gridPos = pos;
-            return true;
-        }
-
-        private void InitSlot(Vector2i pos) {
-            if (rawSlots.ContainsKey(pos)) {
+            if (item == null || amount == 0) {
                 return;
             }
 
-            ItemDrop.ItemData currentItem = inventory.GetItemAt(pos.x, pos.y);
-
-            if (currentItem != null) {
-                rawSlots[pos] = new List<Slot> { new Slot(currentItem, currentItem.m_stack) };
-            } else {
-                rawSlots[pos] = new List<Slot>();
-            }
+            inventory.RemoveItem(inventory.GetItemAt(pos.x, pos.y), amount);
+            hasChanges = true;
         }
 
-        private class Slot {
-            public ItemDrop.ItemData item;
-            public int amount;
+        public bool GetSlot(Vector2i pos, out ItemDrop.ItemData item) {
+            ItemDrop.ItemData originalItem = originalInventory.GetItemAt(pos.x, pos.y);
+            item = inventory.GetItemAt(pos.x, pos.y);
 
-            public Slot(ItemDrop.ItemData item, int amount) {
-                this.item = item?.Clone();
-                this.amount = amount;
+            if (originalItem == null && item == null) {
+                return false;
             }
+
+            if (originalItem == null || item == null) {
+                return true;
+            }
+
+            bool changed = !InventoryHelper.IsSameItem(originalItem, item) || originalItem.m_stack != item.m_stack;
+            return changed;
         }
 
         public bool HasChanges() {
-            return rawSlots.Count > 0;
+            return hasChanges;
         }
     }
 }
