@@ -88,6 +88,32 @@ namespace UnitTests {
         }
 
         [Test]
+        public void RemoveItem_TwiceTooMuch_FirstFull() {
+            inventory.CreateItem("item A", 10, 2, 3);
+            preview = new SlotPreview(inventory);
+
+            preview.Remove(new Vector2i(2, 3), Helper.CreateItem("item A", 10));
+            preview.Remove(new Vector2i(2, 3), Helper.CreateItem("item A", 10));
+
+            bool changed = preview.GetSlot(new Vector2i(2, 3), out ItemDrop.ItemData item);
+            Assert.IsTrue(changed);
+            TestForItem(item, null);
+        }
+
+        [Test]
+        public void RemoveItem_TwiceTooMuch_FirstPartial() {
+            inventory.CreateItem("item A", 10, 2, 3);
+            preview = new SlotPreview(inventory);
+
+            preview.Remove(new Vector2i(2, 3), Helper.CreateItem("item A", 7));
+            preview.Remove(new Vector2i(2, 3), Helper.CreateItem("item A", 5));
+
+            bool changed = preview.GetSlot(new Vector2i(2, 3), out ItemDrop.ItemData item);
+            Assert.IsTrue(changed);
+            TestForItem(item, null);
+        }
+
+        [Test]
         public void AddItem_FastMove() {
             preview.Add(new Vector2i(-1, -1), Helper.CreateItem("item A", 10));
             bool changed = preview.GetSlot(new Vector2i(0, 0), out ItemDrop.ItemData item);

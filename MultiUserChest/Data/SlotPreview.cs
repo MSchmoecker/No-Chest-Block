@@ -42,6 +42,12 @@ namespace MultiUserChest {
                 return;
             }
 
+            ItemDrop.ItemData toRemove = inventory.GetItemAt(pos.x, pos.y);
+
+            if (toRemove == null) {
+                return;
+            }
+
             inventory.RemoveItem(inventory.GetItemAt(pos.x, pos.y), amount);
             hasChanges = true;
         }
