@@ -141,6 +141,10 @@ namespace MultiUserChest.Patches {
                         return true;
                     }
 
+                    if (switchItem != null && InventoryHelper.IsSameItem(item, switchItem)) {
+                        switchItem = null;
+                    }
+
                     RequestChestRemove requestChestRemove = fromContainer.Container.RemoveItemFromChest(item, to.Inventory, pos, to.ZNetView.GetZDO().m_uid, amount, switchItem);
                     successfulAdded = requestChestRemove?.dragAmount == amount;
                     return true;
