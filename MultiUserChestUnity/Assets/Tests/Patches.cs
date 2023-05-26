@@ -21,6 +21,8 @@ namespace UnitTests {
             harmony.PatchAll(typeof(DropPatch));
             harmony.PatchAll(typeof(PathsPatches));
             harmony.PatchAll(typeof(ZNetPatches));
+
+            harmony.PatchAll(typeof(MultiUserChest.Patches.InventoryPatch));
         }
 
         private static class InventoryAddItemPatch {

@@ -97,7 +97,7 @@ namespace MultiUserChest.Patches {
             }
         }
 
-        private static bool InterceptAddItem(Inventory inventory, ItemDrop.ItemData item, int amount, Vector2i pos, out bool successfulAdded) {
+        internal static bool InterceptAddItem(Inventory inventory, ItemDrop.ItemData item, int amount, Vector2i pos, out bool successfulAdded) {
             InventoryOwner from = InventoryOwner.GetOwner(item);
             InventoryOwner to = InventoryOwner.GetOwner(inventory);
 

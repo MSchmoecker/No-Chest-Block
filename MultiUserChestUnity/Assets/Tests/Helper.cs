@@ -48,6 +48,7 @@ namespace UnitTests {
             container.m_inventory = containerInventory ?? new Inventory("inventory", null, 4, 5);
             container.m_inventory.m_onChanged += container.OnContainerChanged;
             container.RegisterRPCs();
+            container.gameObject.AddComponent<ContainerExtend>();
 
             inventories.Add(container.m_nview.m_zdo.m_uid, container.m_inventory);
             Log.LogInfo("Created container with id: " + container.m_nview.m_zdo.m_uid);

@@ -32,7 +32,7 @@ namespace UnitTests {
             if (item == null) {
                 Assert.Null(target);
             } else {
-                Assert.NotNull(target);
+                Assert.NotNull(target, $"item {item.Value.name} should not be null");
                 Assert.AreEqual(item.Value.name, target.m_shared.m_name, "Different items");
                 Assert.AreEqual(item.Value.stack, target.m_stack, "Different stacks");
                 Assert.AreEqual(item.Value.pos, target.m_gridPos, "Different gridPos");
@@ -42,6 +42,33 @@ namespace UnitTests {
         public static void TestResponse(IResponse response, bool success, int amount) {
             Assert.AreEqual(success, response.Success);
             Assert.AreEqual(amount, response.Amount);
+        }
+
+        public static void TestAddRequest(RequestChestAdd request, RequestChestAdd original, TestItem dragItem, Vector2i toPos, bool allowSwitch, Inventory sourceInventory, Inventory targetInventory) {
+            TestForItem(request.dragItem, dragItem);
+            Assert.AreEqual(toPos, request.toPos, "RequestChestAdd toPos");
+            Assert.AreEqual(allowSwitch, request.allowSwitch, "RequestChestAdd allowSwitch");
+            Assert.AreEqual(sourceInventory, original.SourceInventory, "RequestChestAdd sourceInventory");
+            Assert.AreEqual(targetInventory, original.TargetInventory, "RequestChestAdd targetInventory");
+        }
+
+        public static void TestRemoveRequest(RequestChestRemove request, RequestChestRemove original, TestItem? switchItem, Vector2i fromPos, Vector2i toPos, int amount, Inventory sourceInventory, Inventory targetInventory) {
+            TestForItem(request.switchItem, switchItem);
+            Assert.AreEqual(request.fromPos, fromPos, "RequestChestRemove fromPos");
+            Assert.AreEqual(request.toPos, toPos, "RequestChestRemove toPos");
+            Assert.AreEqual(request.dragAmount, amount, "RequestChestRemove dragAmount");
+            Assert.AreEqual(sourceInventory, original.SourceInventory, "RequestChestRemove sourceInventory");
+            Assert.AreEqual(targetInventory, original.TargetInventory, "RequestChestRemove targetInventory");
+        }
+
+        public static void TestMoveRequest(RequestMove request, RequestMove original, Vector2i fromPos, Vector2i toPos, int amount, string itemName, Inventory inventory) {
+            Assert.AreEqual(request.fromPos, fromPos);
+            Assert.AreEqual(request.toPos, toPos);
+            Assert.AreEqual(request.dragAmount, amount);
+            Assert.AreEqual(request.itemHash, itemName.GetStableHashCode());
+            Assert.AreEqual(inventory, original.SourceInventory, "RequestMove sourceInventory");
+            Assert.AreEqual(inventory, original.TargetInventory, "RequestMove targetInventory");
+
         }
     }
 }
