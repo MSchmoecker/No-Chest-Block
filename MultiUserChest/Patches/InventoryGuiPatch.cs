@@ -131,15 +131,78 @@ namespace MultiUserChest.Patches {
                     continue;
                 }
 
-                int stackSize = item?.m_stack ?? 0;
-                int maxStackSize = item?.m_shared?.m_maxStackSize ?? 0;
-
-                element.m_icon.enabled = stackSize > 0;
-                element.m_icon.sprite = item?.GetIcon();
-
-                element.m_amount.enabled = stackSize > 0 && maxStackSize > 1;
-                element.m_amount.text = $"{stackSize}/{maxStackSize}";
+                if (item == null) {
+                    ShowNoItem(element);
+                } else {
+                    ShowItem(__instance, element, item);
+                }
             }
+        }
+
+        private static void ShowItem(InventoryGrid inventoryGrid, InventoryGrid.Element element, ItemDrop.ItemData item) {
+            if (item?.m_shared == null) {
+                return;
+            }
+
+            int stackSize = item.m_stack;
+            int maxStackSize = item.m_shared.m_maxStackSize;
+
+            element.m_icon.enabled = stackSize > 0;
+            element.m_icon.sprite = item.GetIcon();
+            element.m_icon.color = Color.white;
+
+            element.m_amount.enabled = stackSize > 0 && maxStackSize > 1;
+            element.m_amount.text = $"{stackSize}/{maxStackSize}";
+
+            bool showDurability = item.m_shared.m_useDurability && item.m_durability < item.GetMaxDurability();
+            element.m_durability.gameObject.SetActive(showDurability);
+
+            if (showDurability) {
+                if (item.m_durability <= 0.0) {
+                    element.m_durability.SetValue(1f);
+                    element.m_durability.SetColor(Mathf.Sin(Time.time * 10f) > 0.0 ? Color.red : new Color(0.0f, 0.0f, 0.0f, 0.0f));
+                } else {
+                    element.m_durability.SetValue(item.GetDurabilityPercentage());
+                    element.m_durability.ResetColor();
+                }
+            }
+
+            element.m_equiped.enabled = false;
+            element.m_queued.enabled = false;
+            element.m_noteleport.enabled = !item.m_shared.m_teleportable;
+
+            if (item.m_shared.m_itemType == ItemDrop.ItemData.ItemType.Consumable && (item.m_shared.m_food > 0.0 || item.m_shared.m_foodStamina > 0.0 || item.m_shared.m_foodEitr > 0.0)) {
+                element.m_food.enabled = true;
+                if (item.m_shared.m_food < item.m_shared.m_foodEitr / 2.0 && item.m_shared.m_foodStamina < item.m_shared.m_foodEitr / 2.0) {
+                    element.m_food.color = inventoryGrid.m_foodEitrColor;
+                } else if (item.m_shared.m_foodStamina < item.m_shared.m_food / 2.0) {
+                    element.m_food.color = inventoryGrid.m_foodHealthColor;
+                } else if (item.m_shared.m_food < item.m_shared.m_foodStamina / 2.0) {
+                    element.m_food.color = inventoryGrid.m_foodStaminaColor;
+                } else {
+                    element.m_food.color = Color.white;
+                }
+            } else {
+                element.m_food.enabled = false;
+            }
+
+            element.m_quality.enabled = item.m_shared.m_maxQuality > 1;
+            if (item.m_shared.m_maxQuality > 1) {
+                element.m_quality.text = item.m_quality.ToString();
+            }
+        }
+
+        private static void ShowNoItem(InventoryGrid.Element element) {
+            element.m_durability.gameObject.SetActive(false);
+            element.m_icon.enabled = false;
+            element.m_amount.enabled = false;
+            element.m_quality.enabled = false;
+            element.m_equiped.enabled = false;
+            element.m_queued.enabled = false;
+            element.m_noteleport.enabled = false;
+            element.m_food.enabled = false;
+            element.m_tooltip.m_text = "";
+            element.m_tooltip.m_topic = "";
         }
     }
 }
