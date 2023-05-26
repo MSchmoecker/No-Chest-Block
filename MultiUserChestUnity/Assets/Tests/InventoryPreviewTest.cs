@@ -137,6 +137,7 @@ namespace UnitTests {
         public void RemoveRequest_Switch() {
             player.CreateItem("item A", 5, 0, 0);
             chest.CreateItem("item B", 5, 0, 1);
+
             RequestChestRemove request = new RequestChestRemove(new Vector2i(0, 1), new Vector2i(1, 0), 5, player.GetItemAt(0, 0), chest, player);
             InventoryPreview.AddPackage(request);
             player.RemoveItem(player.GetItemAt(0, 0));
@@ -383,10 +384,12 @@ namespace UnitTests {
 
         [Test]
         public void MoveRequest_Switch() {
-            chest.CreateItem("item A", 5, 0, 1);
+            chest.CreateItem("item A", 3, 0, 1);
             chest.CreateItem("item B", 5, 1, 0);
 
-            RequestMove request = new RequestMove(chest.GetItemAt(0, 1), new Vector2i(1, 0), 5, chest);
+            RequestMove request = new RequestMove(chest.GetItemAt(0, 1), new Vector2i(1, 0), 3, chest);
+            InventoryPreview.AddPackage(request);
+            request = new RequestMove(chest.GetItemAt(1, 0), new Vector2i(0, 1), 5, chest);
             InventoryPreview.AddPackage(request);
 
             bool hasChestChanges = InventoryPreview.GetChanges(chest, out SlotPreview chestPreview);
@@ -398,7 +401,7 @@ namespace UnitTests {
             }, new ExpectedSlotPreview {
                 hasChanges = true,
                 pos = new Vector2i(1, 0),
-                item = new TestItem("item A", 5, new Vector2i(1, 0))
+                item = new TestItem("item A", 3, new Vector2i(1, 0))
             });
         }
 
