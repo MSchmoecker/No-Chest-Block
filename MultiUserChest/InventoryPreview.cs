@@ -120,7 +120,7 @@ namespace MultiUserChest {
                             preview.Add(toPos, requestChestRemove.item, requestChestRemove.dragAmount);
                         }
                     } else if (package is RequestMove requestMove) {
-                        if (preview.GetSlot(requestMove.fromPos, out var exising) && requestMove.itemHash != exising.PrefabName().GetStableHashCode()) {
+                        if (preview.GetSlot(requestMove.fromPos, out var exising) && requestMove.itemHash != exising?.PrefabName().GetStableHashCode()) {
                             continue;
                         }
 
