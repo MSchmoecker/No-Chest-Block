@@ -57,7 +57,10 @@ namespace MultiUserChest {
                 ToRemovePackages.Add(inventory, new List<IRequest> { packageToRemove });
             }
 
-            if (owner != null && owner.IsValid() && owner.ZNetView.IsOwner()) {
+            bool isSelfOwner = owner != null && owner.IsValid() && owner.ZNetView.IsOwner();
+
+            // a response without success isn't followed by a changed event, thus we have to remove it immanently
+            if (isSelfOwner || !package.Success) {
                 RemoveQueuedPackages(inventory);
             }
         }
