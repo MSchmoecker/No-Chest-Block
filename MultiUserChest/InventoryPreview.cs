@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using BepInEx;
 using UnityEngine;
 
 namespace MultiUserChest {
@@ -7,6 +9,8 @@ namespace MultiUserChest {
         // private static readonly ConditionalWeakTable<Inventory, List<IRequest>> PackageChanges = new ConditionalWeakTable<Inventory, List<IRequest>>();
         public static readonly Dictionary<Inventory, List<IRequest>> PackageChanges = new Dictionary<Inventory, List<IRequest>>();
         public static readonly Dictionary<Inventory, List<IRequest>> ToRemovePackages = new Dictionary<Inventory, List<IRequest>>();
+
+        private static WaitForSeconds removeQueuedPackagesDelay = new WaitForSeconds(0.2f);
 
         public static void AddPackage(IRequest package) {
             package.RequestID = PackageHandler.AddPackage(package);
@@ -59,9 +63,11 @@ namespace MultiUserChest {
 
             bool isSelfOwner = owner != null && owner.IsValid() && owner.ZNetView.IsOwner();
 
-            // a response without success isn't followed by a changed event, thus we have to remove it immanently
-            if (isSelfOwner || !package.Success) {
+            if (isSelfOwner) {
                 RemoveQueuedPackages(inventory);
+            } else if (!package.Success) {
+                // a response without success might not be followed by a changed event, thus we have to remove it delayed
+                ThreadingHelper.Instance.StartCoroutine(RemoveQueuedPackagesDelayed(inventory));
             }
         }
 
@@ -76,6 +82,11 @@ namespace MultiUserChest {
                     Log.LogDebug($"InventoryPreview: Removed package {package.RequestID} from inventory {inventory.m_name}, total packages: {packages.Count}");
                 }
             }
+        }
+
+        private static IEnumerator RemoveQueuedPackagesDelayed(Inventory inventory) {
+            yield return removeQueuedPackagesDelay;
+            RemoveQueuedPackages(inventory);
         }
 
         public static bool GetChanges(Inventory inventory, out SlotPreview preview) {
