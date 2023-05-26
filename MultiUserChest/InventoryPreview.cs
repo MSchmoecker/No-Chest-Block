@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using UnityEngine;
 
 namespace MultiUserChest {
     public static class InventoryPreview {
@@ -116,8 +117,25 @@ namespace MultiUserChest {
                             preview.Add(toPos, requestChestRemove.item, requestChestRemove.dragAmount);
                         }
                     } else if (package is RequestMove requestMove) {
-                        preview.Remove(requestMove.fromPos, requestMove.item, requestMove.dragAmount);
-                        preview.Add(requestMove.toPos, requestMove.item, requestMove.dragAmount);
+                        ItemDrop.ItemData switchItem = requestMove.TargetInventory.GetItemAt(requestMove.toPos.x, requestMove.toPos.y);
+
+                        if (switchItem != null && !InventoryHelper.IsSameItem(requestMove.item, switchItem)) {
+                            if (requestMove.dragAmount == requestMove.item.m_stack) {
+                                preview.Remove(requestMove.fromPos, requestMove.item, requestMove.dragAmount);
+                                preview.Remove(requestMove.toPos, switchItem, switchItem.m_stack);
+                                preview.Add(requestMove.fromPos, switchItem, switchItem.m_stack);
+                                preview.Add(requestMove.toPos, requestMove.item, requestMove.dragAmount);
+                            }
+                        } else {
+                            int possibleAmount = Mathf.Max(0, requestMove.dragAmount);
+
+                            if (switchItem != null) {
+                                possibleAmount = Mathf.Min(switchItem.m_shared.m_maxStackSize - switchItem.m_stack, requestMove.dragAmount);
+                            }
+
+                            preview.Remove(requestMove.fromPos, requestMove.item, possibleAmount);
+                            preview.Add(requestMove.toPos, requestMove.item, possibleAmount);
+                        }
                     }
                 }
 
