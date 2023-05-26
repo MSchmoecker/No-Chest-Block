@@ -6,9 +6,8 @@ using UnityEngine;
 
 namespace MultiUserChest {
     public static class InventoryPreview {
-        // private static readonly ConditionalWeakTable<Inventory, List<IRequest>> PackageChanges = new ConditionalWeakTable<Inventory, List<IRequest>>();
-        public static readonly Dictionary<Inventory, List<IRequest>> PackageChanges = new Dictionary<Inventory, List<IRequest>>();
-        public static readonly Dictionary<Inventory, List<IRequest>> ToRemovePackages = new Dictionary<Inventory, List<IRequest>>();
+        public static readonly ConditionalWeakTable<Inventory, List<IRequest>> PackageChanges = new ConditionalWeakTable<Inventory, List<IRequest>>();
+        public static readonly ConditionalWeakTable<Inventory, List<IRequest>> ToRemovePackages = new ConditionalWeakTable<Inventory, List<IRequest>>();
 
         private static WaitForSeconds removeQueuedPackagesDelay = new WaitForSeconds(0.2f);
 
