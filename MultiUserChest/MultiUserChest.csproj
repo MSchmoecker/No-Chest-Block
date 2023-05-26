@@ -156,14 +156,16 @@
       <TMP_DEPLOY_FOLDER>$(TargetDir)/tmp</TMP_DEPLOY_FOLDER>
     </PropertyGroup>
     <Target Name="AfterBuild">
+      <CallTarget Targets="Prepare" />
       <CallTarget Condition="Exists('$(DEPLOY_FOLDER)')" Targets="Deploy" />
       <CallTarget Targets="CopyToUnity" />
     </Target>
+    <Target Name="Prepare">
+        <Exec Command="$(SolutionDir)Libs/pdb2mdb.exe $(TargetPath)" />
+    </Target>
     <Target Name="Deploy">
-      <!--Prepare deployment-->
       <Message Text="Deploing into: $(FULL_DEPLOY_FOLDER)" Importance="high" />
       <MakeDir Directories="$(FULL_DEPLOY_FOLDER)" />
-      <Exec Command="$(SolutionDir)Libs/pdb2mdb.exe $(TargetPath)" />
 
       <!--Create Thunderstore Zip-->
       <RemoveDir Directories="$(TMP_DEPLOY_FOLDER)" />
@@ -207,5 +209,6 @@
       <Copy SourceFiles="$(VALHEIM_MANAGED)/PlayFabParty.dll" DestinationFolder="$(SolutionDir)MultiUserChestUnity/Assets/Assemblies" />
       <Copy SourceFiles="$(VALHEIM_MANAGED)/Fishlabs.Core.dll" DestinationFolder="$(SolutionDir)MultiUserChestUnity/Assets/Assemblies" />
       <Copy SourceFiles="$(VALHEIM_MANAGED)/Fishlabs.Common.dll" DestinationFolder="$(SolutionDir)MultiUserChestUnity/Assets/Assemblies" />
+      <Copy SourceFiles="$(VALHEIM_MANAGED)/ConnectedStorage.dll" DestinationFolder="$(SolutionDir)MultiUserChestUnity/Assets/Assemblies" />
     </Target>
 </Project>
