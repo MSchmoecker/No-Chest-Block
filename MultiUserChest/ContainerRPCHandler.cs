@@ -153,10 +153,12 @@ namespace MultiUserChest {
                 if (InventoryHelper.IsSameItem(from, switchItem)) {
                     removedAmount = Mathf.Min(switchItem.m_shared.m_maxStackSize - switchItem.m_stack, dragAmount);
                     removed = inventory.RemoveItem(from, removedAmount);
-                } else if (dragAmount == from.m_stack) {
+                } else if (dragAmount >= from.m_stack) {
                     removed = inventory.RemoveItem(from, dragAmount);
                     removedAmount = Mathf.Min(from.m_stack, dragAmount);
                     switched = inventory.AddItemToInventory(switchItem, switchItem.m_stack, fromContainer);
+                } else {
+                    return new RequestChestRemoveResponse(request.RequestID, false, 0, false, request.switchItem);
                 }
             }
 

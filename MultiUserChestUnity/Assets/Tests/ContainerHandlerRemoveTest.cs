@@ -169,5 +169,33 @@ namespace UnitTests {
             TestForItem(response.responseItem, new TestItem("my item A", 2, new Vector2i(2, 2)));
             TestForItems(container, new TestItem("my item A", 3, new Vector2i(2, 2)));
         }
+
+        [Test]
+        public void RPC_RequestItemRemove_SwitchLowerAmount() {
+            container.CreateItem("my item A", 5, 2, 2);
+            var switchItem = Helper.CreateItem("my item B", 3);
+
+            RequestChestRemove request = MakeMessage(2, switchItem);
+            RequestChestRemoveResponse response = GetResponse(request);
+
+            TestResponse(response, false, 0);
+            Assert.False(response.hasSwitched);
+            TestForItem(response.responseItem, new TestItem("my item B", 3, new Vector2i(0, 0)));
+            TestForItems(container, new TestItem("my item A", 5, new Vector2i(2, 2)));
+        }
+
+        [Test]
+        public void RPC_RequestItemRemove_Switch_RequestHigherAmount() {
+            container.CreateItem("my item A", 5, 2, 2);
+            var switchItem = Helper.CreateItem("my item B", 3);
+
+            RequestChestRemove request = MakeMessage(7, switchItem);
+            RequestChestRemoveResponse response = GetResponse(request);
+
+            TestResponse(response, true, 5);
+            Assert.True(response.hasSwitched);
+            TestForItem(response.responseItem, new TestItem("my item A", 5, new Vector2i(2, 2)));
+            TestForItems(container, new TestItem("my item B", 3, new Vector2i(2, 2)));
+        }
     }
 }
