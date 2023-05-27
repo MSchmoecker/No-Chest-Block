@@ -94,9 +94,9 @@ namespace MultiUserChest {
                 return false;
             }
 
-            preview = new SlotPreview(inventory);
-
             if (PackageChanges.TryGetValue(inventory, out List<IRequest> packages)) {
+                preview = new SlotPreview(inventory);
+
                 foreach (IRequest package in packages) {
                     if (package is RequestChestAdd requestChestAdd) {
                         if (requestChestAdd.dragItem == null) {
