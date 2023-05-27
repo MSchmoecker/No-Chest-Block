@@ -1,5 +1,10 @@
 # Changelog
 
+0.5.0
+- Added item preview. This visually shows changes before all messages have been processed and improves the flow of interaction within a shared chest
+- Changed internal messages and made general code improvements
+- Fixed an issue where items could be lost when a player removes an item from a shared chest and the stack size has changed in the meantime
+
 0.4.4
 - Fixed a compatibility issue with OdinShipPlus. Some of the ships have multiple chests on board, these ships are excluded from MUC
 - Fixed a compatibility issue with AdventureBackpacks where the backpack items could be duplicated
