@@ -125,9 +125,10 @@
     </ItemGroup>
     <ItemGroup>
         <Content Include=".gitignore" />
-    </ItemGroup>
-    <ItemGroup>
-        <Content Include="../README.md">
+        <Content Include="..\CHANGELOG.md">
+            <Link>CHANGELOG.md</Link>
+        </Content>
+        <Content Include="..\README.md">
             <Link>README.md</Link>
         </Content>
     </ItemGroup>
