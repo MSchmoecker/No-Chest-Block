@@ -17,31 +17,43 @@ Please report all errors and desyncs if they occur.
 
 ## FAQ
 - Who needs this installed?
-  - The server and every player joining it. You will be disconnected if there is a version mismatch or the mod is not installed somewhere.
-- When two players move an item at the exact same time, will it be duplicated?
-  - No, only one movement will be accepted.
+  - The server and every player who joins it.
+    You will be disconnected if there is a version mismatch or the mod is not installed somewhere.
+
+- If two players move an item at the exact same time, will it be duplicated?
+  - No, only one move will be accepted.
+
+- How is item duplication/loss prevented?
+  - An item will never exist twice.
+    When an interaction is made inside a shared chest, the item is packed into a message and sent to the player currently managing the chest.
+    This player instance then decides whether or not to move the item and sends the result back to the player who made the interaction.
+
 - Can this be added to an existing game?
-  - Yes, you can add and remove this mod anytime.
-- Does it work with other modded chests
-  - Yes, most likely. But it can make problems when other mods change the behaviour of chests.
-- Does it work with mods that change inventory/chest sizes
+  - Yes, you can add and remove this mod at any time.
+
+- Will this mod work with other modded chests?
+  - Yes, most likely.
+    But it can may cause problems if other mods change the behaviour of chests.
+
+- Will this mod work with mods that change inventory/chest sizes?
   - Yes.
-- Does it work with mods that add quick stacking / chest sorting
-  - Depends on the mod, see [Incompatible Mods](#confirmed-incompatible-mods) and [Compatible Mods](#compatible-mods). If it not listed there, assume it doesn't work.
-  - Recommended is [Quick Stack Store Sort Trash Restock](https://valheim.thunderstore.io/package/Goldenrevolver/Quick_Stack_Store_Sort_Trash_Restock) by Goldenrevolver, as it unifies many quick stack features and provides explicit compatibility with Multi User Chest.
+
+- Does it work with mods that add quick stacking / chest sorting?
+  - Depends on the mod, see [Incompatible Mods](#confirmed-incompatible-mods) and [Compatible Mods](#compatible-mods).
+    If it's not listed there, assume it won't work.
+  - Recommended is [Quick Stack Store Sort Trash Restock](https://valheim.thunderstore.io/package/Goldenrevolver/Quick_Stack_Store_Sort_Trash_Restock) by Goldenrevolver, as as it combines many quick stack features and provides explicit compatibility with Multi User Chest.
 
 
 ## Confirmed Incompatible Mods
 These mods cause desync with Multi User Chest and will not startup together
 - [QuickStore](https://www.nexusmods.com/valheim/mods/1595)
 - [SimpleSort](https://www.nexusmods.com/valheim/mods/584)
-- [OdinsQOL](https://valheim.thunderstore.io/package/OdinPlus/OdinsQOL) (only some features like AutoStore are effected, both mods will start up so make sure incomatible features are disabled)
 
 
 ## Compatible Mods
 Here are some quick stack mods listed that are compatible with Multi User Chest.
 The version number indicates the tested version of the other mod, a different one may also work but isn't confirmed.
-- [Quick Stack Store Sort Trash Restock](https://valheim.thunderstore.io/package/Goldenrevolver/Quick_Stack_Store_Sort_Trash_Restock) 1.3.1 (recommended quick stack mod, a higher version very likely works too)
+- [Quick Stack Store Sort Trash Restock](https://valheim.thunderstore.io/package/Goldenrevolver/Quick_Stack_Store_Sort_Trash_Restock) 1.3.10 (recommended quick stack mod, a higher version very likely works too)
 - [SmartContainers](https://www.nexusmods.com/valheim/mods/332) 1.6.4
 - [QuickDeposit](https://valheim.thunderstore.io/package/MaGic/Quick_Deposit) 1.0.1
 - [QuickStack](https://valheim.thunderstore.io/package/damnsneaker/QuickStack) 0.6.6
@@ -61,4 +73,4 @@ See [contributing](https://github.com/MSchmoecker/No-Chest-Block/blob/master/CON
 
 
 ## Changelog
-See [changelog](CHANGELOG.md).
+See [changelog](https://github.com/MSchmoecker/No-Chest-Block/blob/master/CHANGELOG.md).
