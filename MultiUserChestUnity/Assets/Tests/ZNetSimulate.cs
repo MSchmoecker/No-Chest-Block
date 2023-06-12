@@ -13,7 +13,7 @@ namespace UnitTests {
                 ZRoutedRpc.RoutedRPCData routedRpcData = new ZRoutedRpc.RoutedRPCData() {
                     m_methodHash = method.GetStableHashCode(),
                     m_targetZDO = netView.m_zdo.m_uid,
-                    m_senderPeerID = ZDOMan.instance.m_myid,
+                    m_senderPeerID = ZDOMan.instance.m_sessionID,
                 };
 
                 ZRpc.Serialize(parameters, ref routedRpcData.m_parameters);

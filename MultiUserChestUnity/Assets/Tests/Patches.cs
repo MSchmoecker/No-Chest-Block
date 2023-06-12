@@ -2,13 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using BepInEx;
-using BepInEx.Logging;
 using MultiUserChest;
 using HarmonyLib;
 using NUnit.Framework;
-using UnityEngine;
-using Logger = BepInEx.Logging.Logger;
-using Random = System.Random;
 
 namespace UnitTests {
     [SetUpFixture]
@@ -21,6 +17,7 @@ namespace UnitTests {
             harmony.PatchAll(typeof(DropPatch));
             harmony.PatchAll(typeof(PathsPatches));
             harmony.PatchAll(typeof(ZNetPatches));
+            harmony.PatchAll(typeof(SteamManagerPatches));
 
             harmony.PatchAll(typeof(MultiUserChest.Patches.InventoryPatch));
         }
@@ -33,7 +30,7 @@ namespace UnitTests {
                 ItemDrop.ItemData itemData = new ItemDrop.ItemData() {
                     m_stack = stack,
                     m_durability = durability,
-                    m_equiped = equiped,
+                    m_equipped = equiped,
                     m_quality = quality,
                     m_variant = variant,
                     m_crafterID = crafterID,
@@ -78,8 +75,8 @@ namespace UnitTests {
             [HarmonyPatch(typeof(ZNetView), nameof(ZNetView.InvokeRPC), new[] { typeof(long), typeof(string), typeof(object[]) })]
             [HarmonyPatch(typeof(ZNetView), nameof(ZNetView.InvokeRPC), new[] { typeof(string), typeof(object[]) })]
             public static bool NoZNetViewInvokeRPC(ZNetView __instance, string method, params object[] parameters) {
-                if (ZRoutedRpc.m_instance == null) {
-                    ZRoutedRpc.m_instance = new ZRoutedRpc(false);
+                if (ZRoutedRpc.s_instance == null) {
+                    ZRoutedRpc.s_instance = new ZRoutedRpc(false);
                 }
 
                 ZNetSimulate.routedRpcs.Enqueue(new ZNetSimulate.RoutedNetViewRpc() {
@@ -88,6 +85,18 @@ namespace UnitTests {
                     parameters = parameters,
                 });
 
+                return false;
+            }
+        }
+
+        public static class SteamManagerPatches {
+            [HarmonyPatch(typeof(SteamManager), nameof(SteamManager.Awake)), HarmonyPrefix]
+            public static bool NoSteamManagerAwake() {
+                return false;
+            }
+
+            [HarmonyPatch(typeof(FejdStartup), nameof(FejdStartup.InitializeSteam)), HarmonyPrefix]
+            public static bool NoFejdStartupInitializeSteam() {
                 return false;
             }
         }

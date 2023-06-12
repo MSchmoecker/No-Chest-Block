@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using MultiUserChest;
 using MultiUserChest.Patches;
 using UnityEngine;
@@ -25,25 +27,28 @@ namespace UnitTests {
         }
 
         static Helper() {
+            UnityEngine.TestTools.LogAssert.Expect(LogType.Error, new Regex(".*"));
+
             GameObject zNetParent = new GameObject("ZNet");
             zNetParent.SetActive(false);
 
             zNet = zNetParent.AddComponent<ZNet>();
             zNetParent.AddComponent<ZoneSystem>();
             zNetParent.AddComponent<ZNetScene>();
+            Game game = zNetParent.AddComponent<Game>();
 
             zNet.m_passwordDialog = (RectTransform)new GameObject("PasswordDialog", typeof(RectTransform)).transform;
             zNet.m_connectingDialog = (RectTransform)new GameObject("PasswordDialog", typeof(RectTransform)).transform;
+            game.m_portalPrefab = new GameObject("PortalPrefab");
+            Environment.SetEnvironmentVariable("SteamAppId", "892970");
 
             zNetParent.SetActive(true);
         }
 
         public static Container CreateContainer(Inventory containerInventory = null) {
-            GameObject containerParent = new GameObject("Container");
+            GameObject containerParent = new GameObject("Container", typeof(ZNetView), typeof(Container));
+            Container container = containerParent.GetComponent<Container>();
 
-            containerParent.AddComponent<ZNetView>();
-
-            Container container = containerParent.AddComponent<Container>();
             container.m_nview.m_zdo.SetOwner(-1);
             container.m_inventory = containerInventory ?? new Inventory("inventory", null, 4, 5);
             container.m_inventory.m_onChanged += container.OnContainerChanged;
@@ -57,7 +62,7 @@ namespace UnitTests {
         }
 
         public static ZDOID CreatePlayerIdToInventory(Inventory playerInventory) {
-            ZDO zdo = zNet.m_zdoMan.CreateNewZDO(new Vector3());
+            ZDO zdo = zNet.m_zdoMan.CreateNewZDO(new Vector3(), 0);
 
             inventories.Add(zdo.m_uid, playerInventory);
 
