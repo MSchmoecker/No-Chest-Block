@@ -1,5 +1,8 @@
 # Changelog
 
+0.5.1
+- Updated for Valheim 0.216.9, not compatible with older versions
+
 0.5.0
 - Added item preview. This visually shows changes before all messages have been processed and improves the flow of interaction within a shared chest
 - Changed internal messages and made general code improvements
