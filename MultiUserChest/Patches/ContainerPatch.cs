@@ -70,7 +70,7 @@ namespace MultiUserChest.Patches {
 
             bool containerUse = __instance.IsInUse();
             bool wagonUse = __instance.m_wagon && __instance.m_wagon.InUse();
-            bool isMe = uid == ZNet.instance.GetUID();
+            bool isMe = uid == ZNet.GetUID();
 
             if ((containerUse || wagonUse) && !isMe) {
                 __instance.m_nview.InvokeRPC(uid, "OpenRespons", true);
@@ -107,7 +107,7 @@ namespace MultiUserChest.Patches {
 
         private static bool IsContainerInUse(Container container) {
             ZDOID myId = container.m_nview.GetZDO().m_uid;
-            return Player.m_players.Any(p => p != Player.m_localPlayer && p.m_nview.IsValid() && p.m_nview.GetZDO().GetZDOID("accessed-container") == myId);
+            return Player.s_players.Any(p => p != Player.m_localPlayer && p.m_nview.IsValid() && p.m_nview.GetZDO().GetZDOID("accessed-container") == myId);
         }
     }
 }
