@@ -21,6 +21,8 @@ namespace MultiUserChest {
             int variant = pkg.ReadInt();
             long crafterID = pkg.ReadLong();
             string crafterName = pkg.ReadString();
+            int worldLevel = pkg.ReadInt();
+            bool pickedUp = pkg.ReadBool();
 
             Dictionary<string, string> customData = new Dictionary<string, string>();
             int customDataCount = pkg.ReadInt();
@@ -34,7 +36,7 @@ namespace MultiUserChest {
             // invoke vanilla method to add a new item into the inventory system
             // while not as performant as adding creating a ItemDrop manually, this improves compatibility with other mods
             Inventory tempInventory = new Inventory("tmp", null, pos.x + 1, pos.y + 1);
-            tempInventory.AddItem(name, stack, durability, pos, false, quality, variant, crafterID, crafterName, customData);
+            tempInventory.AddItem(name, stack, durability, pos, false, quality, variant, crafterID, crafterName, customData, worldLevel, pickedUp);
 
             ItemDrop.ItemData itemData = tempInventory.GetItemAt(pos.x, pos.y);
             tempInventory.RemoveItem(itemData);
@@ -57,6 +59,8 @@ namespace MultiUserChest {
             pkg.Write(itemData.m_variant);
             pkg.Write(itemData.m_crafterID);
             pkg.Write(itemData.m_crafterName);
+            pkg.Write(itemData.m_worldLevel);
+            pkg.Write(itemData.m_pickedUp);
 
             pkg.Write(itemData.m_customData.Count);
             foreach (KeyValuePair<string, string> pair in itemData.m_customData) {

@@ -58,7 +58,7 @@ namespace MultiUserChest {
                 bool hasEmptySlot = inventoryTo.HaveEmptySlot();
 
                 if (!hasEmptySlot) {
-                    int freeStackSpace = inventoryTo.FindFreeStackSpace(dragItem.m_shared.m_name);
+                    int freeStackSpace = inventoryTo.FindFreeStackSpace(dragItem.m_shared.m_name, dragItem.m_worldLevel);
                     return Mathf.Min(dragAmount, freeStackSpace);
                 }
             }
