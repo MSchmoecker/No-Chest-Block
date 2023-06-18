@@ -5,11 +5,6 @@ using UnityEngine;
 
 namespace MultiUserChest {
     public static class ContainerHandler {
-        [Obsolete]
-        public static RequestAdd AddItemToChest(this Container containerTo, ItemDrop.ItemData item, Container targetContainer, Vector2i to, int dragAmount = -1, bool allowSwitch = false) {
-            return AddItemToChest(containerTo, item, targetContainer.GetInventory(), to, targetContainer.m_nview.m_zdo.m_uid, dragAmount);
-        }
-
         public static RequestChestAdd AddItemToChest(this Container container, ItemDrop.ItemData item, Inventory sourceInventory, Vector2i to, ZDOID sender, int dragAmount = -1) {
             if (!container || !container.m_nview || !container.m_nview.HasOwner()) {
                 return new RequestChestAdd(Vector2i.zero, 0, null, null, null);
@@ -69,16 +64,6 @@ namespace MultiUserChest {
             }
 
             return dragAmount;
-        }
-
-        [Obsolete]
-        public static RequestRemove RemoveItemFromChest(this Container container, ItemDrop.ItemData item, Container targetContainer, Vector2i to, int dragAmount = -1, ItemDrop.ItemData switchItem = null) {
-            return RemoveItemFromChest(container, item, targetContainer.GetInventory(), to, targetContainer.m_nview.m_zdo.m_uid, dragAmount, switchItem);
-        }
-
-        [Obsolete]
-        public static RequestRemove RemoveItemFromChest(this Container container, ItemDrop.ItemData item, Player targetPlayer, Vector2i to, int dragAmount = -1, ItemDrop.ItemData switchItem = null) {
-            return RemoveItemFromChest(container, item, targetPlayer.GetInventory(), to, targetPlayer.GetZDOID(), dragAmount, switchItem);
         }
 
         public static RequestChestRemove RemoveItemFromChest(this Container container, ItemDrop.ItemData item, Inventory destinationInventory, Vector2i to, ZDOID sender, int dragAmount = -1, ItemDrop.ItemData switchItem = null) {

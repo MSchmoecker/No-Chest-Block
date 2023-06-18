@@ -1,7 +1,7 @@
 using System;
 
 namespace MultiUserChest {
-    public class RequestChestRemove : RequestRemove, IRequest {
+    public class RequestChestRemove : IRequest {
         public int RequestID { get; set; }
         public Inventory SourceInventory { get; }
         public Inventory TargetInventory { get; }
@@ -52,9 +52,5 @@ namespace MultiUserChest {
             InventoryHelper.PrintItem(nameof(switchItem), switchItem);
         }
 #endif
-    }
-
-    [Obsolete]
-    public class RequestRemove {
     }
 }

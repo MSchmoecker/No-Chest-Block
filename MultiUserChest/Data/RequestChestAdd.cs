@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 
 namespace MultiUserChest {
-    public class RequestChestAdd : RequestAdd, IRequest {
+    public class RequestChestAdd : IRequest {
         public int RequestID { get; set; }
         public Inventory SourceInventory { get; }
         public Inventory TargetInventory { get; }
@@ -51,9 +51,5 @@ namespace MultiUserChest {
             InventoryHelper.PrintItem(nameof(dragItem), dragItem);
         }
 #endif
-    }
-
-    [Obsolete]
-    public class RequestAdd {
     }
 }
