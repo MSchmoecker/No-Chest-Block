@@ -7,6 +7,7 @@ namespace MultiUserChest {
     [BepInPlugin(ModGuid, ModName, ModVersion)]
     [BepInIncompatibility("aedenthorn.QuickStore")]
     [BepInIncompatibility("aedenthorn.SimpleSort")]
+    [BepInIncompatibility("org.bepinex.plugins.valheim.quick_stack")]
     [NetworkCompatibility(CompatibilityLevel.EveryoneMustHaveMod, VersionStrictness.Patch)]
     [BepInDependency(Jotunn.Main.ModGuid)]
     public class Plugin : BaseUnityPlugin {
@@ -31,9 +32,11 @@ namespace MultiUserChest {
         }
 
         internal static void ApplyModPatches() {
-            if (Chainloader.PluginInfos.ContainsKey("org.bepinex.plugins.valheim.quick_stack")) {
-                harmony.PatchAll(typeof(QuickStackPatch));
-            }
+            // Disable QuickStack compatibility, as it's broken in the current Valheim release
+
+            // if (Chainloader.PluginInfos.ContainsKey("org.bepinex.plugins.valheim.quick_stack")) {
+            //     harmony.PatchAll(typeof(QuickStackPatch));
+            // }
         }
 
         private void UpdateAccessedContainer() {

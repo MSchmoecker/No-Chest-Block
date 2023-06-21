@@ -47,6 +47,7 @@ Please report all errors and desyncs if they occur.
 ## Confirmed Incompatible Mods
 These mods cause desync with Multi User Chest and will not startup together
 - [QuickStore](https://www.nexusmods.com/valheim/mods/1595)
+- [QuickStack](https://valheim.thunderstore.io/package/damnsneaker/QuickStack)
 - [SimpleSort](https://www.nexusmods.com/valheim/mods/584)
 
 
@@ -56,7 +57,6 @@ The version number indicates the tested version of the other mod, a different on
 - [Quick Stack Store Sort Trash Restock](https://valheim.thunderstore.io/package/Goldenrevolver/Quick_Stack_Store_Sort_Trash_Restock) 1.3.10 (recommended quick stack mod, a higher version very likely works too)
 - [SmartContainers](https://www.nexusmods.com/valheim/mods/332) 1.6.4
 - [QuickDeposit](https://valheim.thunderstore.io/package/MaGic/Quick_Deposit) 1.0.1
-- [QuickStack](https://valheim.thunderstore.io/package/damnsneaker/QuickStack) 0.6.6
 - [DepositAnywhere](https://valheim.thunderstore.io/package/Lookenpeepers/DepositAnywhere) 1.2.0
 - [Valheim Simple Auto Sort](https://www.nexusmods.com/valheim/mods/1824) 1.0.7
 
