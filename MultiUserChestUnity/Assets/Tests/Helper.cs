@@ -39,7 +39,7 @@ namespace UnitTests {
 
             zNet.m_passwordDialog = (RectTransform)new GameObject("PasswordDialog", typeof(RectTransform)).transform;
             zNet.m_connectingDialog = (RectTransform)new GameObject("PasswordDialog", typeof(RectTransform)).transform;
-            game.m_portalPrefab = new GameObject("PortalPrefab");
+            game.m_portalPrefabs = new List<GameObject>();
             Environment.SetEnvironmentVariable("SteamAppId", "892970");
 
             zNetParent.SetActive(true);
