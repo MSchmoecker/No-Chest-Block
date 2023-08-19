@@ -191,5 +191,46 @@ namespace UnitTests {
 
             Assert.AreEqual(5, item.m_stack);
         }
+
+        [Test]
+        public void CanStack_SameItem() {
+            ItemDrop.ItemData itemA = Helper.CreateItem("itemA", 5);
+            ItemDrop.ItemData itemB = Helper.CreateItem("itemA", 5);
+
+            Assert.True(InventoryHelper.CanStack(itemA, itemB));
+        }
+
+        [Test]
+        public void CanStack_SameItem_Tool() {
+            ItemDrop.ItemData itemA = Helper.CreateItem("itemA", 1);
+            itemA.m_shared.m_itemType = ItemDrop.ItemData.ItemType.Tool;
+            itemA.m_shared.m_maxStackSize = 1;
+
+            ItemDrop.ItemData itemB = Helper.CreateItem("itemA", 1);
+            itemB.m_shared.m_itemType = ItemDrop.ItemData.ItemType.Material;
+            itemB.m_shared.m_maxStackSize = 1;
+
+            Assert.False(InventoryHelper.CanStack(itemA, itemB));
+        }
+
+        [Test]
+        public void CanStack_DifferentItem_Name() {
+            ItemDrop.ItemData itemA = Helper.CreateItem("itemA", 5);
+            ItemDrop.ItemData itemB = Helper.CreateItem("itemB", 5);
+
+            Assert.False(InventoryHelper.CanStack(itemA, itemB));
+        }
+
+        [Test]
+        public void CanStack_DifferentItem_Quality() {
+            ItemDrop.ItemData itemA = Helper.CreateItem("itemA", 1);
+            itemA.m_shared.m_maxQuality = 3;
+            itemA.m_quality = 1;
+            ItemDrop.ItemData itemB = Helper.CreateItem("itemA", 1);
+            itemB.m_shared.m_maxQuality = 3;
+            itemB.m_quality = 2;
+
+            Assert.False(InventoryHelper.CanStack(itemA, itemB));
+        }
     }
 }

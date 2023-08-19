@@ -136,7 +136,7 @@ namespace MultiUserChest {
 
                         ItemDrop.ItemData switchItem = requestMove.TargetInventory.GetItemAt(requestMove.toPos.x, requestMove.toPos.y);
 
-                        if (switchItem != null && !InventoryHelper.IsSameItem(requestMove.item, switchItem)) {
+                        if (switchItem != null && !InventoryHelper.CanStack(requestMove.item, switchItem)) {
                             if (requestMove.dragAmount == requestMove.item.m_stack) {
                                 preview.Remove(requestMove.fromPos, requestMove.item, requestMove.dragAmount);
                                 preview.Remove(requestMove.toPos, switchItem, switchItem.m_stack);

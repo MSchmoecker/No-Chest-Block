@@ -64,7 +64,7 @@ namespace MultiUserChest {
                 return true;
             }
 
-            bool changed = !InventoryHelper.IsSameItem(originalItem, item) || originalItem.m_stack != item.m_stack;
+            bool changed = !InventoryHelper.CanStack(originalItem, item) || originalItem.m_stack != item.m_stack;
             return changed;
         }
 

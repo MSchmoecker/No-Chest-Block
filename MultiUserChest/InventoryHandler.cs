@@ -59,7 +59,7 @@ namespace MultiUserChest {
                     int dropAmount = response.Amount;
                     ItemDrop.ItemData exisingItem = inventory.GetItemAt(inventoryPos.x, inventoryPos.y);
 
-                    if (exisingItem != null && InventoryHelper.IsSameItem(response.responseItem, exisingItem)) {
+                    if (exisingItem != null && InventoryHelper.CanStack(response.responseItem, exisingItem)) {
                         int maxStackSize = exisingItem.m_shared.m_maxStackSize;
                         int existingAmount = exisingItem.m_stack;
                         int freeSpace = maxStackSize - existingAmount;

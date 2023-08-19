@@ -12,7 +12,7 @@ namespace MultiUserChest {
 
             dragAmount = PossibleDragAmount(container.GetInventory(), item, to, dragAmount);
             ItemDrop.ItemData itemAtChest = container.GetInventory().GetItemAt(to.x, to.y);
-            bool cannotStack = itemAtChest != null && dragAmount != item.m_stack && !InventoryHelper.IsSameItem(itemAtChest, item);
+            bool cannotStack = itemAtChest != null && dragAmount != item.m_stack && !InventoryHelper.CanStack(itemAtChest, item);
 
             if (dragAmount <= 0 || cannotStack || !sourceInventory.ContainsItem(item)) {
                 return new RequestChestAdd(Vector2i.zero, 0, null, null, null);
@@ -48,7 +48,7 @@ namespace MultiUserChest {
                 ItemDrop.ItemData targetItem = inventoryTo.GetItemAt(to.x, to.y);
 
                 if (targetItem != null && dragAmount < dragItem.m_stack) {
-                    if (InventoryHelper.IsSameItem(targetItem, dragItem)) {
+                    if (InventoryHelper.CanStack(targetItem, dragItem)) {
                         return Mathf.Min(dragAmount, targetItem.m_shared.m_maxStackSize - targetItem.m_stack);
                     }
 
@@ -80,7 +80,7 @@ namespace MultiUserChest {
             RequestChestRemove request = new RequestChestRemove(item.m_gridPos, to, dragAmount, switchItem, container.GetInventory(), destinationInventory);
 
             if (switchItem != null) {
-                if (!InventoryHelper.IsSameItem(item, switchItem)) {
+                if (!InventoryHelper.CanStack(item, switchItem)) {
                     if (dragAmount != item.m_stack) {
                         return new RequestChestRemove(Vector2i.zero, Vector2i.zero, 0, null, container.GetInventory(), destinationInventory);
                     }

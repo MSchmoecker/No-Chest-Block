@@ -141,7 +141,7 @@ namespace MultiUserChest.Patches {
                         return true;
                     }
 
-                    if (switchItem != null && InventoryHelper.IsSameItem(item, switchItem)) {
+                    if (switchItem != null && InventoryHelper.CanStack(item, switchItem)) {
                         switchItem = null;
                     }
 

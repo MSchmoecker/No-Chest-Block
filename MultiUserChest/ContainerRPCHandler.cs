@@ -95,7 +95,7 @@ namespace MultiUserChest {
                 return true;
             }
 
-            if (InventoryHelper.IsSameItem(prevItem, request.dragItem)) {
+            if (InventoryHelper.CanStack(prevItem, request.dragItem)) {
                 stackSpace = Mathf.Min(prevItem.m_shared.m_maxStackSize - prevItem.m_stack, request.dragItem.m_stack);
                 return true;
             }
@@ -150,7 +150,7 @@ namespace MultiUserChest {
                 removedAmount = Mathf.Min(from.m_stack, dragAmount);
                 removed = inventory.RemoveItem(from, removedAmount);
             } else {
-                if (InventoryHelper.IsSameItem(from, switchItem)) {
+                if (InventoryHelper.CanStack(from, switchItem)) {
                     removedAmount = Mathf.Min(switchItem.m_shared.m_maxStackSize - switchItem.m_stack, dragAmount);
                     removed = inventory.RemoveItem(from, removedAmount);
                 } else if (dragAmount >= from.m_stack) {

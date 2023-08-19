@@ -98,8 +98,7 @@ namespace MultiUserChest {
                 return inventory.MoveItemToThis(inventory, item, amount, toPos.x, toPos.y);
             }
 
-            if (IsSameItem(itemAt, item)) {
-                // items can be stacked
+            if (CanStack(itemAt, item)) {
                 movedAmount = Mathf.Min(amount, itemAt.m_shared.m_maxStackSize - itemAt.m_stack);
                 return inventory.MoveItemToThis(inventory, item, movedAmount, toPos.x, toPos.y);
             }
@@ -116,7 +115,7 @@ namespace MultiUserChest {
             return true;
         }
 
-        public static bool IsSameItem(ItemDrop.ItemData itemA, ItemDrop.ItemData itemB) {
+        public static bool CanStack(ItemDrop.ItemData itemA, ItemDrop.ItemData itemB) {
             return itemA.m_shared.m_name == itemB.m_shared.m_name &&
                    (itemA.m_shared.m_maxQuality <= 1 || itemB.m_quality == itemA.m_quality) &&
                    itemA.m_shared.m_maxStackSize != 1;
@@ -185,7 +184,7 @@ namespace MultiUserChest {
             ItemDrop.ItemData curItem = target.GetItemAt(pos.x, pos.y);
 
             if (curItem != null) {
-                if (!IsSameItem(curItem, item)) {
+                if (!CanStack(curItem, item)) {
                     return false;
                 }
 
