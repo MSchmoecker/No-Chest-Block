@@ -106,8 +106,8 @@ namespace MultiUserChest.Patches {
         }
 
         private static bool IsContainerInUse(Container container) {
-            ZDOID myId = container.m_nview.GetZDO().m_uid;
-            return Player.s_players.Any(p => p != Player.m_localPlayer && p.m_nview.IsValid() && p.m_nview.GetZDO().GetZDOID("accessed-container") == myId);
+            ZDOID containerId = container.m_nview.GetZDO().m_uid;
+            return Player.GetAllPlayers().Any(p => p != Player.m_localPlayer && p.m_nview.IsValid() && p.m_nview.GetZDO().GetZDOID("accessed-container") == containerId);
         }
     }
 }
