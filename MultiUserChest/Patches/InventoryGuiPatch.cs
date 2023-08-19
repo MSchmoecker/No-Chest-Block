@@ -169,7 +169,7 @@ namespace MultiUserChest.Patches {
 
             element.m_equiped.enabled = false;
             element.m_queued.enabled = false;
-            element.m_noteleport.enabled = !item.m_shared.m_teleportable;
+            element.m_noteleport.enabled = !item.m_shared.m_teleportable && !ZoneSystem.instance.GetGlobalKey(GlobalKeys.TeleportAll);
 
             if (item.m_shared.m_itemType == ItemDrop.ItemData.ItemType.Consumable && (item.m_shared.m_food > 0.0 || item.m_shared.m_foodStamina > 0.0 || item.m_shared.m_foodEitr > 0.0)) {
                 element.m_food.enabled = true;
