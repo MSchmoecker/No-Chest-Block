@@ -1,5 +1,8 @@
 # Changelog
 
+0.5.3
+- Updated for Valheim 0.217.14 (Hildir's Request), not compatible with older versions
+
 0.5.2
 - Removed [QuickStack](https://valheim.thunderstore.io/package/damnsneaker/QuickStack) compatibility as the mod isn't updated for Valheim and threw a MUC error. The mods will no longer start together
 
