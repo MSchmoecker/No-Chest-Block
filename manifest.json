@@ -1,10 +1,10 @@
 {
 	"name": "MultiUserChest",
 	"description": "Allows multiple players to interact with the same chest at the same time",
-	"version_number": "0.5.3",
+	"version_number": "0.5.4",
 	"website_url": "https://github.com/MSchmoecker/No-Chest-Block",
 	"dependencies": [
 		"denikson-BepInExPack_Valheim-5.4.2105",
-        "ValheimModding-Jotunn-2.12.4"
+        "ValheimModding-Jotunn-2.12.7"
 	]
 }

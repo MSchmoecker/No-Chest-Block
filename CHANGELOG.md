@@ -1,5 +1,8 @@
 # Changelog
 
+0.5.4
+- Fixed equipped items appear to be un-equipped when item preview shows an item in the player inventory, resulting in equipped items background flashing
+
 0.5.3
 - Updated for Valheim 0.217.14 (Hildir's Request), not compatible with older versions
 
