@@ -121,5 +121,28 @@ namespace UnitTests {
             Assert.IsTrue(changed, "changed");
             TestForItem(item, new TestItem("item A", 10, new Vector2i(0, 0)));
         }
+
+        [Test]
+        public void AddItem_UnrelatedNotChanged() {
+            inventory.CreateItem("item A", 10, 2, 3);
+            preview = new SlotPreview(inventory);
+            preview.Add(new Vector2i(3, 3), Helper.CreateItem("item B", 5));
+
+            Assert.IsFalse(preview.GetSlot(new Vector2i(2, 3), out ItemDrop.ItemData item));
+        }
+
+        [Test]
+        public void AddItem_EquippedNotChanged() {
+            ItemDrop.ItemData tool = inventory.CreateItem("item A", 1, 2, 3);
+            tool.m_shared.m_maxStackSize = 1;
+            tool.m_equipped = true;
+
+            preview = new SlotPreview(inventory);
+            preview.Add(new Vector2i(3, 3), Helper.CreateItem("item B", 5));
+
+            bool changed = preview.GetSlot(new Vector2i(2, 3), out ItemDrop.ItemData item);
+            Assert.IsFalse(changed);
+            TestForItem(item, new TestItem("item A", 1, new Vector2i(2, 3)));
+        }
     }
 }
