@@ -65,7 +65,7 @@ The version number indicates the tested version of the other mod, a different on
 - [Thunderstore](https://valheim.thunderstore.io/package/MSchmoecker/MultiUserChest/)
 - [Nexus](https://www.nexusmods.com/valheim/mods/1766)
 - [Github](https://github.com/MSchmoecker/No-Chest-Block)
-- Discord: Margmas#9562. Feel free to DM or ping me, for example in the [Jötunn discord](https://discord.gg/DdUt6g7gyA)
+- Discord: Margmas. Feel free to DM or ping me about feedback or questions, for example in the [Jötunn discord](https://discord.gg/DdUt6g7gyA)
 
 
 ## Development

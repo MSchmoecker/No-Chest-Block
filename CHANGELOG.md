@@ -1,5 +1,9 @@
 # Changelog
 
+0.5.5
+- Compatible with Valheim version 0.217.22, not working with an older version
+- Updated and compiled for BepInExPack 5.4.2200
+
 0.5.4
 - Fixed equipped items appear to be un-equipped when item preview shows an item in the player inventory, resulting in equipped items background flashing
 
