@@ -10,13 +10,17 @@ namespace MultiUserChest {
         public static int AddPackage(IPackage package) {
             int id = GetRandomId();
             Packages.Add(id, package);
+#if DEBUG
             Log.LogDebug($"PackageHandler: Added package {id}, total packages: {++total}");
+#endif
             return id;
         }
 
         public static void RemovePackage(int id) {
             Packages.Remove(id);
+#if DEBUG
             Log.LogDebug($"PackageHandler: Removed package {id}, total packages: {--total}");
+#endif
         }
 
         private static int GetRandomId() {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using BepInEx;
 using HarmonyLib;
@@ -88,6 +89,16 @@ namespace MultiUserChest.Patches {
             if (LastRemovedItem.TryGetTarget(out ItemDrop.ItemData lastItem) && InventoryOwner.GetOwner(lastItem)?.Inventory == __instance) {
                 LastRemovedItem.SetTarget(null);
             }
+        }
+
+        [HarmonyPatch(typeof(Inventory), nameof(Inventory.AddItem), typeof(ItemDrop.ItemData), typeof(int), typeof(int), typeof(int))]
+        [HarmonyWrapSafe]
+        [HarmonyTranspiler]
+        public static IEnumerable<CodeInstruction> RemoveLogging(IEnumerable<CodeInstruction> instructions) {
+            return new CodeMatcher(instructions)
+                .MatchForward(false, new CodeMatch(i => i.Calls(AccessTools.Method(typeof(ZLog), nameof(ZLog.Log)))))
+                .SetInstruction(new CodeInstruction(OpCodes.Pop))
+                .Instructions();
         }
 
         private static void AssignItemsOfInventory(Inventory inventory) {
