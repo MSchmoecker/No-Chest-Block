@@ -69,28 +69,35 @@ namespace MultiUserChest.Patches {
         }
 
         [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.OnDropOutside)), HarmonyPrefix]
-        public static bool InventoryGuiOnDropOutsidePatch(InventoryGui __instance) {
-            Player player = Player.m_localPlayer;
+        public static void InventoryGuiOnDropOutsidePatch(InventoryGui __instance, ref bool __runOriginal) {
+            if (!__runOriginal) {
+                return;
+            }
 
             if (!__instance.m_dragGo) {
-                return false;
+                return;
+            }
+
+            bool isPlayerInventory = Player.m_localPlayer.GetInventory().GetInventories().Contains(__instance.m_dragInventory);
+
+            if (isPlayerInventory) {
+                Log.LogDebug("Drop item from own inventory");
+                return;
             }
 
             bool isOwnerOfContainer = __instance.m_currentContainer && __instance.m_currentContainer.IsOwner();
-            bool isPlayerInventory = player.GetInventory().GetInventories().Contains(__instance.m_dragInventory);
 
-            if (isOwnerOfContainer || isPlayerInventory) {
-                Log.LogDebug("Drop item from own inventory");
-                return true;
+            if (!__instance.m_currentContainer || isOwnerOfContainer) {
+                return;
             }
 
-            RequestDrop request = new RequestDrop(__instance.m_dragItem.m_gridPos, __instance.m_dragAmount, player.GetZDOID());
+            RequestDrop request = new RequestDrop(__instance.m_dragItem.m_gridPos, __instance.m_dragAmount, Player.m_localPlayer.GetZDOID());
 #if DEBUG
             Timer.Start(request);
 #endif
             __instance.m_currentContainer.m_nview.InvokeRPC(ContainerPatch.ItemDropRPC, request.WriteToPackage());
             __instance.SetupDragItem(null, null, 1);
-            return false;
+            __runOriginal = false;
         }
 
         [HarmonyPatch(typeof(Inventory), nameof(Inventory.Load)), HarmonyPostfix]
