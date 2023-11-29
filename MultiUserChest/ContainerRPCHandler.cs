@@ -74,6 +74,10 @@ namespace MultiUserChest {
 
             bool added = inventory.AddItemToInventory(request.dragItem, stackSpace, request.toPos);
 
+            if (!added) {
+                stackSpace = 0;
+            }
+
             if (!added || stackSpace != request.dragItem.m_stack) {
                 switched = request.dragItem;
                 switched.m_stack = request.dragItem.m_stack - stackSpace;
@@ -157,6 +161,11 @@ namespace MultiUserChest {
                     removed = inventory.RemoveItem(from, dragAmount);
                     removedAmount = Mathf.Min(from.m_stack, dragAmount);
                     switched = inventory.AddItemToInventory(switchItem, switchItem.m_stack, fromContainer);
+
+                    if (!switched) {
+                        Log.LogWarning("Could not switch item in Remove Request");
+                        InventoryHandler.DropItem(switchItem, switchItem.m_stack);
+                    }
                 } else {
                     return new RequestChestRemoveResponse(request.RequestID, false, 0, false, request.switchItem);
                 }

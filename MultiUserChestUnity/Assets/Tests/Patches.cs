@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using BepInEx;
 using MultiUserChest;
 using HarmonyLib;
@@ -102,6 +104,46 @@ namespace UnitTests {
 
             [HarmonyPatch(typeof(FejdStartup), nameof(FejdStartup.InitializeSteam)), HarmonyPrefix]
             public static bool NoFejdStartupInitializeSteam() {
+                return false;
+            }
+        }
+
+        public static class PreventAddItem {
+            public static bool Enabled { get; private set; }
+
+            private static MethodInfo[] methodTargets = AccessTools.GetDeclaredMethods(typeof(Inventory))
+                .Where(i => i.Name == nameof(Inventory.AddItem) && i.ReturnType == typeof(bool))
+                .ToArray();
+
+            private static Harmony harmony = new Harmony("prevent-add-item");
+
+            public static void Enable() {
+                if (Enabled) {
+                    throw new Exception("Already enabled");
+                }
+
+                Enabled = true;
+
+                foreach (MethodInfo methodInfo in methodTargets) {
+                    harmony.Patch(methodInfo, new HarmonyMethod(typeof(PreventAddItem), nameof(PreventAddItemPatch)));
+                }
+            }
+
+            public static void Disable() {
+                if (!Enabled) {
+                    throw new Exception("Already disabled");
+                }
+
+                Enabled = false;
+
+                foreach (MethodInfo methodInfo in methodTargets) {
+                    harmony.Unpatch(methodInfo, AccessTools.Method(typeof(PreventAddItem), nameof(PreventAddItemPatch)));
+                }
+            }
+
+            public static bool PreventAddItemPatch(Inventory __instance, ref bool __result) {
+                Log.LogInfo("AddItem: Prevented");
+                __result = false;
                 return false;
             }
         }

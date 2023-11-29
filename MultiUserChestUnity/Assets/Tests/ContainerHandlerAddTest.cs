@@ -27,6 +27,12 @@ namespace UnitTests {
             return new RequestChestAdd(target, itemAmount, item, new Inventory("source", null, 1, 1), new Inventory("target", null, 1, 1));
         }
 
+        private static RequestChestAdd MakeRequest(Vector2i target, int itemAmount, int dragAmount) {
+            ItemDrop.ItemData item = Helper.CreateItem("my item", itemAmount);
+            item.m_gridPos = new Vector2i(2, 2);
+            return new RequestChestAdd(target, dragAmount, item, new Inventory("source", null, 1, 1), new Inventory("target", null, 1, 1));
+        }
+
         [Test]
         public void RPC_RequestItemAddToEmptySlotExactAmountAsInventory() {
             RequestChestAdd request = MakeRequest();
@@ -172,6 +178,21 @@ namespace UnitTests {
             TestResponse(response, true, 5);
             TestForItem(response.switchItem, new TestItem("my item", 10, new Vector2i(2, 2)));
             TestForItems(container, new TestItem("my item", 20, new Vector2i(0, 0)));
+        }
+
+        [Test]
+        public void RPC_AddItem_FailsByPatch() {
+            container = new Inventory("inv", null, 1, 1);
+            container.CreateItem("my item", 2, 0, 0);
+
+            RequestChestAdd request = MakeRequest(new Vector2i(0, 0), 4, 3);
+            Patches.PreventAddItem.Enable();
+            RequestChestAddResponse response = GetResponse(request);
+            Patches.PreventAddItem.Disable();
+
+            TestResponse(response, false, 0);
+            TestForItem(response.switchItem, new TestItem("my item", 3, new Vector2i(2, 2)));
+            TestForItems(container, new TestItem("my item", 2, new Vector2i(0, 0)));
         }
     }
 }

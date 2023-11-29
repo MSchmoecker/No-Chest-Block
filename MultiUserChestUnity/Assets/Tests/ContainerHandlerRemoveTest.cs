@@ -6,10 +6,36 @@ namespace UnitTests {
     [TestFixture]
     public class ContainerHandlerRemoveTest : ItemTestBase {
         private Inventory container;
+        private Inventory groundInv;
 
         [SetUp]
         public void SetUp() {
             container = new Inventory("inventory", null, 4, 5);
+            groundInv = new Inventory("ground", null, 5, 5);
+            Patches.DropPatch.OnDrop += AddItemToGround;
+        }
+
+        [TearDown]
+        public void TearDown() {
+            Patches.DropPatch.OnDrop -= AddItemToGround;
+        }
+
+        private void AddItemToGround(ItemDrop.ItemData item, int amount) {
+            bool preventAddItem = Patches.PreventAddItem.Enabled;
+
+            if (preventAddItem) {
+                Patches.PreventAddItem.Disable();
+            }
+
+            if (item != null) {
+                ItemDrop.ItemData clone = item.Clone();
+                clone.m_stack = amount;
+                groundInv.AddItem(clone);
+            }
+
+            if (preventAddItem) {
+                Patches.PreventAddItem.Enable();
+            }
         }
 
         private RequestChestRemoveResponse GetResponse(RequestChestRemove request) {
@@ -196,6 +222,23 @@ namespace UnitTests {
             Assert.True(response.hasSwitched);
             TestForItem(response.responseItem, new TestItem("my item A", 5, new Vector2i(2, 2)));
             TestForItems(container, new TestItem("my item B", 3, new Vector2i(2, 2)));
+        }
+
+        [Test]
+        public void RPC_RemoveItem_Switch_FailsByPatch() {
+            container.CreateItem("my item A", 5, 2, 2);
+            var switchItem = Helper.CreateItem("my item B", 7);
+
+            RequestChestRemove request = MakeMessage(7, switchItem);
+            Patches.PreventAddItem.Enable();
+            RequestChestRemoveResponse response = GetResponse(request);
+            Patches.PreventAddItem.Disable();
+
+            TestResponse(response, true, 5);
+            Assert.False(response.hasSwitched);
+            TestForItem(response.responseItem, new TestItem("my item A", 5, new Vector2i(2, 2)));
+            TestForItems(container);
+            TestForItems(groundInv, new TestItem("my item B", 7, new Vector2i(0, 0)));
         }
     }
 }
