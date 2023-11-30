@@ -12,7 +12,7 @@ namespace MultiUserChest {
             Success = success;
             Amount = amount;
             this.hasSwitched = hasSwitched;
-            this.responseItem = responseItem;
+            this.responseItem = responseItem.ClampStackSize();
         }
 
         public RequestChestRemoveResponse(ZPackage package) {

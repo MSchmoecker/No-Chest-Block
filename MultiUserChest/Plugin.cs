@@ -37,6 +37,10 @@ namespace MultiUserChest {
             // if (Chainloader.PluginInfos.ContainsKey("org.bepinex.plugins.valheim.quick_stack")) {
             //     harmony.PatchAll(typeof(QuickStackPatch));
             // }
+
+            if (Chainloader.PluginInfos.ContainsKey("mkz.itemdrawers")) {
+                harmony.PatchAll(typeof(ItemDrawerCompat));
+            }
         }
 
         private void UpdateAccessedContainer() {

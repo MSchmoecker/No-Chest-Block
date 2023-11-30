@@ -16,6 +16,7 @@ namespace UnitTests {
             Harmony harmony = new Harmony("id");
 
             harmony.PatchAll(typeof(InventoryAddItemPatch));
+            harmony.PatchAll(typeof(ClampStackSize));
             harmony.PatchAll(typeof(DropPatch));
             harmony.PatchAll(typeof(PathsPatches));
             harmony.PatchAll(typeof(ZNetPatches));
@@ -50,6 +51,14 @@ namespace UnitTests {
                 };
                 __instance.AddItem(itemData, itemData.m_stack, pos.x, pos.y);
                 __result = true;
+                return false;
+            }
+        }
+
+        private static class ClampStackSize {
+            [HarmonyPatch(typeof(InventoryHelper), nameof(InventoryHelper.ClampStackSize)), HarmonyPrefix]
+            public static bool ClampStackSizePatch(ItemDrop.ItemData item, ref ItemDrop.ItemData __result) {
+                __result = item;
                 return false;
             }
         }

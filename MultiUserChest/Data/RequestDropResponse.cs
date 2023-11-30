@@ -7,7 +7,7 @@
         public int Amount { get; }
 
         public RequestDropResponse(ItemDrop.ItemData responseItem, ZDOID sender, bool success, int amount) {
-            this.responseItem = responseItem;
+            this.responseItem = responseItem.ClampStackSize();
             this.sender = sender;
             Success = success;
             Amount = amount;

@@ -1,10 +1,15 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using HarmonyLib;
+using Jotunn.Managers;
 using UnityEngine;
 
 namespace MultiUserChest {
     public static class InventoryHelper {
         public delegate void MoveAction(Inventory from, Inventory to);
+
+        private static MethodBase memberwiseCloneMethod = AccessTools.Method(typeof(object), "MemberwiseClone");
 
         public static ItemDrop.ItemData LoadItemFromPackage(ZPackage pkg) {
             bool hasItem = pkg.ReadBool();
@@ -67,6 +72,16 @@ namespace MultiUserChest {
                 pkg.Write(pair.Key);
                 pkg.Write(pair.Value);
             }
+        }
+
+        public static ItemDrop.ItemData ClampStackSize(this ItemDrop.ItemData item) {
+            if (item == null) {
+                return null;
+            }
+
+            ItemDrop itemPrefab = PrefabManager.Cache.GetPrefab<ItemDrop>(item.PrefabName());
+            item.m_shared.m_maxStackSize = itemPrefab.m_itemData.m_shared.m_maxStackSize;
+            return item;
         }
 
         public static string PrefabName(this ItemDrop.ItemData item) {
@@ -193,10 +208,16 @@ namespace MultiUserChest {
                 }
             }
 
-            ItemDrop.ItemData clone = item.Clone();
+            ItemDrop.ItemData clone = item.CloneDeeper();
             clone.m_stack = amount;
 
             return target.AddItem(clone, amount, pos.x, pos.y);
+        }
+
+        public static ItemDrop.ItemData CloneDeeper(this ItemDrop.ItemData itemDrop) {
+            ItemDrop.ItemData result = itemDrop.Clone();
+            result.m_shared = memberwiseCloneMethod.Invoke(itemDrop.m_shared, null) as ItemDrop.ItemData.SharedData;
+            return result;
         }
 
         public static void PrintItem(string title, ItemDrop.ItemData itemData) {
@@ -210,6 +231,7 @@ namespace MultiUserChest {
             Log.LogDebug($"    drop name: {(itemData.m_dropPrefab != null ? itemData.m_dropPrefab.name : "null!!!")}");
             Log.LogDebug($"    shared name: {itemData.m_shared.m_name}");
             Log.LogDebug($"    stack: {itemData.m_stack}");
+            Log.LogDebug($"    max stack size: {itemData.m_shared.m_maxStackSize}");
 #endif
         }
     }

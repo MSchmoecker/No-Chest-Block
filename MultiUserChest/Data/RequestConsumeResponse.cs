@@ -12,7 +12,7 @@
         }
 
         public RequestConsumeResponse(ItemDrop.ItemData item, bool success, int amount) {
-            this.item = item;
+            this.item = item.ClampStackSize();
             Success = success;
             Amount = amount;
         }

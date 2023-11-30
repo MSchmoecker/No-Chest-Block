@@ -11,7 +11,7 @@ namespace MultiUserChest {
             Success = success;
             Amount = amount;
             this.inventoryPos = inventoryPos;
-            this.switchItem = switchItem;
+            this.switchItem = switchItem.ClampStackSize();
         }
 
         public RequestChestAddResponse(ZPackage package) {

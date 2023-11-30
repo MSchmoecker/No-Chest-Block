@@ -40,9 +40,11 @@ namespace MultiUserChest {
 
     public class ContainerInventoryOwner : InventoryOwner {
         public Container Container { get; }
+        public bool IsItemDrawer { get; }
 
         public ContainerInventoryOwner(Container container) {
             Container = container;
+            IsItemDrawer = ItemDrawerCompat.IsItemDrawer(Container);
         }
 
         public override ZNetView ZNetView => Container.m_nview;
