@@ -1,5 +1,11 @@
 # Changelog
 
+0.5.6
+- Fixed a conflict with [Backpacks](https://valheim.thunderstore.io/package/Smoothbrain/Backpacks/) where dropping an item from a backpack throws an error
+- Fixed compatibility with [ItemDrawers](https://valheim.thunderstore.io/package/makail/ItemDrawers/) for dependent mods like [ItemHopper](https://valheim.thunderstore.io/package/MSchmoecker/ItemHopper/) where stack sizes were wrong and the drawer did not update correctly
+- Fixed a potential item loss issue when another mod patches AddItem() to reject an item inconsistently between clients
+- Removed some vanilla logging when adding an item to an inventory, to avoid clutter and slightly improve performance when many actions are done
+
 0.5.5
 - Compatible with Valheim version 0.217.22, not working with an older version
 - Updated and compiled for BepInExPack 5.4.2200
