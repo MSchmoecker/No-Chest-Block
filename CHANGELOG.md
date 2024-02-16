@@ -1,5 +1,8 @@
 # Changelog
 
+0.5.7
+- Fixed type warning about ItemDrawer when it's not installed
+
 0.5.6
 - Fixed a conflict with [Backpacks](https://valheim.thunderstore.io/package/Smoothbrain/Backpacks/) where dropping an item from a backpack throws an error
 - Fixed compatibility with [ItemDrawers](https://valheim.thunderstore.io/package/makail/ItemDrawers/) for dependent mods like [ItemHopper](https://valheim.thunderstore.io/package/MSchmoecker/ItemHopper/) where stack sizes were wrong and the drawer did not update correctly
