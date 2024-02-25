@@ -1,8 +1,8 @@
 ﻿namespace MultiUserChest {
     public class RequestMoveResponse : IPackage, IResponse {
-        public int SourceID { get; }
-        public bool Success { get; }
-        public int Amount { get; }
+        public int SourceID { get; set; }
+        public bool Success { get; set; }
+        public int Amount { get; set; }
 
         public RequestMoveResponse(int sourceID, bool success, int amount) {
             SourceID = sourceID;

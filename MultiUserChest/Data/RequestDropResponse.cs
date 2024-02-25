@@ -1,10 +1,11 @@
 ﻿namespace MultiUserChest {
     public class RequestDropResponse : IPackage, IResponse {
-        public int SourceID { get; }
+        public int SourceID { get; set; }
+        public bool Success { get; set; }
+        public int Amount { get; set; }
+
         public readonly ItemDrop.ItemData responseItem;
         public readonly ZDOID sender;
-        public bool Success { get; }
-        public int Amount { get; }
 
         public RequestDropResponse(ItemDrop.ItemData responseItem, ZDOID sender, bool success, int amount) {
             this.responseItem = responseItem.ClampStackSize();

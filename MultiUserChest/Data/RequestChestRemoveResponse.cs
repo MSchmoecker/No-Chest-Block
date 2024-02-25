@@ -1,9 +1,9 @@
 namespace MultiUserChest {
     public class RequestChestRemoveResponse : IPackage, IResponse {
-        public int SourceID { get; }
+        public int SourceID { get; set; }
+        public bool Success { get; set; }
+        public int Amount { get; set; }
 
-        public bool Success { get; }
-        public int Amount { get; }
         public readonly ItemDrop.ItemData responseItem;
         public readonly bool hasSwitched;
 

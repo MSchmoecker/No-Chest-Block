@@ -1,8 +1,9 @@
 namespace MultiUserChest {
     public class RequestChestAddResponse : IPackage, IResponse {
-        public int SourceID { get; }
-        public bool Success { get; }
-        public int Amount { get; }
+        public int SourceID { get; set; }
+        public bool Success { get; set; }
+        public int Amount { get; set; }
+
         public readonly Vector2i inventoryPos;
         public readonly ItemDrop.ItemData switchItem;
 

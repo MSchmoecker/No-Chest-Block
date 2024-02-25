@@ -1,7 +1,7 @@
 ﻿namespace MultiUserChest {
-    public interface IResponse {
-        int SourceID { get; }
-        bool Success { get; }
-        int Amount { get; }
+    public interface IResponse : IPackage {
+        int SourceID { get; set; }
+        bool Success { get; set; }
+        int Amount { get; set; }
     }
 }
