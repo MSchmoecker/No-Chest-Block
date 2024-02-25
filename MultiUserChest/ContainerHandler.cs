@@ -30,10 +30,7 @@ namespace MultiUserChest {
                 return null;
             }
 
-#if DEBUG
-            Timer.Start(request);
-#endif
-            container.m_nview.InvokeRPC(ContainerPatch.ItemAddRPC, request.WriteToPackage());
+            GamePatches.InvokeRPC(container.m_nview, ContainerPatch.ItemAddRPC, request);
             return request;
         }
 
@@ -98,11 +95,7 @@ namespace MultiUserChest {
                 return null;
             }
 
-#if DEBUG
-            Timer.Start(request);
-#endif
-
-            container.m_nview.InvokeRPC(ContainerPatch.ItemRemoveRPC, request.WriteToPackage());
+            GamePatches.InvokeRPC(container.m_nview, ContainerPatch.ItemRemoveRPC, request);
             return request;
         }
 
@@ -111,11 +104,7 @@ namespace MultiUserChest {
 
             InventoryPreview.AddPackage(request);
 
-#if DEBUG
-            Timer.Start(request);
-#endif
-
-            container.m_nview.InvokeRPC(ContainerPatch.ItemMoveRPC, request.WriteToPackage());
+            GamePatches.InvokeRPC(container.m_nview, ContainerPatch.ItemMoveRPC, request);
         }
     }
 }

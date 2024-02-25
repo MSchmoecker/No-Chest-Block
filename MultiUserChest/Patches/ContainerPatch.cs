@@ -32,24 +32,6 @@ namespace MultiUserChest.Patches {
             if (!__instance.m_nview) {
                 __instance.m_nview = __instance.m_rootObjectOverride ? __instance.m_rootObjectOverride.GetComponent<ZNetView>() : __instance.GetComponent<ZNetView>();
             }
-
-            __instance.RegisterRPCs();
-        }
-
-        public static void RegisterRPCs(this Container __instance) {
-            ZNetView nview = __instance.m_nview;
-
-            nview.Register<ZPackage>(ItemMoveRPC, (l, package) => ContainerRPCHandler.RPC_RequestItemMove(__instance, l, package));
-            nview.Register<ZPackage>(ItemAddRPC, (l, package) => ContainerRPCHandler.RPC_RequestItemAdd(__instance, l, package));
-            nview.Register<ZPackage>(ItemRemoveRPC, (l, package) => ContainerRPCHandler.RPC_RequestItemRemove(__instance, l, package));
-            nview.Register<ZPackage>(ItemConsumeRPC, (l, package) => ContainerRPCHandler.RPC_RequestItemConsume(__instance, l, package));
-            nview.Register<ZPackage>(ItemDropRPC, (l, package) => ContainerRPCHandler.RPC_RequestDrop(__instance, l, package));
-
-            nview.Register<ZPackage>(ItemMoveResponseRPC, InventoryHandler.RPC_RequestItemMoveResponse);
-            nview.Register<ZPackage>(ItemAddResponseRPC, InventoryHandler.RPC_RequestItemAddResponse);
-            nview.Register<ZPackage>(ItemRemoveResponseRPC, InventoryHandler.RPC_RequestItemRemoveResponse);
-            nview.Register<ZPackage>(ItemConsumeResponseRPC, InventoryHandler.RPC_RequestItemConsumeResponse);
-            nview.Register<ZPackage>(ItemDropResponseRPC, InventoryHandler.RPC_RequestDropResponse);
         }
 
         // This could maybe converted to a transpiler but is currently not worth it as the order of the statements have to be changed

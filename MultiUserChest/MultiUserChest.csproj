@@ -115,6 +115,7 @@
         <Compile Include="Patches\Compatibility\OdinShip.cs" />
         <Compile Include="Patches\Compatibility\QuickStackPatch.cs" />
         <Compile Include="Patches\ContainerPatch.cs" />
+        <Compile Include="Patches\GamePatches.cs" />
         <Compile Include="Patches\HumanoidPatch.cs" />
         <Compile Include="Patches\InventoryGuiPatch.cs" />
         <Compile Include="Patches\InventoryPatch.cs" />

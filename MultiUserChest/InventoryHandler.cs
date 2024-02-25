@@ -5,23 +5,23 @@ using UnityEngine;
 
 namespace MultiUserChest {
     public static class InventoryHandler {
-        public static void RPC_RequestItemAddResponse(long sender, ZPackage package) {
+        public static void RPC_RequestItemAddResponse(long sender, ZDOID containerId, ZPackage package) {
             HandleRPC(new RequestChestAddResponse(package), p => GetSourceInventory(p.SourceID), RPC_RequestItemAddResponse);
         }
 
-        public static void RPC_RequestItemRemoveResponse(long sender, ZPackage package) {
+        public static void RPC_RequestItemRemoveResponse(long sender, ZDOID containerId, ZPackage package) {
             HandleRPC(new RequestChestRemoveResponse(package), p => GetTargetInventory(p.SourceID), RPC_RequestItemRemoveResponse);
         }
 
-        public static void RPC_RequestDropResponse(long sender, ZPackage package) {
+        public static void RPC_RequestDropResponse(long sender, ZDOID containerId, ZPackage package) {
             HandleRPC(new RequestDropResponse(package), RPC_RequestDropResponse);
         }
 
-        public static void RPC_RequestItemConsumeResponse(long sender, ZPackage package) {
+        public static void RPC_RequestItemConsumeResponse(long sender, ZDOID containerId, ZPackage package) {
             HandleRPC(new RequestConsumeResponse(package), RPC_RequestItemConsumeResponse);
         }
 
-        public static void RPC_RequestItemMoveResponse(long sender, ZPackage package) {
+        public static void RPC_RequestItemMoveResponse(long sender, ZDOID containerId, ZPackage package) {
             HandleRPC(new RequestMoveResponse(package), RPC_RequestItemMoveResponse);
         }
 

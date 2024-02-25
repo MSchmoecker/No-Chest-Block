@@ -5,52 +5,55 @@ using UnityEngine;
 
 namespace MultiUserChest {
     public static class ContainerRPCHandler {
-        public static void RPC_RequestItemAdd(Container container, long sender, ZPackage package) {
-            HandleRPC(container, sender, ContainerPatch.ItemAddResponseRPC, RequestItemAdd, () => new RequestChestAdd(package));
+        public static void RPC_RequestItemAdd(long sender, ZDOID containerId, ZPackage package) {
+            HandleRPC(containerId, sender, ContainerPatch.ItemAddResponseRPC, RequestItemAdd, new RequestChestAdd(package));
         }
 
-        public static void RPC_RequestItemRemove(Container container, long sender, ZPackage package) {
-            HandleRPC(container, sender, ContainerPatch.ItemRemoveResponseRPC, RequestItemRemove, () => new RequestChestRemove(package));
+        public static void RPC_RequestItemRemove( long sender, ZDOID containerId,ZPackage package) {
+            HandleRPC(containerId, sender, ContainerPatch.ItemRemoveResponseRPC, RequestItemRemove, new RequestChestRemove(package));
         }
 
-        public static void RPC_RequestItemConsume(Container container, long sender, ZPackage package) {
-            HandleRPC(container, sender, ContainerPatch.ItemConsumeResponseRPC, RequestItemConsume, () => new RequestConsume(package));
+        public static void RPC_RequestItemConsume(long sender, ZDOID containerId, ZPackage package) {
+            HandleRPC(containerId, sender, ContainerPatch.ItemConsumeResponseRPC, RequestItemConsume, new RequestConsume(package));
         }
 
-        public static void RPC_RequestItemMove(Container container, long sender, ZPackage package) {
-            HandleRPC(container, sender, ContainerPatch.ItemMoveResponseRPC, RequestItemMove, () => new RequestMove(package));
+        public static void RPC_RequestItemMove(long sender, ZDOID containerId, ZPackage package) {
+            HandleRPC(containerId, sender, ContainerPatch.ItemMoveResponseRPC, RequestItemMove, new RequestMove(package));
         }
 
-        public static void RPC_RequestDrop(Container container, long sender, ZPackage package) {
-            HandleRPC(container, sender, ContainerPatch.ItemDropResponseRPC, RequestDrop, () => new RequestDrop(package));
+        public static void RPC_RequestDrop(long sender, ZDOID containerId, ZPackage package) {
+            HandleRPC(containerId, sender, ContainerPatch.ItemDropResponseRPC, RequestDrop, new RequestDrop(package));
         }
 
-        private static void HandleRPC<TResponse, TInput>(Container container, long target, string rpcInvoke, Func<Inventory, TInput, TResponse> message, Func<TInput> input) where TResponse : new() where TInput : IPackage {
-            if (!container.IsOwner()) {
-                Log.LogDebug("I am not the owner");
-                container.m_nview.InvokeRPC(target, rpcInvoke, Unpack(new TResponse()));
-                return;
-            }
+        private static void HandleRPC<TResponse, TInput>(ZDOID containerId, long target, string rpcInvoke, Func<Inventory, TInput, TResponse> message, TInput input) where TResponse : IResponse, new() where TInput : IPackage {
+            ZDO zdo = ZDOMan.instance.GetZDO(containerId);
+            ZNetView instance = zdo != null ? ZNetScene.instance.FindInstance(zdo) : null;
 
-            TInput inputPackage = input();
+            TResponse response;
 
+            if (!instance || !instance.IsOwner()) {
 #if DEBUG
-            inputPackage.PrintDebug();
+                if (!instance) {
+                    Log.LogWarning($"{input.GetType().Name}: not handling RPC, ZNetView instance is null");
+                } else if (!instance.IsOwner()) {
+                    Log.LogWarning($"{input.GetType().Name}: not handling RPC, ZNetView instance is not owner");
+                }
 #endif
 
-            container.m_nview.InvokeRPC(target, rpcInvoke, Unpack(message(container.m_inventory, inputPackage)));
-        }
-
-        private static object Unpack(object input) {
-            if (input is IPackage package) {
-#if DEBUG
-                package.PrintDebug();
-#endif
-
-                return package.WriteToPackage();
+                IRequest request = input as IRequest;
+                response = new TResponse() {
+                    SourceID = request?.RequestID ?? 0
+                };
+            } else {
+                response = message(instance.GetComponent<Container>().m_inventory, input);
             }
 
-            return input;
+#if DEBUG
+            input.PrintDebug();
+            response.PrintDebug();
+#endif
+
+            ZRoutedRpc.instance.InvokeRoutedRPC(target, rpcInvoke, containerId, response.WriteToPackage());
         }
 
         public static RequestChestAddResponse RequestItemAdd(this Inventory inventory, RequestChestAdd request) {

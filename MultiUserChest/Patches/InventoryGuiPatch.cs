@@ -37,10 +37,7 @@ namespace MultiUserChest.Patches {
             if (player.CanConsumeItem(item)) {
                 InventoryBlock.Get(player.GetInventory()).BlockConsume = true;
                 RequestConsume request = new RequestConsume(item);
-#if DEBUG
-                Timer.Start(request);
-#endif
-                __instance.m_currentContainer.m_nview.InvokeRPC(ContainerPatch.ItemConsumeRPC, request.WriteToPackage());
+                GamePatches.InvokeRPC(__instance.m_currentContainer.m_nview, ContainerPatch.ItemConsumeRPC, request);
             }
 
             return false;
@@ -92,10 +89,7 @@ namespace MultiUserChest.Patches {
             }
 
             RequestDrop request = new RequestDrop(__instance.m_dragItem.m_gridPos, __instance.m_dragAmount, Player.m_localPlayer.GetZDOID());
-#if DEBUG
-            Timer.Start(request);
-#endif
-            __instance.m_currentContainer.m_nview.InvokeRPC(ContainerPatch.ItemDropRPC, request.WriteToPackage());
+            GamePatches.InvokeRPC(__instance.m_currentContainer.m_nview, ContainerPatch.ItemDropRPC, request);
             __instance.SetupDragItem(null, null, 1);
             __runOriginal = false;
         }
