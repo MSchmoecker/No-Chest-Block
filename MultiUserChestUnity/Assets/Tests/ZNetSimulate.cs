@@ -12,7 +12,7 @@ namespace UnitTests {
             public ZRoutedRpc.RoutedRPCData ToRoutedRpcData() {
                 ZRoutedRpc.RoutedRPCData routedRpcData = new ZRoutedRpc.RoutedRPCData() {
                     m_methodHash = method.GetStableHashCode(),
-                    m_targetZDO = netView.m_zdo.m_uid,
+                    m_targetZDO = netView ? netView.m_zdo.m_uid : ZDOID.None,
                     m_senderPeerID = ZDOMan.instance.m_sessionID,
                 };
 
@@ -32,7 +32,12 @@ namespace UnitTests {
         public static void HandleRoutedRpcs(int count) {
             for (int i = 0; i < count; i++) {
                 RoutedNetViewRpc rpc = routedRpcs.Dequeue();
-                rpc.netView.HandleRoutedRPC(rpc.ToRoutedRpcData());
+
+                if (rpc.netView) {
+                    rpc.netView.HandleRoutedRPC(rpc.ToRoutedRpcData());
+                } else {
+                    ZRoutedRpc.instance.HandleRoutedRPC(rpc.ToRoutedRpcData());
+                }
             }
         }
     }

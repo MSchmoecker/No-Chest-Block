@@ -22,6 +22,7 @@ namespace UnitTests {
             harmony.PatchAll(typeof(ZNetPatches));
             harmony.PatchAll(typeof(SteamManagerPatches));
 
+            harmony.PatchAll(typeof(MultiUserChest.Patches.GamePatches));
             harmony.PatchAll(typeof(MultiUserChest.Patches.InventoryPatch));
         }
 
@@ -88,16 +89,16 @@ namespace UnitTests {
 
         public static class ZNetPatches {
             [HarmonyPrefix]
-            [HarmonyPatch(typeof(ZNetView), nameof(ZNetView.InvokeRPC), new[] { typeof(long), typeof(string), typeof(object[]) })]
-            [HarmonyPatch(typeof(ZNetView), nameof(ZNetView.InvokeRPC), new[] { typeof(string), typeof(object[]) })]
-            public static bool NoZNetViewInvokeRPC(ZNetView __instance, string method, params object[] parameters) {
+            [HarmonyPatch(typeof(ZRoutedRpc), nameof(ZRoutedRpc.InvokeRoutedRPC), new[] { typeof(long), typeof(string), typeof(object[]) })]
+            [HarmonyPatch(typeof(ZRoutedRpc), nameof(ZRoutedRpc.InvokeRoutedRPC), new[] { typeof(string), typeof(object[]) })]
+            public static bool NoZNetViewInvokeRPC(ZNetView __instance, string methodName, params object[] parameters) {
                 if (ZRoutedRpc.s_instance == null) {
                     ZRoutedRpc.s_instance = new ZRoutedRpc(false);
                 }
 
                 ZNetSimulate.routedRpcs.Enqueue(new ZNetSimulate.RoutedNetViewRpc() {
                     netView = __instance,
-                    method = method,
+                    method = methodName,
                     parameters = parameters,
                 });
 

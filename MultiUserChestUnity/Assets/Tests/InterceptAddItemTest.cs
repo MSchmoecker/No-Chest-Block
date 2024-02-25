@@ -211,7 +211,7 @@ namespace UnitTests {
         private RequestChestAdd GetAddRequest() {
             ZNetSimulate.RoutedNetViewRpc rpc = ZNetSimulate.routedRpcs.Dequeue();
             Assert.AreEqual(ContainerPatch.ItemAddRPC, rpc.method);
-            ZPackage package = (ZPackage)rpc.parameters[0];
+            ZPackage package = (ZPackage)rpc.parameters[1];
             package.SetPos(0);
             return new RequestChestAdd(package);
         }
@@ -219,7 +219,7 @@ namespace UnitTests {
         private RequestChestRemove GetRemoveRequest() {
             ZNetSimulate.RoutedNetViewRpc rpc = ZNetSimulate.routedRpcs.Dequeue();
             Assert.AreEqual(ContainerPatch.ItemRemoveRPC, rpc.method);
-            ZPackage package = (ZPackage)rpc.parameters[0];
+            ZPackage package = (ZPackage)rpc.parameters[1];
             package.SetPos(0);
             return new RequestChestRemove(package);
         }
@@ -227,7 +227,7 @@ namespace UnitTests {
         private RequestMove GetMoveRequest() {
             ZNetSimulate.RoutedNetViewRpc rpc = ZNetSimulate.routedRpcs.Dequeue();
             Assert.AreEqual(ContainerPatch.ItemMoveRPC, rpc.method);
-            ZPackage package = (ZPackage)rpc.parameters[0];
+            ZPackage package = (ZPackage)rpc.parameters[1];
             package.SetPos(0);
             return new RequestMove(package);
         }

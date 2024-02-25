@@ -43,6 +43,7 @@ namespace UnitTests {
             Environment.SetEnvironmentVariable("SteamAppId", "892970");
 
             zNetParent.SetActive(true);
+            game.Start();
         }
 
         public static Container CreateContainer(Inventory containerInventory = null) {
@@ -52,7 +53,6 @@ namespace UnitTests {
             container.m_nview.m_zdo.SetOwner(-1);
             container.m_inventory = containerInventory ?? new Inventory("inventory", null, 4, 5);
             container.m_inventory.m_onChanged += container.OnContainerChanged;
-            container.RegisterRPCs();
             container.gameObject.AddComponent<ContainerExtend>();
 
             inventories.Add(container.m_nview.m_zdo.m_uid, container.m_inventory);

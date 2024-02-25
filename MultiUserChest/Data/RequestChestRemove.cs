@@ -19,7 +19,7 @@ namespace MultiUserChest {
             this.switchItem = switchItem?.Clone();
             SourceInventory = sourceInventory;
             TargetInventory = targetInventory;
-            item = sourceInventory.GetItemAt(fromPos.x, fromPos.y)?.Clone();
+            item = sourceInventory?.GetItemAt(fromPos.x, fromPos.y)?.Clone();
         }
 
         public RequestChestRemove(ZPackage package) {

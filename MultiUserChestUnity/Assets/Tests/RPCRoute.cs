@@ -53,28 +53,28 @@ namespace UnitTests {
                 return false;
             }
 
-            [HarmonyPatch(typeof(ZNetView), nameof(ZNetView.InvokeRPC), new[] { typeof(long), typeof(string), typeof(object[]) }), HarmonyPrefix]
-            public static void InvokeRPCPatch(string method) {
-                throw new CallThrow(method);
+            [HarmonyPatch(typeof(ZRoutedRpc), nameof(ZRoutedRpc.InvokeRoutedRPC), new[] { typeof(long), typeof(string), typeof(object[]) }), HarmonyPrefix]
+            public static void InvokeRPCPatch(string methodName) {
+                throw new CallThrow(methodName);
             }
         }
 
         [Test]
-        public void ContainerHasRegisterRPCs() {
-            Assert.IsTrue(container.m_nview.m_functions.ContainsKey(RequestMoveRPC.GetStableHashCode()));
-            Assert.IsTrue(container.m_nview.m_functions.ContainsKey(RequestMoveResponseRPC.GetStableHashCode()));
+        public void ZRoutedRpcHasRegisterRPCs() {
+            Assert.IsTrue(ZRoutedRpc.instance.m_functions.ContainsKey(RequestMoveRPC.GetStableHashCode()));
+            Assert.IsTrue(ZRoutedRpc.instance.m_functions.ContainsKey(RequestMoveResponseRPC.GetStableHashCode()));
 
-            Assert.IsTrue(container.m_nview.m_functions.ContainsKey(RequestAddRPC.GetStableHashCode()));
-            Assert.IsTrue(container.m_nview.m_functions.ContainsKey(RequestAddResponseRPC.GetStableHashCode()));
+            Assert.IsTrue(ZRoutedRpc.instance.m_functions.ContainsKey(RequestAddRPC.GetStableHashCode()));
+            Assert.IsTrue(ZRoutedRpc.instance.m_functions.ContainsKey(RequestAddResponseRPC.GetStableHashCode()));
 
-            Assert.IsTrue(container.m_nview.m_functions.ContainsKey(RequestRemoveRPC.GetStableHashCode()));
-            Assert.IsTrue(container.m_nview.m_functions.ContainsKey(RequestRemoveResponseRPC.GetStableHashCode()));
+            Assert.IsTrue(ZRoutedRpc.instance.m_functions.ContainsKey(RequestRemoveRPC.GetStableHashCode()));
+            Assert.IsTrue(ZRoutedRpc.instance.m_functions.ContainsKey(RequestRemoveResponseRPC.GetStableHashCode()));
 
-            Assert.IsTrue(container.m_nview.m_functions.ContainsKey(RequestConsumeRPC.GetStableHashCode()));
-            Assert.IsTrue(container.m_nview.m_functions.ContainsKey(RequestConsumeResponseRPC.GetStableHashCode()));
+            Assert.IsTrue(ZRoutedRpc.instance.m_functions.ContainsKey(RequestConsumeRPC.GetStableHashCode()));
+            Assert.IsTrue(ZRoutedRpc.instance.m_functions.ContainsKey(RequestConsumeResponseRPC.GetStableHashCode()));
 
-            Assert.IsTrue(container.m_nview.m_functions.ContainsKey(RequestDropRPC.GetStableHashCode()));
-            Assert.IsTrue(container.m_nview.m_functions.ContainsKey(RequestDropResponseRPC.GetStableHashCode()));
+            Assert.IsTrue(ZRoutedRpc.instance.m_functions.ContainsKey(RequestDropRPC.GetStableHashCode()));
+            Assert.IsTrue(ZRoutedRpc.instance.m_functions.ContainsKey(RequestDropResponseRPC.GetStableHashCode()));
         }
 
         private static ZPackage NewSendAbleRPC_ZPackage() {
@@ -85,44 +85,45 @@ namespace UnitTests {
             return pgk;
         }
 
-        private static ZPackage NewSendAbleRPC_Bool() {
-            ZPackage pgk = new ZPackage();
-            pgk.Write(0L);
-            pgk.Write(false);
-            pgk.SetPos(0);
-            return pgk;
-        }
-
-        private static void TestRPCCallsResponse(string rpc, string rpcResponse, ZPackage package) {
-            RoutedMethodBase toCall = container.m_nview.m_functions[rpc.GetStableHashCode()];
-            var exception = Assert.Throws<TargetInvocationException>(() => toCall.Invoke(0, package));
+        private static void TestRPCCallsResponse(string rpc, string rpcResponse, IPackage package) {
+            RoutedMethodBase toCall = ZRoutedRpc.instance.m_functions[rpc.GetStableHashCode()];
+            var exception = Assert.Throws<TargetInvocationException>(() => {
+                ZRoutedRpc.RoutedRPCData routedRpcData = new ZRoutedRpc.RoutedRPCData();
+                routedRpcData.m_senderPeerID = 0L; //this.m_id;
+                routedRpcData.m_targetPeerID = 0L; //targetPeerID;
+                routedRpcData.m_targetZDO = ZDOID.None; //targetZDO;
+                routedRpcData.m_methodHash = rpc.GetStableHashCode(); //methodName.GetStableHashCode();
+                ZRpc.Serialize(new object[] { ZDOID.None, package.WriteToPackage() }, ref routedRpcData.m_parameters);
+                routedRpcData.m_parameters.SetPos(0);
+                toCall.Invoke(routedRpcData.m_senderPeerID, routedRpcData.m_parameters);
+            });
             Assert.IsInstanceOf<CallThrow>(exception.InnerException);
             Assert.AreEqual(rpcResponse, exception.InnerException.Message);
         }
 
         [Test]
         public void RequestMoveCallsResponse() {
-            TestRPCCallsResponse(RequestMoveRPC, RequestMoveResponseRPC, NewSendAbleRPC_ZPackage());
+            TestRPCCallsResponse(RequestMoveRPC, RequestMoveResponseRPC, new RequestMove(null, Vector2i.zero, 0, null));
         }
 
         [Test]
         public void RequestAddCallsResponse() {
-            TestRPCCallsResponse(RequestAddRPC, RequestAddResponseRPC, NewSendAbleRPC_ZPackage());
+            TestRPCCallsResponse(RequestAddRPC, RequestAddResponseRPC, new RequestChestAdd(Vector2i.zero, 0, null, null, null));
         }
 
         [Test]
         public void RequestRemoveCallsResponse() {
-            TestRPCCallsResponse(RequestRemoveRPC, RequestRemoveResponseRPC, NewSendAbleRPC_ZPackage());
+            TestRPCCallsResponse(RequestRemoveRPC, RequestRemoveResponseRPC, new RequestChestRemove(Vector2i.zero, Vector2i.zero, 0, null, null, null));
         }
 
         [Test]
         public void RequestConsumeCallsResponse() {
-            TestRPCCallsResponse(RequestConsumeRPC, RequestConsumeResponseRPC, NewSendAbleRPC_ZPackage());
+            TestRPCCallsResponse(RequestConsumeRPC, RequestConsumeResponseRPC, new RequestConsume(new ItemDrop.ItemData()));
         }
 
         [Test]
         public void RequestDropResponse() {
-            TestRPCCallsResponse(RequestDropRPC, RequestDropResponseRPC, NewSendAbleRPC_ZPackage());
+            TestRPCCallsResponse(RequestDropRPC, RequestDropResponseRPC, new RequestDrop(Vector2i.zero, 0, ZDOID.None));
         }
     }
 }
