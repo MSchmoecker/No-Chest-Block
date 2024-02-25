@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿using System.Linq;
+using HarmonyLib;
 
 namespace MultiUserChest.Patches {
     /// <summary>
@@ -11,7 +12,10 @@ namespace MultiUserChest.Patches {
         public static bool HaveEmptySlotPrefix(Humanoid __instance, ref bool __result) {
             if (InventoryBlock.Get(__instance.GetInventory()).IsAnySlotBlocked()) {
 #if DEBUG
-                Log.LogDebug("Pickup blocked because of blocked slot");
+                Log.LogDebug($"Pickup blocked because of blocked slot:");
+                Log.LogDebug($"  BlockConsume: {InventoryBlock.Get(__instance.GetInventory()).BlockConsume}");
+                Log.LogDebug($"  BlockAllSlots: {InventoryBlock.Get(__instance.GetInventory()).BlockAllSlots}");
+                Log.LogDebug($"  blockedSlots: " + string.Join(", ", InventoryBlock.Get(__instance.GetInventory()).BlockedSlots.Select(pair => $"({pair.Key}): {pair.Value}")));
 #endif
                 __result = false;
                 return false;

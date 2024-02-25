@@ -4,8 +4,8 @@ namespace MultiUserChest {
         public bool Success { get; set; }
         public int Amount { get; set; }
 
-        public readonly ItemDrop.ItemData responseItem;
-        public readonly bool hasSwitched;
+        public ItemDrop.ItemData responseItem;
+        public bool hasSwitched;
 
         public RequestChestRemoveResponse(int sourceID, bool success, int amount, bool hasSwitched, ItemDrop.ItemData responseItem) {
             SourceID = sourceID;
@@ -45,6 +45,7 @@ namespace MultiUserChest {
 #if DEBUG
         public void PrintDebug() {
             Log.LogDebug($"RequestRemoveResponse:");
+            Log.LogDebug($"  id: {SourceID}");
             Log.LogDebug($"  success: {Success}");
             Log.LogDebug($"  amount: {Amount}");
             Log.LogDebug($"  hasSwitched: {hasSwitched}");

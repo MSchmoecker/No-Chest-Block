@@ -35,8 +35,9 @@
 #if DEBUG
         public void PrintDebug() {
             Log.LogDebug($"RequestConsumeResponse:");
-            Log.LogDebug($"Success: {Success}");
-            Log.LogDebug($"Amount: {Amount}");
+            Log.LogDebug($"  id: {SourceID}");
+            Log.LogDebug($"  success: {Success}");
+            Log.LogDebug($"  amount: {Amount}");
             InventoryHelper.PrintItem(nameof(item), item);
         }
 #endif

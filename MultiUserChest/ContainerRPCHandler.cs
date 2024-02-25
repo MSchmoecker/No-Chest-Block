@@ -44,6 +44,13 @@ namespace MultiUserChest {
                 response = new TResponse() {
                     SourceID = request?.RequestID ?? 0
                 };
+
+                if (request is RequestChestAdd addRequest && response is RequestChestAddResponse addResponse) {
+                    addResponse.switchItem = addRequest.dragItem;
+                    addResponse.inventoryPos = addRequest.dragItem?.m_gridPos ?? Vector2i.zero;
+                } else if (request is RequestChestRemove removeRequest && response is RequestChestRemoveResponse removeResponse) {
+                    removeResponse.responseItem = removeRequest.switchItem;
+                }
             } else {
                 response = message(instance.GetComponent<Container>().m_inventory, input);
             }

@@ -10,24 +10,26 @@ namespace UnitTests {
         private Harmony harmony;
         private static Container container;
 
-        private const string RequestMoveRPC = "MUC_RequestItemMove";
-        private const string RequestMoveResponseRPC = "MUC_RequestItemMoveResponse";
+        public const string RequestMoveRPC = "MUC_RequestItemMove";
+        public const string RequestMoveResponseRPC = "MUC_RequestItemMoveResponse";
 
-        private const string RequestAddRPC = "MUC_RequestItemAdd";
-        private const string RequestAddResponseRPC = "MUC_RequestItemAddResponse";
+        public const string RequestAddRPC = "MUC_RequestItemAdd";
+        public const string RequestAddResponseRPC = "MUC_RequestItemAddResponse";
 
-        private const string RequestRemoveRPC = "MUC_RequestItemRemove";
-        private const string RequestRemoveResponseRPC = "MUC_RequestItemRemoveResponse";
+        public const string RequestRemoveRPC = "MUC_RequestItemRemove";
+        public const string RequestRemoveResponseRPC = "MUC_RequestItemRemoveResponse";
 
-        private const string RequestConsumeRPC = "MUC_RequestItemConsume";
-        private const string RequestConsumeResponseRPC = "MUC_RequestItemConsumeResponse";
+        public const string RequestConsumeRPC = "MUC_RequestItemConsume";
+        public const string RequestConsumeResponseRPC = "MUC_RequestItemConsumeResponse";
 
-        private const string RequestDropRPC = "MUC_RequestItemDrop";
-        private const string RequestDropResponseRPC = "MUC_RequestItemDropResponse";
+        public const string RequestDropRPC = "MUC_RequestItemDrop";
+        public const string RequestDropResponseRPC = "MUC_RequestItemDropResponse";
 
         [SetUp]
         public void SetUp() {
             container = Helper.CreateContainer();
+
+            ZNetSimulate.routedRpcs.Clear();
         }
 
         [OneTimeSetUp]

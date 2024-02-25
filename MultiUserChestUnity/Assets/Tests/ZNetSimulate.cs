@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using MultiUserChest;
+using NUnit.Framework;
 
 namespace UnitTests {
     public class ZNetSimulate {
@@ -39,6 +42,17 @@ namespace UnitTests {
                     ZRoutedRpc.instance.HandleRoutedRPC(rpc.ToRoutedRpcData());
                 }
             }
+        }
+
+        public static TPackage GetRoutedRpc<TPackage>(string expectedMethod, Func<ZPackage, TPackage> converter) {
+            RoutedNetViewRpc rpc = routedRpcs.ToArray()[0];
+            Assert.AreEqual(expectedMethod, rpc.method);
+            Assert.AreEqual(typeof(ZDOID), rpc.parameters[0].GetType());
+            Assert.AreEqual(typeof(ZPackage), rpc.parameters[1].GetType());
+
+            ZPackage package = (ZPackage)rpc.parameters[1];
+            package.SetPos(0);
+            return converter(package);
         }
     }
 }

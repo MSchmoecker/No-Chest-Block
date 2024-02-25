@@ -4,8 +4,8 @@ namespace MultiUserChest {
         public bool Success { get; set; }
         public int Amount { get; set; }
 
-        public readonly Vector2i inventoryPos;
-        public readonly ItemDrop.ItemData switchItem;
+        public Vector2i inventoryPos;
+        public ItemDrop.ItemData switchItem;
 
         public RequestChestAddResponse(int sourceID, bool success, Vector2i inventoryPos, int amount, ItemDrop.ItemData switchItem) {
             SourceID = sourceID;
@@ -44,7 +44,7 @@ namespace MultiUserChest {
 
 #if DEBUG
         public void PrintDebug() {
-            Log.LogDebug($"RequestAddResponse:");
+            Log.LogDebug($"RequestChestAddResponse:");
             Log.LogDebug($"  id: {SourceID}");
             Log.LogDebug($"  inventoryPos: {inventoryPos}");
             Log.LogDebug($"  success: {Success}");

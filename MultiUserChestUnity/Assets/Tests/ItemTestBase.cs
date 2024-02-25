@@ -40,8 +40,8 @@ namespace UnitTests {
         }
 
         public static void TestResponse(IResponse response, bool success, int amount) {
-            Assert.AreEqual(success, response.Success);
-            Assert.AreEqual(amount, response.Amount);
+            Assert.AreEqual(success, response.Success, "Response success");
+            Assert.AreEqual(amount, response.Amount, "Response amount");
         }
 
         public static void TestAddRequest(RequestChestAdd request, RequestChestAdd original, TestItem dragItem, Vector2i toPos, bool allowSwitch, Inventory sourceInventory, Inventory targetInventory) {

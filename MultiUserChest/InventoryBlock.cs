@@ -8,11 +8,11 @@ namespace MultiUserChest {
         public bool BlockAllSlots { get; set; }
         public bool BlockConsume { get; set; }
 
-        private readonly Dictionary<Vector2i, int> blockedSlots = new Dictionary<Vector2i, int>();
+        public Dictionary<Vector2i, int> BlockedSlots { get; } = new Dictionary<Vector2i, int>();
 
         public static InventoryBlock Get(Inventory inventory) {
-            if (Inventories.ContainsKey(inventory)) {
-                return Inventories[inventory];
+            if (Inventories.TryGetValue(inventory, out InventoryBlock existingBlock)) {
+                return existingBlock;
             }
 
             InventoryBlock block = new InventoryBlock();
@@ -25,10 +25,10 @@ namespace MultiUserChest {
                 return;
             }
 
-            if (blockedSlots.ContainsKey(slot)) {
-                blockedSlots[slot]++;
+            if (BlockedSlots.ContainsKey(slot)) {
+                BlockedSlots[slot]++;
             } else {
-                blockedSlots[slot] = 1;
+                BlockedSlots[slot] = 1;
             }
         }
 
@@ -37,29 +37,29 @@ namespace MultiUserChest {
                 return;
             }
 
-            if (!blockedSlots.ContainsKey(slot)) {
+            if (!BlockedSlots.ContainsKey(slot)) {
                 return;
             }
 
-            blockedSlots[slot]--;
+            BlockedSlots[slot]--;
 
-            if (blockedSlots[slot] <= 0) {
-                blockedSlots.Remove(slot);
+            if (BlockedSlots[slot] <= 0) {
+                BlockedSlots.Remove(slot);
             }
         }
 
         public void ReleaseBlockedSlots() {
-            blockedSlots.Clear();
+            BlockedSlots.Clear();
             BlockAllSlots = false;
             BlockConsume = false;
         }
 
         public bool IsSlotBlocked(Vector2i slot) {
-            return BlockConsume || BlockAllSlots || blockedSlots.ContainsKey(slot);
+            return BlockConsume || BlockAllSlots || BlockedSlots.ContainsKey(slot);
         }
 
         public bool IsAnySlotBlocked() {
-            return BlockConsume || BlockAllSlots || blockedSlots.Count > 0;
+            return BlockConsume || BlockAllSlots || BlockedSlots.Count > 0;
         }
 
         private static bool CanBlockSlot(Vector2i slot) {
