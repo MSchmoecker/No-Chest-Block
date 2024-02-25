@@ -1,5 +1,8 @@
 # Changelog
 
+0.5.8
+- Fixed issues when a player interacts with a chest while the owning player is teleporting away
+
 0.5.7
 - Fixed type warning about ItemDrawer when it's not installed
 
