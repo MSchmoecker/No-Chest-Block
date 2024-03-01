@@ -40,19 +40,16 @@ namespace MultiUserChest {
                 }
 #endif
 
-                IRequest request = input as IRequest;
-                response = new TResponse() {
-                    SourceID = request?.RequestID ?? 0
-                };
-
-                if (request is RequestChestAdd addRequest && response is RequestChestAddResponse addResponse) {
-                    addResponse.switchItem = addRequest.dragItem;
-                    addResponse.inventoryPos = addRequest.dragItem?.m_gridPos ?? Vector2i.zero;
-                } else if (request is RequestChestRemove removeRequest && response is RequestChestRemoveResponse removeResponse) {
-                    removeResponse.responseItem = removeRequest.switchItem;
-                }
+                response = FallbackResponse<TResponse>(input as IRequest);
             } else {
-                response = message(instance.GetComponent<Container>().m_inventory, input);
+                Container container = instance.GetComponentInChildren<Container>();
+
+                if (container) {
+                    response = message(container.GetInventory(), input);
+                } else {
+                    Log.LogWarning($"{input.GetType().Name}: not handling RPC, Container component not found on {instance.name}");
+                    response = FallbackResponse<TResponse>(input as IRequest);
+                }
             }
 
 #if DEBUG
@@ -61,6 +58,21 @@ namespace MultiUserChest {
 #endif
 
             ZRoutedRpc.instance.InvokeRoutedRPC(target, rpcInvoke, containerId, response.WriteToPackage());
+        }
+
+        private static TResponse FallbackResponse<TResponse>(IRequest request) where TResponse : IResponse, new() {
+            TResponse response = new TResponse() {
+                SourceID = request?.RequestID ?? 0
+            };
+
+            if (request is RequestChestAdd addRequest && response is RequestChestAddResponse addResponse) {
+                addResponse.switchItem = addRequest.dragItem;
+                addResponse.inventoryPos = addRequest.dragItem?.m_gridPos ?? Vector2i.zero;
+            } else if (request is RequestChestRemove removeRequest && response is RequestChestRemoveResponse removeResponse) {
+                removeResponse.responseItem = removeRequest.switchItem;
+            }
+
+            return response;
         }
 
         public static RequestChestAddResponse RequestItemAdd(this Inventory inventory, RequestChestAdd request) {
