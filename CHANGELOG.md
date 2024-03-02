@@ -1,5 +1,8 @@
 # Changelog
 
+0.5.9
+- Fixed issues with ships and carts caused by the 0.5.8 update
+
 0.5.8
 - Fixed issues when a player interacts with a chest while the owning player is teleporting away
 
