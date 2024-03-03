@@ -1,5 +1,8 @@
 # Changelog
 
+0.5.10
+- Uploaded without debugging context, which has slowed down the mod a lot
+
 0.5.9
 - Fixed issues with ships and carts caused by the 0.5.8 update
 
