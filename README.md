@@ -16,7 +16,7 @@ Please report all errors and desyncs if they occur.
 
 
 ## FAQ
-- Who needs this installed?
+- Where does this mod needs to be installed?
   - The server and every player who joins it.
     You will be disconnected if there is a version mismatch or the mod is not installed somewhere.
 
@@ -24,7 +24,7 @@ Please report all errors and desyncs if they occur.
   - No, only one move will be accepted.
 
 - How is item duplication/loss prevented?
-  - An item will never exist twice.
+  - An item never exists twice.
     When an interaction is made inside a shared chest, the item is packed into a message and sent to the player currently managing the chest.
     This player instance then decides whether or not to move the item and sends the result back to the player who made the interaction.
 

@@ -1,5 +1,8 @@
 # Changelog
 
+0.6.0
+- Added a `MUC_Ignore` ZDO bool flag that other mods can set on containers ZNetViews to exclude them from interacting with Multi User Chest
+
 0.5.10
 - Uploaded without debugging context, which has slowed down the mod a lot
 
