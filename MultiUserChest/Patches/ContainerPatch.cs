@@ -25,7 +25,7 @@ namespace MultiUserChest.Patches {
         public static void ContainerAwakePatch(Container __instance) {
             __instance.gameObject.AddComponent<ContainerExtend>();
 
-            if (__instance.IsOdinShipContainer()) {
+            if (__instance.IgnoreInventory()) {
                 return;
             }
 
@@ -37,7 +37,7 @@ namespace MultiUserChest.Patches {
         // This could maybe converted to a transpiler but is currently not worth it as the order of the statements have to be changed
         [HarmonyPatch(typeof(Container), nameof(Container.RPC_RequestOpen)), HarmonyPrefix]
         public static bool ContainerRPC_RequestOpenPatch(Container __instance, long uid, long playerID) {
-            if (__instance.IsOdinShipContainer() || !__instance.m_nview.IsOwner()) {
+            if (__instance.IgnoreInventory() || !__instance.m_nview.IsOwner()) {
                 return true;
             }
 
@@ -60,7 +60,7 @@ namespace MultiUserChest.Patches {
 
         [HarmonyPatch(typeof(Container), nameof(Container.RPC_RequestStack)), HarmonyPrefix]
         public static bool ContainerRPC_RequestStackPatch(Container __instance, long uid, long playerID) {
-            if (__instance.IsOdinShipContainer() || !__instance.m_nview.IsOwner()) {
+            if (__instance.IgnoreInventory() || !__instance.m_nview.IsOwner()) {
                 return true;
             }
 
@@ -89,7 +89,7 @@ namespace MultiUserChest.Patches {
 
         [HarmonyPatch(typeof(Container), nameof(Container.UpdateUseVisual)), HarmonyPostfix]
         public static void ContainerUpdateUseVisualPatch(Container __instance) {
-            if (__instance.IsOdinShipContainer()) {
+            if (__instance.IgnoreInventory()) {
                 return;
             }
 

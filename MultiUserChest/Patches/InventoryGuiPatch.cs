@@ -57,8 +57,8 @@ namespace MultiUserChest.Patches {
         }
 
         public static bool CanOpenContainer(Container container) {
-            if (container.IsOdinShipContainer()) {
-                // do not change behavior for OdinShip containers
+            if (container.IgnoreInventory()) {
+                // do not change behavior for ignored containers
                 return container.IsOwner();
             }
 

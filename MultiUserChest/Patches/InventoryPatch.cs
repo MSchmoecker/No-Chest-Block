@@ -53,6 +53,10 @@ namespace MultiUserChest.Patches {
 
             InventoryOwner owner = InventoryOwner.GetOwner(__instance);
 
+            if (owner.IgnoreInventory()) {
+                return;
+            }
+
             // forbid removing items from inventories not owned by the local instance
             if (owner != null && owner.IsValid() && !owner.ZNetView.IsOwner()) {
                 __result = false;
@@ -121,14 +125,9 @@ namespace MultiUserChest.Patches {
                 return false;
             }
 
-            if (OdinShip.IsOdinShipInstalled() && (!from.ZNetView.IsOwner() || !to.ZNetView.IsOwner())) {
-                bool toIsOdinShipContainer = to is ContainerInventoryOwner toContainer && toContainer.Container.IsOdinShipContainer();
-                bool fromIsOdinShipContainer = from is ContainerInventoryOwner fromContainer && fromContainer.Container.IsOdinShipContainer();
-
-                if (toIsOdinShipContainer || fromIsOdinShipContainer) {
-                    successfulAdded = false;
-                    return true;
-                }
+            if (to.IgnoreInventory() || from.IgnoreInventory()) {
+                successfulAdded = false;
+                return false;
             }
 
             if (from.ZNetView.IsOwner() && !to.ZNetView.IsOwner()) {

@@ -111,6 +111,7 @@
         <Compile Include="InventoryHandler.cs" />
         <Compile Include="InventoryOwner.cs" />
         <Compile Include="InventoryPreview.cs" />
+        <Compile Include="Patches\Compatibility\InventoryIgnore.cs" />
         <Compile Include="Patches\Compatibility\ItemDrawerCompat.cs" />
         <Compile Include="Patches\Compatibility\OdinShip.cs" />
         <Compile Include="Patches\Compatibility\QuickStackPatch.cs" />

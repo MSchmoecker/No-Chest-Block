@@ -10,6 +10,10 @@ namespace MultiUserChest {
         }
 
         public static InventoryOwner GetOwner(Inventory inventory) {
+            if (inventory == null) {
+                return null;
+            }
+
             if (HumanoidExtend.GetHumanoid(inventory, out HumanoidInventoryOwner fromHumanoid)) {
                 return fromHumanoid;
             }
@@ -22,6 +26,10 @@ namespace MultiUserChest {
         }
 
         public static InventoryOwner GetOwner(ItemDrop.ItemData item) {
+            if (item == null) {
+                return null;
+            }
+
             if (InventoryPatch.InventoryOfItem.TryGetValue(item, out Inventory fromInventory)) {
                 return GetOwner(fromInventory);
             }
