@@ -65,6 +65,15 @@
       "dependencies": {},
       "url": "https://packages.unity.com"
     },
+    "com.unity.inputsystem": {
+      "version": "https://github.com/MSchmoecker/InputSystem.git?path=/Packages/com.unity.inputsystem",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.unity.modules.uielements": "1.0.0"
+      },
+      "hash": "ba2d5ce28f7f8bb678e1012652c303a8302d2729"
+    },
     "com.unity.test-framework": {
       "version": "1.1.33",
       "depth": 0,

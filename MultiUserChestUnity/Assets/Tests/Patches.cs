@@ -7,6 +7,8 @@ using BepInEx;
 using MultiUserChest;
 using HarmonyLib;
 using NUnit.Framework;
+using UnityEngine;
+using Valheim.SettingsGui;
 
 namespace UnitTests {
     [SetUpFixture]
@@ -20,6 +22,7 @@ namespace UnitTests {
             harmony.PatchAll(typeof(DropPatch));
             harmony.PatchAll(typeof(PathsPatches));
             harmony.PatchAll(typeof(ZNetPatches));
+            harmony.PatchAll(typeof(GameAwakePatches));
             harmony.PatchAll(typeof(SteamManagerPatches));
 
             harmony.PatchAll(typeof(MultiUserChest.Patches.GamePatches));
@@ -102,6 +105,36 @@ namespace UnitTests {
                     parameters = parameters,
                 });
 
+                return false;
+            }
+        }
+
+        public static class GameAwakePatches {
+            [HarmonyPatch(typeof(Game), nameof(Game.Awake)), HarmonyPrefix]
+            public static void GameAwakePatch(Game __instance) {
+                __instance.m_consolePrefab = new GameObject();
+                __instance.m_serverOptionPrefab = new GameObject();
+            }
+
+            [HarmonyPatch(typeof(FejdStartup), nameof(FejdStartup.AwakePlatforms)), HarmonyPrefix]
+            public static bool AwakePlatformsPatch(ref bool __result) {
+                if (FejdStartup.s_monoUpdaters == null) {
+                    FejdStartup.s_monoUpdaters = new GameObject();
+                    FejdStartup.s_monoUpdaters.AddComponent<MonoUpdaters>();
+                    UnityEngine.Object.DontDestroyOnLoad(FejdStartup.s_monoUpdaters);
+                }
+
+                __result = true;
+                return false;
+            }
+
+            [HarmonyPatch(typeof(FileHelpers), nameof(FileHelpers.UpdateCloudEnabledStatus)), HarmonyPrefix]
+            public static bool UpdateCloudEnabledStatusPatch() {
+                return false;
+            }
+
+            [HarmonyPatch(typeof(GraphicsModeManager), nameof(GraphicsModeManager.ApplyMode)), HarmonyPrefix]
+            public static bool NoGraphicsModeManagerAwake() {
                 return false;
             }
         }
