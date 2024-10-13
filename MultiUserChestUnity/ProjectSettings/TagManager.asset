@@ -3,7 +3,8 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - snappoint
   layers:
   - Default
   - TransparentFX
@@ -13,30 +14,30 @@ TagManager:
   - UI
   - 
   - 
+  - effect
+  - character
+  - piece
+  - terrain
+  - item
+  - ghost
+  - character_trigger
+  - static_solid
+  - piece_nonsolid
+  - character_ghost
+  - hitbox
+  - skybox
+  - Default_small
+  - WaterVolume
+  - weapon
+  - blocker
+  - pathblocker
+  - viewblock
+  - character_net
+  - character_noenv
+  - vehicle
   - 
   - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - smoke
   m_SortingLayers:
   - name: Default
     uniqueID: 0
