@@ -1,5 +1,9 @@
 # Changelog
 
+0.6.1
+- Fixed chests sometimes remained open after interaction
+- Removed sync of visual chest opening, normal vanilla behavior is used again
+
 0.6.0
 - Added a `MUC_Ignore` ZDO bool flag that other mods can set on containers ZNetViews to exclude them from interacting with Multi User Chest
 
@@ -109,7 +113,7 @@
 - Added compatibility with [Valheim Simple Auto Sort](https://www.nexusmods.com/valheim/mods/1824)
 
 0.1.3
-- Sync visual chest opening with other players
+- Added sync of visual chest opening with other players
 - Added compatibility with [QuickDeposit](https://valheim.thunderstore.io/package/MaGic/Quick_Deposit/) and [QuickStack](https://valheim.thunderstore.io/package/damnsneaker/QuickStack/)
 
 0.1.2
