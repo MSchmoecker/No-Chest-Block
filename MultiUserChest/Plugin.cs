@@ -23,8 +23,6 @@ namespace MultiUserChest {
             Log.Init(Logger);
 
             harmony.PatchAll();
-
-            InvokeRepeating(nameof(UpdateAccessedContainer), 0, 0.1f);
         }
 
         private void Start() {
@@ -40,20 +38,6 @@ namespace MultiUserChest {
 
             if (Chainloader.PluginInfos.ContainsKey("mkz.itemdrawers")) {
                 harmony.PatchAll(typeof(ItemDrawerCompat));
-            }
-        }
-
-        private void UpdateAccessedContainer() {
-            if (!Player.m_localPlayer || !Player.m_localPlayer.m_nview.IsValid() || !InventoryGui.instance) {
-                return;
-            }
-
-            Container container = InventoryGui.instance.m_currentContainer;
-
-            if (container && container.m_nview.IsValid()) {
-                Player.m_localPlayer.m_nview.GetZDO().Set("accessed-container", container.m_nview.GetZDO().m_uid);
-            } else {
-                Player.m_localPlayer.m_nview.GetZDO().Set("accessed-container", ZDOID.None);
             }
         }
     }

@@ -86,31 +86,5 @@ namespace MultiUserChest.Patches {
             bool isMe = playerId == ZNet.GetUID();
             return (containerUse || wagonUse) && !isMe;
         }
-
-        [HarmonyPatch(typeof(Container), nameof(Container.UpdateUseVisual)), HarmonyPostfix]
-        public static void ContainerUpdateUseVisualPatch(Container __instance) {
-            if (__instance.IgnoreInventory()) {
-                return;
-            }
-
-            if (!__instance.m_nview.IsValid() || !Player.m_localPlayer || !InventoryGui.instance) {
-                return;
-            }
-
-            bool inUse = __instance == InventoryGui.instance.m_currentContainer || IsContainerInUse(__instance);
-
-            if (__instance.m_open) {
-                __instance.m_open.SetActive(inUse);
-            }
-
-            if (__instance.m_closed) {
-                __instance.m_closed.SetActive(!inUse);
-            }
-        }
-
-        private static bool IsContainerInUse(Container container) {
-            ZDOID containerId = container.m_nview.GetZDO().m_uid;
-            return Player.GetAllPlayers().Any(p => p != Player.m_localPlayer && p.m_nview.IsValid() && p.m_nview.GetZDO().GetZDOID("accessed-container") == containerId);
-        }
     }
 }
