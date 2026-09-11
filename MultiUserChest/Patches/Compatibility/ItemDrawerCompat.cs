@@ -33,7 +33,7 @@ namespace MultiUserChest {
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(Inventory), nameof(Inventory.AddItem), new[] { typeof(ItemDrop.ItemData) })]
-        [HarmonyPatch(typeof(Inventory), nameof(Inventory.AddItem), new[] { typeof(ItemDrop.ItemData), typeof(int), typeof(int), typeof(int) })]
+        [HarmonyPatch(typeof(Inventory), nameof(Inventory.AddItem), new[] { typeof(ItemDrop.ItemData), typeof(int), typeof(int), typeof(int), typeof(bool) })]
         [HarmonyPriority(Priority.VeryHigh)]
         public static bool PreventItemAdd(Inventory __instance, ItemDrop.ItemData item) {
             if (InventoryOwner.GetOwner(__instance) is ContainerInventoryOwner containerOwner && containerOwner.IsItemDrawer) {

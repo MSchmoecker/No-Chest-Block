@@ -41,7 +41,7 @@ namespace MultiUserChest {
             // invoke vanilla method to add a new item into the inventory system
             // while not as performant as adding creating a ItemDrop manually, this improves compatibility with other mods
             Inventory tempInventory = new Inventory("tmp", null, pos.x + 1, pos.y + 1);
-            tempInventory.AddItem(name, stack, durability, pos, false, quality, variant, crafterID, crafterName, customData, worldLevel, pickedUp);
+            tempInventory.AddItem(name, stack, durability, pos, false, quality, variant, crafterID, crafterName, customData, worldLevel, pickedUp, false);
 
             ItemDrop.ItemData itemData = tempInventory.GetItemAt(pos.x, pos.y);
             tempInventory.RemoveItem(itemData);

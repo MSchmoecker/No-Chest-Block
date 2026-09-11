@@ -94,7 +94,7 @@ namespace MultiUserChest.Patches {
             __runOriginal = false;
         }
 
-        [HarmonyPatch(typeof(Inventory), nameof(Inventory.Load)), HarmonyPostfix]
+        [HarmonyPatch(typeof(Inventory), nameof(Inventory.Load), typeof(ZPackage)), HarmonyPostfix]
         public static void InventorySelectSameItemAfterLoad(Inventory __instance) {
             if (!InventoryGui.instance || InventoryGui.instance.m_dragItem == null) {
                 return;
@@ -127,8 +127,8 @@ namespace MultiUserChest.Patches {
                 return;
             }
 
-            foreach (InventoryGrid.Element element in __instance.m_elements) {
-                if (!preview.GetSlot(element.m_pos, out ItemDrop.ItemData item)) {
+            foreach (InventoryElement element in __instance.m_elements) {
+                if (!preview.GetSlot(element.Position, out ItemDrop.ItemData item)) {
                     continue;
                 }
 
@@ -140,7 +140,7 @@ namespace MultiUserChest.Patches {
             }
         }
 
-        private static void ShowItem(InventoryGrid inventoryGrid, InventoryGrid.Element element, ItemDrop.ItemData item) {
+        private static void ShowItem(InventoryGrid inventoryGrid, InventoryElement element, ItemDrop.ItemData item) {
             if (item?.m_shared == null) {
                 return;
             }
@@ -193,7 +193,7 @@ namespace MultiUserChest.Patches {
             }
         }
 
-        private static void ShowNoItem(InventoryGrid.Element element) {
+        private static void ShowNoItem(InventoryElement element) {
             element.m_durability.gameObject.SetActive(false);
             element.m_icon.enabled = false;
             element.m_amount.enabled = false;

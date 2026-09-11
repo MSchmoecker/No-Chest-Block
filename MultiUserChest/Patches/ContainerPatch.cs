@@ -42,18 +42,18 @@ namespace MultiUserChest.Patches {
             }
 
             if (!__instance.CheckAccess(playerID)) {
-                __instance.m_nview.InvokeRPC(uid, "OpenRespons", false);
+                __instance.m_nview.InvokeRPC(uid, nameof(Container.RPC_OpenResponse), false);
                 return false;
             }
 
             if (IsContainerInUse(__instance, uid)) {
-                __instance.m_nview.InvokeRPC(uid, "OpenRespons", true);
+                __instance.m_nview.InvokeRPC(uid, nameof(Container.RPC_OpenResponse), true);
                 return false;
             }
 
             ZDOMan.instance.ForceSendZDO(uid, __instance.m_nview.GetZDO().m_uid);
             __instance.m_nview.GetZDO().SetOwner(uid);
-            __instance.m_nview.InvokeRPC(uid, "OpenRespons", true);
+            __instance.m_nview.InvokeRPC(uid, nameof(Container.RPC_OpenResponse), true);
 
             return false;
         }
@@ -65,18 +65,18 @@ namespace MultiUserChest.Patches {
             }
 
             if (!__instance.CheckAccess(playerID)) {
-                __instance.m_nview.InvokeRPC(uid, "RPC_StackResponse", false);
+                __instance.m_nview.InvokeRPC(uid, nameof(Container.RPC_StackResponse), false);
                 return false;
             }
 
             if (IsContainerInUse(__instance, uid)) {
-                __instance.m_nview.InvokeRPC(uid, "RPC_StackResponse", true);
+                __instance.m_nview.InvokeRPC(uid, nameof(Container.RPC_StackResponse), true);
                 return false;
             }
 
             ZDOMan.instance.ForceSendZDO(uid, __instance.m_nview.GetZDO().m_uid);
             __instance.m_nview.GetZDO().SetOwner(uid);
-            __instance.m_nview.InvokeRPC(uid, "RPC_StackResponse", true);
+            __instance.m_nview.InvokeRPC(uid, nameof(Container.RPC_StackResponse), true);
             return false;
         }
 
