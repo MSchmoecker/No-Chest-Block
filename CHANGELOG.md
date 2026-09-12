@@ -1,5 +1,8 @@
 # Changelog
 
+0.6.2
+- Updated for Valheim 1.0
+
 0.6.1
 - Fixed chests sometimes remained open after interaction
 - Removed sync of visual chest opening, normal vanilla behavior is used again
