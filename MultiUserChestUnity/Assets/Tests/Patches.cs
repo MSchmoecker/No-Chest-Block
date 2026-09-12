@@ -107,6 +107,12 @@ namespace UnitTests {
 
                 return false;
             }
+
+            [HarmonyPatch(typeof(ZNet), nameof(ZNet.Awake)), HarmonyPrefix]
+            public static void InitZoneSystem() {
+                GameObject zoneSystemGameObject = new GameObject();
+                zoneSystemGameObject.AddComponent<ZoneSystem>();
+            }
         }
 
         public static class GameAwakePatches {
@@ -125,11 +131,6 @@ namespace UnitTests {
                 }
 
                 __result = true;
-                return false;
-            }
-
-            [HarmonyPatch(typeof(FileHelpers), nameof(FileHelpers.UpdateCloudEnabledStatus)), HarmonyPrefix]
-            public static bool UpdateCloudEnabledStatusPatch() {
                 return false;
             }
 

@@ -187,32 +187,37 @@
       <Unzip Condition="Exists('$(DEPLOY_FOLDER_XBOX)')" SourceFiles="$(FULL_DEPLOY_FOLDER)/MultiUserChest.zip" DestinationFolder="$(FULL_DEPLOY_FOLDER_XBOX)" />
     </Target>
     <Target Name="CopyToUnity">
-      <Message Text="Copy To Unity" Importance="high" />
-      <Copy SourceFiles="$(VALHEIM_INSTALL)/BepInEx/core/BepInEx.dll" DestinationFolder="$(UNITY_FOLDER)/Assets/Assemblies" />
-      <Copy SourceFiles="$(VALHEIM_INSTALL)/BepInEx/core/0Harmony.dll" DestinationFolder="$(UNITY_FOLDER)/Assets/Assemblies" />
-      <Copy SourceFiles="$(VALHEIM_INSTALL)/BepInEx/core/Mono.Cecil.dll" DestinationFolder="$(UNITY_FOLDER)/Assets/Assemblies" /> 
-      <Copy SourceFiles="$(VALHEIM_INSTALL)/BepInEx/core/MonoMod.Utils.dll" DestinationFolder="$(UNITY_FOLDER)/Assets/Assemblies" />
-      <Copy SourceFiles="$(VALHEIM_INSTALL)/BepInEx/core/MonoMod.RuntimeDetour.dll" DestinationFolder="$(UNITY_FOLDER)/Assets/Assemblies" />
+      <Message Text="Copy assemblies to Unity" Importance="high" />
+      <Copy SourceFiles="$(BEPINEX_PATH)/core/BepInEx.dll" DestinationFolder="$(UNITY_FOLDER)/Assets/Assemblies" />
+      <Copy SourceFiles="$(BEPINEX_PATH)/core/0Harmony.dll" DestinationFolder="$(UNITY_FOLDER)/Assets/Assemblies" />
+      <Copy SourceFiles="$(BEPINEX_PATH)/core/Mono.Cecil.dll" DestinationFolder="$(UNITY_FOLDER)/Assets/Assemblies" />
+      <Copy SourceFiles="$(BEPINEX_PATH)/core/MonoMod.Utils.dll" DestinationFolder="$(UNITY_FOLDER)/Assets/Assemblies" />
+      <Copy SourceFiles="$(BEPINEX_PATH)/core/MonoMod.RuntimeDetour.dll" DestinationFolder="$(UNITY_FOLDER)/Assets/Assemblies" />
       <Copy SourceFiles="$(TargetDir)Jotunn.dll" DestinationFolder="$(UNITY_FOLDER)/Assets/Assemblies" />
       <Copy SourceFiles="$(TargetDir)$(TargetName).dll" DestinationFolder="$(UNITY_FOLDER)/Assets/Assemblies" />
       <Copy SourceFiles="$(TargetDir)$(TargetName).pdb" DestinationFolder="$(UNITY_FOLDER)/Assets/Assemblies" />
-      <Copy SourceFiles="$(TargetDir)$(TargetName).dll.mdb" DestinationFolder="$(UNITY_FOLDER)/Assets/Assemblies" />
+      <Copy
+          Condition="Exists('$(TargetDir)$(TargetName).dll.mdb')"
+          SourceFiles="$(TargetDir)$(TargetName).dll.mdb"
+          DestinationFolder="$(UNITY_FOLDER)/Assets/Assemblies"
+      />
+      <Copy SourceFiles="$(VALHEIM_MANAGED)/Assembly-CSharp.dll" DestinationFolder="$(UNITY_FOLDER)/Assets/Assemblies" />
       <Copy SourceFiles="$(VALHEIM_MANAGED)/publicized_assemblies/assembly_valheim_publicized.dll" DestinationFiles="$(UNITY_FOLDER)/Assets/Assemblies/assembly_valheim.dll" />
       <Copy SourceFiles="$(VALHEIM_MANAGED)/assembly_utils.dll" DestinationFolder="$(UNITY_FOLDER)/Assets/Assemblies" />
       <Copy SourceFiles="$(VALHEIM_MANAGED)/assembly_postprocessing.dll" DestinationFolder="$(UNITY_FOLDER)/Assets/Assemblies" />
       <Copy SourceFiles="$(VALHEIM_MANAGED)/assembly_sunshafts.dll" DestinationFolder="$(UNITY_FOLDER)/Assets/Assemblies" />
       <Copy SourceFiles="$(VALHEIM_MANAGED)/assembly_guiutils.dll" DestinationFolder="$(UNITY_FOLDER)/Assets/Assemblies" />
+      <Copy SourceFiles="$(VALHEIM_MANAGED)/assembly_lux.dll" DestinationFolder="$(UNITY_FOLDER)/Assets/Assemblies" />
+      <Copy SourceFiles="$(VALHEIM_MANAGED)/assembly_simplemeshcombine.dll" DestinationFolder="$(UNITY_FOLDER)/Assets/Assemblies" />
       <Copy SourceFiles="$(VALHEIM_MANAGED)/assembly_googleanalytics.dll" DestinationFolder="$(UNITY_FOLDER)/Assets/Assemblies" />
       <Copy SourceFiles="$(VALHEIM_MANAGED)/PlayFab.dll" DestinationFolder="$(UNITY_FOLDER)/Assets/Assemblies" />
       <Copy SourceFiles="$(VALHEIM_MANAGED)/PlayFabParty.dll" DestinationFolder="$(UNITY_FOLDER)/Assets/Assemblies" />
-      <Copy SourceFiles="$(VALHEIM_MANAGED)/PlatformTools.Core.dll" DestinationFolder="$(UNITY_FOLDER)/Assets/Assemblies" />
-      <Copy SourceFiles="$(VALHEIM_MANAGED)/PlatformTools.Common.dll" DestinationFolder="$(UNITY_FOLDER)/Assets/Assemblies" />
-      <Copy SourceFiles="$(VALHEIM_MANAGED)/PlatformTools.Platform.Dev.dll" DestinationFolder="$(UNITY_FOLDER)/Assets/Assemblies" />
-      <Copy SourceFiles="$(VALHEIM_MANAGED)/PlatformTools.Platform.Steam.dll" DestinationFolder="$(UNITY_FOLDER)/Assets/Assemblies" />
-      <Copy SourceFiles="$(VALHEIM_MANAGED)/ConnectedStorage.dll" DestinationFolder="$(UNITY_FOLDER)/Assets/Assemblies" />
+      <Copy SourceFiles="$(VALHEIM_MANAGED)/Splatform.dll" DestinationFolder="$(UNITY_FOLDER)/Assets/Assemblies" />
+      <Copy SourceFiles="$(VALHEIM_MANAGED)/Splatform.Steam.dll" DestinationFolder="$(UNITY_FOLDER)/Assets/Assemblies" />
       <Copy SourceFiles="$(VALHEIM_MANAGED)/gui_framework.dll" DestinationFolder="$(UNITY_FOLDER)/Assets/Assemblies" />
       <Copy SourceFiles="$(VALHEIM_MANAGED)/com.rlabrecque.steamworks.net.dll" DestinationFolder="$(UNITY_FOLDER)/Assets/Assemblies" />
-      <Copy SourceFiles="$(VALHEIM_MANAGED)/SoftReferenceableAssets.dll" DestinationFolder="$(UNITY_FOLDER)/Assets/Assemblies" />    </Target>
+      <Copy SourceFiles="$(VALHEIM_MANAGED)/SoftReferenceableAssets.dll" DestinationFolder="$(UNITY_FOLDER)/Assets/Assemblies" />
+    </Target>
     <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
       <PropertyGroup>
         <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105.The missing file is {0}.</ErrorText>

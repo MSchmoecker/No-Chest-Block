@@ -21,6 +21,9 @@ namespace MultiUserChest {
         private void Awake() {
             Instance = this;
             Log.Init(Logger);
+#if DEBUG
+            Log.LogWarning("Debug mode is enabled!");
+#endif
 
             harmony.PatchAll();
         }
