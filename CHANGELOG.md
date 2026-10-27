@@ -1,5 +1,8 @@
 # Changelog
 
+Unreleased
+- Added `RequestEvents` for other mods: `RequestSent` and `ResponseApplied` report each chest add or remove request and the chest owner's answer on the requesting client, so a mod can read the result of a transfer it started instead of inferring it from inventory contents
+
 0.6.2
 - Updated for Valheim 1.0
 

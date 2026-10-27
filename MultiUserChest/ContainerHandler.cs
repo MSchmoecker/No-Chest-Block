@@ -23,6 +23,7 @@ namespace MultiUserChest {
             InventoryPreview.AddPackage(request);
 
             sourceInventory.RemoveItem(item, dragAmount);
+            RequestEvents.OnRequestSent(request);
 
             if (container.m_nview.IsOwner()) {
                 RequestChestAddResponse response = container.GetInventory().RequestItemAdd(request);
@@ -88,6 +89,7 @@ namespace MultiUserChest {
 
             InventoryBlock.Get(destinationInventory).BlockSlot(request.toPos);
             InventoryPreview.AddPackage(request);
+            RequestEvents.OnRequestSent(request);
 
             if (container.m_nview.IsOwner()) {
                 RequestChestRemoveResponse response = container.GetInventory().RequestItemRemove(request);
