@@ -48,7 +48,8 @@ namespace MultiUserChest {
         }
 
         public static void RPC_RequestItemRemoveResponse(Inventory inventory, RequestChestRemoveResponse response) {
-            Vector2i inventoryPos = PackageHandler.GetPackage<RequestChestRemove>(response.SourceID).toPos;
+            RequestChestRemove request = PackageHandler.GetPackage<RequestChestRemove>(response.SourceID);
+            Vector2i inventoryPos = request.toPos;
             InventoryBlock.Get(inventory).ReleaseSlot(inventoryPos);
             InventoryPreview.RemovePackage(response);
 
@@ -83,6 +84,7 @@ namespace MultiUserChest {
             }
 
             UpdateGUIAfterPlayerMove(GetTargetInventory(response.SourceID));
+            RequestEvents.OnResponseApplied(request, response);
         }
 
         private static void RPC_RequestDropResponse(RequestDropResponse response) {
@@ -126,6 +128,7 @@ namespace MultiUserChest {
         }
 
         public static void RPC_RequestItemAddResponse(Inventory inventory, RequestChestAddResponse response) {
+            IRequest request = PackageHandler.GetPackage<IRequest>(response.SourceID);
             Vector2i inventoryPos = response.inventoryPos;
             ItemDrop.ItemData switchItem = response.switchItem;
 
@@ -141,6 +144,7 @@ namespace MultiUserChest {
             }
 
             UpdateGUIAfterPlayerMove(GetSourceInventory(response.SourceID));
+            RequestEvents.OnResponseApplied(request, response);
         }
 
         public static void RPC_RequestItemConsumeResponse(RequestConsumeResponse response) {
